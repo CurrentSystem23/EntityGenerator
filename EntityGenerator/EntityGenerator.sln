@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityGeneratorCLI", "EntityGeneratorCLI\EntityGeneratorCLI.csproj", "{D93F0754-F959-4F17-BF1F-5AC2E2E6A5CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityGenerator", "EntityGenerator\EntityGenerator.csproj", "{AD9018F8-2556-45F3-9F55-746B623612DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D93F0754-F959-4F17-BF1F-5AC2E2E6A5CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D93F0754-F959-4F17-BF1F-5AC2E2E6A5CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D93F0754-F959-4F17-BF1F-5AC2E2E6A5CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D93F0754-F959-4F17-BF1F-5AC2E2E6A5CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD9018F8-2556-45F3-9F55-746B623612DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD9018F8-2556-45F3-9F55-746B623612DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD9018F8-2556-45F3-9F55-746B623612DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD9018F8-2556-45F3-9F55-746B623612DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {318C5721-CE63-42F3-93FA-E63D0E6BB05B}
+	EndGlobalSection
+EndGlobal
