@@ -1,7 +1,7 @@
 ﻿namespace EntityGenerator.Profile
 {
   /// <summary>
-  /// Class <c>ProfileGeneratorDataAccessFacade</c> models generator settings for the data access facade project.
+  /// Class <see cref="ProfileGeneratorDataAccessFacade"/> models generator settings for the data access facade project.
   /// </summary>
   public class ProfileGeneratorDataAccessFacade
   {

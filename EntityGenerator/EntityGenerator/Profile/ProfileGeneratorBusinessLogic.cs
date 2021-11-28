@@ -1,7 +1,7 @@
 ﻿namespace EntityGenerator.Profile
 {
   /// <summary>
-  /// Class <c>ProfileGeneratorBusinessLogic</c> models generator settings for the business logic project.
+  /// Class <see cref="ProfileGeneratorBusinessLogic"/> models generator settings for the business logic project.
   /// </summary>
   public class ProfileGeneratorBusinessLogic
   {

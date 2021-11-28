@@ -3,7 +3,7 @@
 namespace EntityGenerator.Profile
 {
   /// <summary>
-  /// Class <c>ProfileDatabase</c> models database settings for a project.
+  /// Class <see cref="ProfileDatabase"/> models database settings for a project.
   /// </summary>
   public class ProfileDatabase
   {
@@ -11,6 +11,11 @@ namespace EntityGenerator.Profile
     /// The connection string of source database.
     /// </summary>
     public string ConnectionString { get; set; }
+
+    /// <summary>
+    /// The database name of source database.
+    /// </summary>
+    public string DatabaseName { get; set; }
 
     /// <summary>
     /// The type of source database from which it is generated.

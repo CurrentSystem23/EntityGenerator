@@ -1,7 +1,7 @@
 ﻿namespace EntityGenerator.Profile.Enums
 {
   /// <summary>
-  /// Types of supported databases
+  /// Types <see cref="DatabaseTypes"/> of supported databases
   /// </summary>
   public enum DatabaseTypes
   {

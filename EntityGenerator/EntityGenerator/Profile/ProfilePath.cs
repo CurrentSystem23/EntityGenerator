@@ -1,7 +1,7 @@
 ﻿namespace EntityGenerator.Profile
 {
   /// <summary>
-  /// Class <c>ProfilePath</c> models path settings for the project.
+  /// Class <see cref="ProfilePath"/> models path settings for the project.
   /// </summary>
   public class ProfilePath
   {

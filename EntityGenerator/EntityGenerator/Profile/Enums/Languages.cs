@@ -1,7 +1,7 @@
 ﻿namespace EntityGenerator.Profile.Enums
 {
   /// <summary>
-  /// Types of supported programming languages
+  /// Types <see cref="Languages"/> of supported programming languages
   /// </summary>
   public enum Languages
   {

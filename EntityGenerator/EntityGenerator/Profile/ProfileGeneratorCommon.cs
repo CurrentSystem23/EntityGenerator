@@ -1,7 +1,7 @@
 ﻿namespace EntityGenerator.Profile
 {
   /// <summary>
-  /// Class <c>ProfileGeneratorCommon</c> models generator settings for the common project.
+  /// Class <see cref="ProfileGeneratorCommon"/> models generator settings for the common project.
   /// </summary>
   public class ProfileGeneratorCommon
   {

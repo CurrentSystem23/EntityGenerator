@@ -1,7 +1,7 @@
 ﻿namespace EntityGenerator.Profile
 {
   /// <summary>
-  /// Class <c>ProfileGlobal</c> models global settings for the project.
+  /// Class <see cref="ProfileGlobal"/> models global settings for the project.
   /// </summary>
   public class ProfileGlobal
   {

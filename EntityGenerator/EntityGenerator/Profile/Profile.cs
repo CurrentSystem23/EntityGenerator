@@ -1,7 +1,7 @@
 ﻿namespace EntityGenerator.Profile
 {
   /// <summary>
-  /// Class <c>Profile</c> models the settings for the generators for a project.
+  /// Class <see cref="Profile"/> models the settings for a project.
   /// </summary>
   public class Profile
   {
