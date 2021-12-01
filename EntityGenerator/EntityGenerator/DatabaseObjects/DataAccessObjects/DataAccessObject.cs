@@ -1,4 +1,6 @@
-﻿using EntityGenerator.Profile;
+﻿using EntityGenerator.DatabaseObjects.DataTransferObjects;
+using EntityGenerator.Profile;
+using System.Collections.Generic;
 
 namespace EntityGenerator.DatabaseObjects.DataAccessObjects
 {
@@ -26,5 +28,16 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     ///<returns>the count of all database objects for the generator</returns>
     public abstract int DatabaseObjectCount();
 
+    ///<summary>Determine the schemas of a database for the generator</summary>
+    ///<returns>the <see cref="List<SchemaDataTransferObject>"/> of all schemas in the database for the generator</returns>
+    public abstract List<SchemaDataTransferObject> DatabaseSchemas();
+
+    ///<summary>Determine the table value objects of a database for the generator</summary>
+    ///<returns>the <see cref="List<TableValueObjectDataTransferObject>"/> of all schemas in the database for the generator</returns>
+    public abstract List<TableValueObjectDataTransferObject> DatabaseTableValueObjects();
+
+    ///<summary>Determine the columns of a database for the generator</summary>
+    ///<returns>the <see cref="List<ColumnDataTransferObject>"/> of all schemas in the database for the generator</returns>
+    public abstract List<ColumnDataTransferObject> DatabaseColumns();
   }
 }
