@@ -39,5 +39,12 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     ///<summary>Determine the columns of a database for the generator</summary>
     ///<returns>the <see cref="List<ColumnDataTransferObject>"/> of all schemas in the database for the generator</returns>
     public abstract List<ColumnDataTransferObject> DatabaseColumns();
+
+    ///<summary>Determine the user defined functions of a database for the generator</summary>
+    ///<returns>the <see cref="List<FunctionDataTransferObject>"/> of all schemas in the database for the generator</returns>
+    public abstract List<FunctionDataTransferObject> DatabaseFunctions();
+
+    ///<summary>Determine the return column information for user defined functions of a database for the generator</summary>
+    public abstract void DatabaseFunctionReturnColumns(List<FunctionDataTransferObject> databaseFunctions);
   }
 }

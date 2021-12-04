@@ -105,6 +105,83 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
+    public override List<FunctionDataTransferObject> DatabaseFunctions()
+    {
+      List<FunctionDataTransferObject> tableValueObjects = new List<FunctionDataTransferObject>();
+      using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
+      {
+        using (SqlCommand cmd = con.CreateCommand())
+        {
+          cmd.Parameters.Clear();
+          cmd.CommandType = CommandType.Text;
+          cmd.CommandText = GetSqlForFunctions(ProfileProvider.DatabaseName);
+
+          con.Open();
+          using (SqlDataReader reader = cmd.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              FunctionDataTransferObject dto = new FunctionDataTransferObject();
+              dto.FunctionId = reader.GetInt32(0);
+              dto.DatabaseName = reader.GetString(1);
+              dto.SchemaName = reader.GetString(2);
+              dto.FunctionName = reader.GetString(3);
+              dto.TypeName = reader.GetString(4);
+              dto.XType = reader.GetString(5);
+              dto.Parameters = reader.GetString(6);
+              dto.ReturnType = reader.GetString(7);
+              dto.FunctionBody = reader.GetString(8);
+              tableValueObjects.Add(dto);
+            }
+            reader.Close();
+          }
+          con.Close();
+        }
+      }
+      DatabaseFunctionReturnColumns(tableValueObjects);
+      return tableValueObjects;
+    }
+
+    /// <inheritdoc />
+    public override void DatabaseFunctionReturnColumns(List<FunctionDataTransferObject> databaseFunctions)
+    {
+      using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
+      {
+        using (SqlCommand cmd = con.CreateCommand())
+        {
+          foreach (FunctionDataTransferObject functionData in databaseFunctions)
+          {
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add("@schemaName", SqlDbType.VarChar).Value = functionData.SchemaName;
+            cmd.Parameters.Add("@functionName", SqlDbType.VarChar).Value = functionData.DatabaseObjectName;
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = GetSqlForReturnColumns(ProfileProvider.DatabaseName);
+            con.Open();
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+              while (reader.Read())
+              {
+                TableValueFunctionReturnColumnDataTransferObject dto = new TableValueFunctionReturnColumnDataTransferObject();
+                dto.DatabaseName = reader.GetString(0);
+                dto.SchemaName = reader.GetString(1);
+                dto.DatabaseObjectName = reader.GetString(2);
+                dto.ColumnName = reader.GetString(3);
+                dto.ColumnDefault = reader.IsDBNull(4) ? "NULL" : reader.GetString(4);
+                dto.IsNullable = reader.GetString(5);
+                dto.DataType = reader.GetString(6);
+                dto.MaximumLength = reader.GetInt32(7);
+                dto.Order = reader.GetInt32(8);
+                functionData.ReturnColumns.Add(dto);
+              }
+              reader.Close();
+            }
+            con.Close();
+          }
+        }
+      }
+    }
+
+    /// <inheritdoc />
     public override List<ColumnDataTransferObject> DatabaseColumns()
     {
       List<ColumnDataTransferObject> columns = new List<ColumnDataTransferObject>();
@@ -114,7 +191,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
         {
           cmd.Parameters.Clear();
           cmd.CommandType = CommandType.Text;
-          cmd.CommandText = GetSqlForTableValueObjects(ProfileProvider.DatabaseName);
+          cmd.CommandText = GetSqlForColumns(ProfileProvider.DatabaseName);
 
           con.Open();
           using (SqlDataReader reader = cmd.ExecuteReader())
@@ -268,8 +345,76 @@ SELECT [table_catalog],
        [numeric_precision_radix],
        [numeric_scale],
        [datetime_precision]
-FROM [Lenny].[information_schema].[columns]
+FROM [{databaseName}].[information_schema].[columns]
 ORDER BY [table_catalog], [table_schema], [table_name], [ordinal_position];
+";
+      return ret;
+    }
+
+    /// <summary>
+    /// Gets the SQL statement to get all user defined functions in the database for the generator
+    /// </summary>
+    /// <param name="databaseName"> Name of the source database</param>
+    /// <returns>The SQL statement <see cref="string"/></returns>
+    private string GetSqlForFunctions(string databaseName)
+    {
+      string ret = $@"
+SELECT obj.[object_id] AS [object_id],
+       schema_name(obj.[schema_id]) as [schema_name],
+       obj.[name] as [function_name],
+       CASE type
+            WHEN 'FN' THEN 'SQL scalar function'
+            WHEN 'TF' THEN 'SQL inline table-valued function'
+            WHEN 'IF' THEN 'SQL table-valued-function'
+       END AS [type],
+       obj.[type] AS [xtype],
+       SUBSTRING(par.[parameters], 0, LEN(par.[parameters])) as [parameters],
+       TYPE_NAME(ret.[user_type_id]) as [return_type],
+       mod.[definition]
+  FROM [sys].[objects] obj
+ INNER JOIN [sys].[sql_modules] mod ON mod.[object_id] = obj.[object_id]
+ CROSS APPLY (SELECT p.[name] + ' ' + TYPE_NAME(p.[user_type_id]) + ', ' 
+                FROM [sys].[parameters] p
+               WHERE p.[object_id] = obj.[object_id]
+                 AND p.[parameter_id] != 0 
+                 FOR XML PATH ('') ) AS par ([parameters])
+  LEFT JOIN [sys].[parameters] ret ON obj.[object_id] = ret.[object_id] AND ret.[parameter_id] = 0
+ WHERE obj.[type] in ('FN', 'TF', 'IF')
+ ORDER BY [schema_name], [function_name];
+";
+      return ret;
+    }
+
+    /// <summary>
+    /// Gets the SQL statement to get all columns in the database for the generator
+    /// </summary>
+    /// <param name="databaseName"> Name of the source database</param>
+    /// <param name="schemaName"> Name of the schema</param>
+    /// <param name="functionName"> Name of the function</param>
+    /// <returns>The SQL statement <see cref="string"/></returns>
+    private string GetSqlForReturnColumns(string databaseName)
+    {
+      string ret = $@"
+SELECT '{databaseName}' AS [table_catalog],
+       s.[name] AS [schema_name],
+       o.[name] AS [function_name],
+       c.[name] AS [column_name],
+       null AS [column_default],
+       CASE 
+          WHEN c.[is_nullable] = 1 THEN 'YES' 
+          ELSE 'NO' 
+       END AS [is_nullable],
+       t.[name] AS [data_type],
+       c.[max_length],
+       [column_id] AS [order]
+  FROM sys.columns AS c
+ INNER JOIN sys.types AS t ON  t.system_type_id = c.system_type_id
+ INNER JOIN sys.sysobjects o ON o.id = c.object_id
+ INNER JOIN sys.schemas s ON o.UID = s.SCHEMA_ID
+ WHERE s.name = @schemaName
+   AND o.name = @functionName
+   AND t.name <> 'sysname'
+ORDER BY o.name, c.column_id
 ";
       return ret;
     }
