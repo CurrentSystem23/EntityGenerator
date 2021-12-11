@@ -1,6 +1,7 @@
 ﻿using EntityGenerator.DatabaseObjects.DataTransferObjects;
 using EntityGenerator.Profile;
 using Microsoft.Data.SqlClient;
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -15,9 +16,10 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     /// <summary>
     /// The <see cref="MicrosoftSqlServerDataAccessObject"/> Constructor
     /// </summary>
-    /// <param name="profileProvider"> The <see cref="ProfileProvider"/>profile provider</param>
-    public MicrosoftSqlServerDataAccessObject(ProfileProvider profileProvider)
-      : base(profileProvider)
+    /// <param name="serviceProvider"> The <see cref="IServiceProvider"/> dependency injection service provider.</param>
+    /// <param name="profileProvider"> The <see cref="ProfileProvider"/> profile provider</param>
+    public MicrosoftSqlServerDataAccessObject(IServiceProvider serviceProvider, ProfileProvider profileProvider)
+      : base(serviceProvider, profileProvider)
     {}
 
     /// <inheritdoc />
@@ -40,9 +42,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<SchemaDataTransferObject> DatabaseSchemas()
+    public override List<SchemaDTO> DatabaseSchemas()
     {
-      List<SchemaDataTransferObject> schemas = new List<SchemaDataTransferObject>();
+      List<SchemaDTO> schemas = new List<SchemaDTO>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -56,7 +58,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              SchemaDataTransferObject dto = new SchemaDataTransferObject();
+              SchemaDTO dto = new SchemaDTO();
               dto.DatabaseName = reader.GetString(0);
               dto.SchemaName = reader.GetString(1);
               dto.SchemaId = reader.GetInt32(2);
@@ -71,9 +73,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<TableValueObjectDataTransferObject> DatabaseTableValueObjects()
+    public override List<TableValueObjectDTO> DatabaseTableValueObjects()
     {
-      List<TableValueObjectDataTransferObject> tableValueObjects = new List<TableValueObjectDataTransferObject>();
+      List<TableValueObjectDTO> tableValueObjects = new List<TableValueObjectDTO>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -87,7 +89,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              TableValueObjectDataTransferObject dto = new TableValueObjectDataTransferObject();
+              TableValueObjectDTO dto = new TableValueObjectDTO();
               dto.TableId = reader.GetInt32(0);
               dto.DatabaseName = reader.GetString(1);
               dto.SchemaName = reader.GetString(2);
@@ -105,9 +107,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<FunctionDataTransferObject> DatabaseFunctions()
+    public override List<FunctionDTO> DatabaseFunctions()
     {
-      List<FunctionDataTransferObject> tableValueObjects = new List<FunctionDataTransferObject>();
+      List<FunctionDTO> tableValueObjects = new List<FunctionDTO>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -121,7 +123,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              FunctionDataTransferObject dto = new FunctionDataTransferObject();
+              FunctionDTO dto = new FunctionDTO();
               dto.FunctionId = reader.GetInt32(0);
               dto.DatabaseName = reader.GetString(1);
               dto.SchemaName = reader.GetString(2);
@@ -143,13 +145,13 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override void DatabaseFunctionReturnColumns(List<FunctionDataTransferObject> databaseFunctions)
+    public override void DatabaseFunctionReturnColumns(List<FunctionDTO> databaseFunctions)
     {
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
         {
-          foreach (FunctionDataTransferObject functionData in databaseFunctions)
+          foreach (FunctionDTO functionData in databaseFunctions)
           {
             cmd.Parameters.Clear();
             cmd.Parameters.Add("@schemaName", SqlDbType.VarChar).Value = functionData.SchemaName;
@@ -161,7 +163,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
             {
               while (reader.Read())
               {
-                TableValueFunctionReturnColumnDataTransferObject dto = new TableValueFunctionReturnColumnDataTransferObject();
+                TableValueFunctionReturnColumnDTO dto = new TableValueFunctionReturnColumnDTO();
                 dto.DatabaseName = reader.GetString(0);
                 dto.SchemaName = reader.GetString(1);
                 dto.DatabaseObjectName = reader.GetString(2);
@@ -182,9 +184,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<ColumnDataTransferObject> DatabaseColumns()
+    public override List<ColumnDTO> DatabaseColumns()
     {
-      List<ColumnDataTransferObject> columns = new List<ColumnDataTransferObject>();
+      List<ColumnDTO> columns = new List<ColumnDTO>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -198,7 +200,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              ColumnDataTransferObject dto = new ColumnDataTransferObject();
+              ColumnDTO dto = new ColumnDTO();
               dto.DatabaseName = reader.GetString(0);
               dto.SchemaName = reader.GetString(1);
               dto.DatabaseObjectName = reader.GetString(2);

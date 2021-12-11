@@ -1,9 +1,9 @@
 ﻿namespace EntityGenerator.DatabaseObjects.DataTransferObjects
 {
   /// <summary>
-  /// Class <see cref="TableValueObjectDataTransferObject"/> models the data transfer object for table value objects.
+  /// Class <see cref="TableValueObjectDTO"/> models the data transfer object for table value objects.
   /// </summary>
-  public class TableValueObjectDataTransferObject : DataTransferObject
+  public class TableValueObjectDTO : DataTransferObject
   {
     /// <summary>
     /// The table id of the table value object in the source database.

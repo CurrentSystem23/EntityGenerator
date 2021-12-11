@@ -1,10 +1,20 @@
-﻿namespace EntityGenerator.Profile
+﻿using System;
+
+namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileGeneratorDataAccess"/> models generator settings for the data access project.
+  /// Class <see cref="ProfileGeneratorDataAccessDTO"/> models generator settings for the data access project.
   /// </summary>
-  public class ProfileGeneratorDataAccess
+  [Serializable]
+  public class ProfileGeneratorDataAccessDTO
   {
+    /// <summary>
+    /// Constructor for <see cref="ProfileGeneratorDataAccessDTO"/> class.
+    /// </summary>
+    public ProfileGeneratorDataAccessDTO()
+    {
+    }
+
     /// <summary>
     /// Flag for generating async data access objects.
     /// </summary>

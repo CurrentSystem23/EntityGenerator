@@ -1,5 +1,6 @@
 ﻿using EntityGenerator.DatabaseObjects.DataTransferObjects;
 using EntityGenerator.Profile;
+using System;
 using System.Collections.Generic;
 
 namespace EntityGenerator.DatabaseObjects.DataAccessObjects
@@ -9,13 +10,19 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
   /// </summary>
   public abstract class DataAccessObject
   {
+    /// <summary>
+    /// The profile data.
+    /// </summary>
+    IServiceProvider _serviceProvider;
 
     /// <summary>
     /// The <see cref="DataAccessObject"/> Constructor
     /// </summary>
-    /// <param name="profileProvider"> The <see cref="ProfileProvider"/>profile provider</param>
-    public DataAccessObject(ProfileProvider profileProvider)
+    /// <param name="serviceProvider"> The <see cref="IServiceProvider"/> dependency injection service provider.</param>
+    /// <param name="profileProvider"> The <see cref="ProfileProvider"/> profile provider</param>
+    public DataAccessObject(IServiceProvider serviceProvider, ProfileProvider profileProvider)
     {
+      _serviceProvider = serviceProvider;
       ProfileProvider = profileProvider;
     }
 
@@ -30,21 +37,21 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
 
     ///<summary>Determine the schemas of a database for the generator</summary>
     ///<returns>the <see cref="List<SchemaDataTransferObject>"/> of all schemas in the database for the generator</returns>
-    public abstract List<SchemaDataTransferObject> DatabaseSchemas();
+    public abstract List<SchemaDTO> DatabaseSchemas();
 
     ///<summary>Determine the table value objects of a database for the generator</summary>
     ///<returns>the <see cref="List<TableValueObjectDataTransferObject>"/> of all schemas in the database for the generator</returns>
-    public abstract List<TableValueObjectDataTransferObject> DatabaseTableValueObjects();
+    public abstract List<TableValueObjectDTO> DatabaseTableValueObjects();
 
     ///<summary>Determine the columns of a database for the generator</summary>
     ///<returns>the <see cref="List<ColumnDataTransferObject>"/> of all schemas in the database for the generator</returns>
-    public abstract List<ColumnDataTransferObject> DatabaseColumns();
+    public abstract List<ColumnDTO> DatabaseColumns();
 
     ///<summary>Determine the user defined functions of a database for the generator</summary>
     ///<returns>the <see cref="List<FunctionDataTransferObject>"/> of all schemas in the database for the generator</returns>
-    public abstract List<FunctionDataTransferObject> DatabaseFunctions();
+    public abstract List<FunctionDTO> DatabaseFunctions();
 
     ///<summary>Determine the return column information for user defined functions of a database for the generator</summary>
-    public abstract void DatabaseFunctionReturnColumns(List<FunctionDataTransferObject> databaseFunctions);
+    public abstract void DatabaseFunctionReturnColumns(List<FunctionDTO> databaseFunctions);
   }
 }

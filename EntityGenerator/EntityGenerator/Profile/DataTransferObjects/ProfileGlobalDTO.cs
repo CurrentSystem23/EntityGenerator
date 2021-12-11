@@ -1,10 +1,22 @@
-﻿namespace EntityGenerator.Profile
+﻿using EntityGenerator.Profile.SerializingHelper;
+using System;
+using System.Text.Json.Serialization;
+
+namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileGlobal"/> models global settings for the project.
+  /// Class <see cref="ProfileGlobalDTO"/> models global settings for the project.
   /// </summary>
-  public class ProfileGlobal
+  [Serializable]
+  public class ProfileGlobalDTO
   {
+    /// <summary>
+    /// Constructor for <see cref="ProfileGlobalDTO"/> class.
+    /// </summary>
+    public ProfileGlobalDTO()
+    {
+    }
+
     /// <summary>
     /// The name of the project.
     /// </summary>
@@ -28,11 +40,13 @@
     /// <summary>
     /// The language of the backend.
     /// </summary>
+    [JsonConverter(typeof(StringNullableEnumConverter<Enums.Languages>))]
     public Enums.Languages LanguageBackend { get; set; } = Enums.Languages.CSharp;
 
     /// <summary>
     /// The language of the frontend.
     /// </summary>
+    [JsonConverter(typeof(StringNullableEnumConverter<Enums.Languages>))]
     public Enums.Languages LanguageFrontend { get; set; } = Enums.Languages.TypeScript;
 
     /// <summary>

@@ -1,9 +1,9 @@
 ﻿namespace EntityGenerator.DatabaseObjects.DataTransferObjects
 {
   /// <summary>
-  /// Class <see cref="TableValueFunctionReturnColumnDataTransferObject"/> models the data transfer object for columns.
+  /// Class <see cref="ColumnDTO"/> models the data transfer object for columns.
   /// </summary>
-  public class TableValueFunctionReturnColumnDataTransferObject : DataTransferObject
+  public class ColumnDTO : DataTransferObject
   {
     /// <summary>
     /// The column name of the column.
@@ -31,14 +31,34 @@
     public string DataType { get; set; }
 
     /// <summary>
-    /// The max character length of the column.
+    /// The max character length of the column (unicode).
     /// </summary>
-    public int MaximumLength { get; set; }
+    public int? CharacterMaximumLength { get; set; }
 
     /// <summary>
-    /// The order of the column.
+    /// The max character length of the column (non-unicode).
     /// </summary>
-    public int Order { get; set; }
+    public int? CharacterOctetLength { get; set; }
+
+    /// <summary>
+    /// The numeric precision value of the column.
+    /// </summary>
+    public int? NumericPrecision { get; set; }
+
+    /// <summary>
+    /// The numeric precision radix value of the column.
+    /// </summary>
+    public int? NumericPrecisionRadix { get; set; }
+
+    /// <summary>
+    /// The numeric scale value of the column.
+    /// </summary>
+    public int? NumericScale { get; set; }
+
+    /// <summary>
+    /// The date time precision value of the column.
+    /// </summary>
+    public int? DatetimePrecision { get; set; }
 
     /// <summary>
     /// The database escaped column name of the column.

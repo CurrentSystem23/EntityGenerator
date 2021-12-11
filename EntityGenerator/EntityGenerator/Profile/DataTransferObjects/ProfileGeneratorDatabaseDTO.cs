@@ -1,10 +1,20 @@
-﻿namespace EntityGenerator.Profile
+﻿using System;
+
+namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileGeneratorDatabase"/> models generator settings for the database project.
+  /// Class <see cref="ProfileGeneratorDatabaseDTO"/> models generator settings for the database project.
   /// </summary>
-  public class ProfileGeneratorDatabase
+  [Serializable]
+  public class ProfileGeneratorDatabaseDTO
   {
+    /// <summary>
+    /// Constructor for <see cref="ProfileGeneratorDatabaseDTO"/> class.
+    /// </summary>
+    public ProfileGeneratorDatabaseDTO()
+    {
+    }
+
     /// <summary>
     /// Flag for generating history tables.
     /// </summary>

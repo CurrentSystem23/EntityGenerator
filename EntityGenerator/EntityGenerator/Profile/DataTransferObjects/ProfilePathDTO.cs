@@ -1,10 +1,20 @@
-﻿namespace EntityGenerator.Profile
+﻿using System;
+
+namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfilePath"/> models path settings for the project.
+  /// Class <see cref="ProfilePathDTO"/> models path settings for the project.
   /// </summary>
-  public class ProfilePath
+  [Serializable]
+  public class ProfilePathDTO
   {
+    /// <summary>
+    /// Constructor for <see cref="ProfilePathDTO"/> class.
+    /// </summary>
+    public ProfilePathDTO()
+    {
+    }
+
     /// <summary>
     /// The root directory of the project.
     /// </summary>
