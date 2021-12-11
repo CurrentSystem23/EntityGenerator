@@ -51,6 +51,14 @@ namespace EntityGenerator.Profile
     /// <param name="profile"> The json structure of the json profile.</param>
     public void LoadProfileFromJson(string profile)
     {
+      try
+      {
+        _profile = JsonSerializer.Deserialize<ProfileDTO>(profile);
+      }
+      catch (Exception)
+      {
+        _profile = null;
+      }
     }
 
     /// <summary>
@@ -104,6 +112,8 @@ namespace EntityGenerator.Profile
         string profileDto = textWriter.ToString();
       }
     }
+
+    public ProfileDTO Profile => _profile;
 
     /// <summary>
     /// The connection string of the source database.

@@ -36,18 +36,31 @@ namespace EntityGenerator.Profile.SerializingHelper
         return _converter.Read(ref reader, _underlyingType, options);
       }
 
-      string value = reader.GetString();
-
-      if (String.IsNullOrEmpty(value)) return default;
-
-      // for performance, parse with ignoreCase:false first.
-      if (!Enum.TryParse(_underlyingType, value, ignoreCase: false, out object result)
-          && !Enum.TryParse(_underlyingType, value, ignoreCase: true, out result))
+      dynamic enums = Activator.CreateInstance(typeToConvert);
+      if (typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(List<>))
       {
-        throw new JsonException($"Unable to convert \"{value}\" to Enum \"{_underlyingType}\".");
+        Type type = typeToConvert.GetGenericArguments()[0];
+        if (reader.TokenType == JsonTokenType.StartArray)
+        {
+          while (reader.Read())
+          {
+            if (reader.TokenType == JsonTokenType.EndArray)
+            {
+              break;
+            }
+            string value = reader.GetString();
+            if (!Enum.TryParse(type, value, ignoreCase: false, out object result)
+                && !Enum.TryParse(type, value, ignoreCase: true, out result))
+            {
+              throw new JsonException($"Unable to convert \"{value}\" to Enum \"{typeToConvert}\".");
+            }
+            dynamic item = result;
+            enums.Add(item);
+          }
+        }
       }
 
-      return (T)result;
+      return (T)enums;
     }
 
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)

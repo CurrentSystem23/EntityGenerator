@@ -41,10 +41,10 @@ namespace EntityGenerator.Profile.SerializingHelper
       if (String.IsNullOrEmpty(value)) return default;
 
       // for performance, parse with ignoreCase:false first.
-      if (!Enum.TryParse(_underlyingType, value, ignoreCase: false, out object result)
-          && !Enum.TryParse(_underlyingType, value, ignoreCase: true, out result))
+      if (!Enum.TryParse(typeToConvert, value, ignoreCase: false, out object result)
+          && !Enum.TryParse(typeToConvert, value, ignoreCase: true, out result))
       {
-        throw new JsonException($"Unable to convert \"{value}\" to Enum \"{_underlyingType}\".");
+        throw new JsonException($"Unable to convert \"{value}\" to Enum \"{typeToConvert}\".");
       }
 
       return (T)result;
