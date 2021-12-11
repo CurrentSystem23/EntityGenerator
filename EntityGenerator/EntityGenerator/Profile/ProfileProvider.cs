@@ -67,6 +67,18 @@ namespace EntityGenerator.Profile
     /// <param name="profile"> The xml structure of the xml profile.</param>
     public void LoadProfileFromXml(string profile)
     {
+      try
+      {
+        XmlSerializer serializer = new XmlSerializer(typeof(ProfileDTO));
+        using (TextReader reader = new StringReader(profile))
+        {
+          _profile = (ProfileDTO)serializer.Deserialize(reader);
+        }
+      }
+      catch (Exception)
+      {
+        _profile = null;
+      }
     }
 
     /// <summary>
