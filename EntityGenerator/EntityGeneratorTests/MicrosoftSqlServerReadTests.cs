@@ -1,12 +1,19 @@
 ﻿using EntityGenerator.DatabaseObjects.DataAccessObjects;
+using EntityGenerator.DatabaseObjects.DataTransferObjects;
 using EntityGenerator.Profile;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace EntityGeneratorTests
 {
   public class MicrosoftSqlServerReadTests : UnitTestFixture
   {
+    /// <summary>
+    /// xmlProfile to connect test database
+    /// </summary>
     string xmlProfile = @"<?xml version = ""1.0"" encoding=""utf-16""?>
    <ProfileDTO xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
    <Global>
@@ -73,5 +80,22 @@ namespace EntityGeneratorTests
       // assert
       Assert.True(0 < dbObjectCount);
     }
+
+    [Fact]
+    public void DatabaseSchemas()
+    {
+      // arrange
+      ProfileProvider profileProvider = _serviceProvider.GetRequiredService<ProfileProvider>();
+      profileProvider.LoadProfile(xmlProfile);
+      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = _serviceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+
+      // act
+      List<SchemaDTO> schemas = microsoftSqlServerDataAccessObject.DatabaseSchemas();
+
+      // assert
+      Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("dbo", StringComparison.InvariantCultureIgnoreCase)));
+      Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("core", StringComparison.InvariantCultureIgnoreCase)));
+    }
+
   }
 }

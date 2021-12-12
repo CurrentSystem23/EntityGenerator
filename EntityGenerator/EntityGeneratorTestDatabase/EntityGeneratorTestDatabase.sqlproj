@@ -58,11 +58,13 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="Schemas" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\AllDbTypes.sql" />
     <Build Include="Tables\TimeStampType.sql" />
     <Build Include="Tables\NullableTimeStampType.sql" />
+    <Build Include="Schemas\core.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EntityGeneratorTestDatabase.publish.xml" />
