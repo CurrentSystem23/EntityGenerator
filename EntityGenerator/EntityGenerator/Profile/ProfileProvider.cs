@@ -87,6 +87,8 @@ namespace EntityGenerator.Profile
     /// <param name="profilePath"> The path of the json profile file.</param>
     public void LoadProfileFromFileJson(string profilePath)
     {
+      string data = File.ReadAllText(profilePath);
+      LoadProfileFromJson(data);
     }
 
     /// <summary>
@@ -95,6 +97,8 @@ namespace EntityGenerator.Profile
     /// <param name="profilePath"> The path of the xml profile file.</param>
     public void LoadProfileFromFileXml(string profilePath)
     {
+      string data = File.ReadAllText(profilePath);
+      LoadProfileFromXml(data);
     }
 
     /// <summary>
