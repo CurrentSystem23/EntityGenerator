@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityGenerator", "EntityGe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityGeneratorTests", "EntityGeneratorTests\EntityGeneratorTests.csproj", "{8E62E21C-BE2F-4303-B882-CF0F81D11A45}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EntityGeneratorTestDatabase", "EntityGeneratorTestDatabase\EntityGeneratorTestDatabase.sqlproj", "{C8A05E80-82BD-400A-B8AF-598D2113B6C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{8E62E21C-BE2F-4303-B882-CF0F81D11A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E62E21C-BE2F-4303-B882-CF0F81D11A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E62E21C-BE2F-4303-B882-CF0F81D11A45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8A05E80-82BD-400A-B8AF-598D2113B6C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8A05E80-82BD-400A-B8AF-598D2113B6C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8A05E80-82BD-400A-B8AF-598D2113B6C9}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C8A05E80-82BD-400A-B8AF-598D2113B6C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8A05E80-82BD-400A-B8AF-598D2113B6C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8A05E80-82BD-400A-B8AF-598D2113B6C9}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
