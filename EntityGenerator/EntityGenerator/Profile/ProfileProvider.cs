@@ -87,8 +87,15 @@ namespace EntityGenerator.Profile
     /// <param name="profilePath"> The path of the json profile file.</param>
     public void LoadProfileFromFileJson(string profilePath)
     {
-      string data = File.ReadAllText(profilePath);
-      LoadProfileFromJson(data);
+      try
+      {
+        string data = File.ReadAllText(profilePath);
+        LoadProfileFromJson(data);
+      }
+      catch (Exception)
+      {
+        _profile = null;
+      }
     }
 
     /// <summary>
@@ -97,8 +104,15 @@ namespace EntityGenerator.Profile
     /// <param name="profilePath"> The path of the xml profile file.</param>
     public void LoadProfileFromFileXml(string profilePath)
     {
-      string data = File.ReadAllText(profilePath);
-      LoadProfileFromXml(data);
+      try
+      {
+        string data = File.ReadAllText(profilePath);
+        LoadProfileFromXml(data);
+      }
+      catch (Exception)
+      {
+        _profile = null;
+      }
     }
 
     /// <summary>
@@ -129,16 +143,19 @@ namespace EntityGenerator.Profile
       }
     }
 
+    /// <summary>
+    /// The current profile.
+    /// </summary>
     public ProfileDTO Profile => _profile;
 
     /// <summary>
     /// The connection string of the source database.
     /// </summary>
-    public string ConnectionString => _profile.Database.ConnectionString;
+    public string ConnectionString => _profile?.Database.ConnectionString;
 
     /// <summary>
     /// The database name of the source database.
     /// </summary>
-    public string DatabaseName => _profile.Database.DatabaseName;
+    public string DatabaseName => _profile?.Database.DatabaseName;
   }
 }

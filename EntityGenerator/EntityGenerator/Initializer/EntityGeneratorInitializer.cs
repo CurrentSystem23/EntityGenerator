@@ -8,7 +8,7 @@ namespace EntityGenerator.Initializer
   {
     public EntityGeneratorInitializer(IServiceCollection services)
     {
-      services.AddTransient<ProfileProvider>();
+      services.AddSingleton<ProfileProvider>();
       services.AddTransient<MicrosoftSqlServerDataAccessObject>();
     }
   }

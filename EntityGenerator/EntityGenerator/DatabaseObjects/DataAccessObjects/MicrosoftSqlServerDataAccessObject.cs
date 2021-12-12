@@ -266,6 +266,8 @@ FROM
   SELECT COUNT(0) AS Summe
     FROM [{databaseName}].[information_schema].[columns]
 
+   UNION ALL
+
   SELECT COUNT(0)
     FROM [{databaseName}].[sys].[objects] obj
    INNER JOIN [{databaseName}].[sys].[sql_modules] mo ON mo.[object_id] = obj.[object_id]
