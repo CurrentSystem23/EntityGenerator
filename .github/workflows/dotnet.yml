@@ -7,23 +7,25 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
+  build-and-publish:
     runs-on: ubuntu-latest
-
+    env:
+      NET_SDK: 6.0.x
+      CONFIGURATION: Release
+      RUNTIME: win-x64
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: env.NET_SDK
     - name: Restore dependencies
       run: dotnet restore EntityGenerator/EntityGenerator.sln
     - name: Build
-      run: dotnet build EntityGenerator/EntityGenerator.sln --configuration Release --no-restore
+      run: dotnet build EntityGenerator/EntityGenerator.sln --configuration env.CONFIGURATION --no-restore
       
     - name: Publish
-      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration Release --output /output/artifact --self-contained
+      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration env.CONFIGURATION --runtime env.RUNTIME --output /output/artifact --self-contained
     
     - uses: actions/upload-artifact@v2
       with:
