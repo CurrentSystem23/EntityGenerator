@@ -18,7 +18,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: env.NET_SDK
+        dotnet-version: ${{env.NET_SDK}}
     - name: Restore dependencies
       run: dotnet restore EntityGenerator/EntityGenerator.sln
     - name: Build
