@@ -25,9 +25,9 @@ jobs:
       run: dotnet build EntityGenerator/EntityGenerator.sln --configuration ${{env.CONFIGURATION}} --no-restore
       
     - name: Publish
-      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{env.RUNTIME}} --output /output/artifact --self-contained
+      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{env.RUNTIME}} --output $GITHUB_WORKSPACE/output/artifact --self-contained
     
     - uses: actions/upload-artifact@v2
       with:
         name: Upload Artifact
-        path: /output/artifact/
+        path: $GITHUB_WORKSPACE/output/artifact
