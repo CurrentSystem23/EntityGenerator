@@ -23,4 +23,9 @@ jobs:
       run: dotnet build EntityGenerator/EntityGenerator.sln --configuration Release --no-restore
       
     - name: Publish
-      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration Release --output /output/src --self-contained
+      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration Release --output /output/artifact --self-contained
+    
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Upload Artifact
+        path: /output/artifact/
