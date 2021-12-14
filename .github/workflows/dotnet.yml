@@ -30,7 +30,7 @@ jobs:
     - name: Test
       run: dotnet test EntityGenerator/EntityGenerator.sln --no-restore --verbosity normal
     - name: Publish
-      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{matrix.RUNTIME}} --output ${{env.GITHUB_WORKSPACE}}artifacts/${{matrix.RUNTIME}} --no-restore --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true
+      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{matrix.RUNTIME}} --output ${{env.GITHUB_WORKSPACE}}artifacts/${{matrix.RUNTIME}} --no-restore --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=None
     
     - uses: actions/upload-artifact@v2
       with:
