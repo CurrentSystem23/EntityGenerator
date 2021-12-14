@@ -66,7 +66,7 @@ namespace IntegrationTests
 </ProfileDTO>
 ";
 
-    [Fact]
+    [RunnableInDebugOnly]
     public void DatabaseObjectCount()
     {
       // arrange
@@ -81,7 +81,7 @@ namespace IntegrationTests
       Assert.True(0 < dbObjectCount);
     }
 
-    [Fact]
+    [RunnableInDebugOnly]
     public void DatabaseSchemas()
     {
       // arrange
@@ -96,5 +96,65 @@ namespace IntegrationTests
       Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("dbo", StringComparison.InvariantCultureIgnoreCase)));
       Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("core", StringComparison.InvariantCultureIgnoreCase)));
     }
+
+    [RunnableInDebugOnly]
+    public void DatabaseTableValueObjects()
+    {
+      // arrange
+      ProfileProvider profileProvider = _serviceProvider.GetRequiredService<ProfileProvider>();
+      profileProvider.LoadProfile(xmlProfile);
+      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = _serviceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+
+      // act
+      List<TableValueObjectDTO> tableValueObjects = microsoftSqlServerDataAccessObject.DatabaseTableValueObjects();
+
+      // assert
+      Assert.True(0 < tableValueObjects.Count);
+    }
+
+    [RunnableInDebugOnly]
+    public void DatabaseFunctions()
+    {
+      // arrange
+      ProfileProvider profileProvider = _serviceProvider.GetRequiredService<ProfileProvider>();
+      profileProvider.LoadProfile(xmlProfile);
+      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = _serviceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+
+      // act
+      List<FunctionDTO> functions = microsoftSqlServerDataAccessObject.DatabaseFunctions();
+
+      // assert
+      Assert.True(0 == functions.Count);
+    }
+
+    [RunnableInDebugOnly]
+    public void DatabaseFunctionReturnColumns()
+    {
+      // arrange
+      ProfileProvider profileProvider = _serviceProvider.GetRequiredService<ProfileProvider>();
+      profileProvider.LoadProfile(xmlProfile);
+      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = _serviceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+
+      // act
+      //void microsoftSqlServerDataAccessObject.DatabaseFunctionReturnColumns(List<FunctionDTO> databaseFunctions)
+
+      // assert
+    }
+
+    [RunnableInDebugOnly]
+    public void DatabaseColumns()
+    {
+      // arrange
+      ProfileProvider profileProvider = _serviceProvider.GetRequiredService<ProfileProvider>();
+      profileProvider.LoadProfile(xmlProfile);
+      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = _serviceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+
+      // act
+      List<ColumnDTO> columns = microsoftSqlServerDataAccessObject.DatabaseColumns();
+
+      // assert
+      Assert.True(0 < columns.Count);
+    }
+
   }
 }

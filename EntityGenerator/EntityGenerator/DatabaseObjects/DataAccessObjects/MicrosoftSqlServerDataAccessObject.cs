@@ -210,10 +210,10 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
               dto.DataType = reader.GetString(6);
               dto.CharacterMaximumLength = reader.IsDBNull(7) ? null : reader.GetInt32(7);
               dto.CharacterOctetLength = reader.IsDBNull(8) ? null : reader.GetInt32(8);
-              dto.NumericPrecision = reader.IsDBNull(9) ? null : reader.GetInt32(9);
-              dto.NumericPrecisionRadix = reader.IsDBNull(10) ? null : reader.GetInt32(10);
+              dto.NumericPrecision = reader.IsDBNull(9) ? null : reader.GetByte(9);
+              dto.NumericPrecisionRadix = reader.IsDBNull(10) ? null : reader.GetInt16(10);
               dto.NumericScale = reader.IsDBNull(11) ? null : reader.GetInt32(11);
-              dto.DatetimePrecision = reader.IsDBNull(12) ? null : reader.GetInt32(12);
+              dto.DatetimePrecision = reader.IsDBNull(12) ? null : reader.GetInt16(12);
               columns.Add(dto);
             }
             reader.Close();
