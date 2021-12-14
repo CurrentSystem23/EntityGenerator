@@ -24,7 +24,7 @@ jobs:
       with:
         dotnet-version: ${{env.NET_SDK}}
     - name: Restore dependencies
-      run: dotnet restore EntityGenerator/EntityGenerator.sln
+      run: dotnet restore EntityGenerator/EntityGenerator.sln --runtime ${{matrix.RUNTIME}}
     - name: Build
       run: dotnet build EntityGenerator/EntityGenerator.sln --configuration ${{env.CONFIGURATION}} --no-restore
     - name: Test
