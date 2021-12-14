@@ -26,6 +26,8 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore EntityGenerator/EntityGenerator.sln
     - name: Build
-      run: dotnet build EntityGenerator/EntityGenerator.sln --configuration ${{env.CONFIGURATION}} --runtime ${{matrix.RUNTIME}} --no-restore
+      run: dotnet build EntityGenerator/EntityGenerator.sln --configuration ${{env.CONFIGURATION}} --no-restore
     - name: Test
       run: dotnet test EntityGenerator/EntityGenerator.sln --no-restore --verbosity normal
+    - name: Publish
+      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{matrix.RUNTIME}} --no-restore      
