@@ -30,4 +30,4 @@ jobs:
     - name: Test
       run: dotnet test EntityGenerator/EntityGenerator.sln --no-restore --verbosity normal
     - name: Publish
-      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{matrix.RUNTIME}} --no-restore --self-contained     
+      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{matrix.RUNTIME}} --output ${{env.GITHUB_WORKSPACE}}artifacts/${{matrix.RUNTIME}} --no-restore /p:PublishSingleFile=true    
