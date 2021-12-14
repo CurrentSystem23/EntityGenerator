@@ -1,12 +1,8 @@
-﻿using EntityGenerator.Initializer;
+using EntityGenerator.Initializer;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EntityGeneratorTests
+namespace UnitTests
 {
   public class UnitTestFixture : IDisposable
   {
@@ -14,11 +10,6 @@ namespace EntityGeneratorTests
     public UnitTestFixture()
     {
       _serviceProvider = CreateServiceProdvider();
-    }
-
-    public void SomeMethod()
-    {
-      Console.WriteLine("SomeFixture::SomeMethod()");
     }
 
     public void Dispose()

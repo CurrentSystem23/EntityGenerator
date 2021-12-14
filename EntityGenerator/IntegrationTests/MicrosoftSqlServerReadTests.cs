@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace EntityGeneratorTests
+namespace IntegrationTests
 {
   public class MicrosoftSqlServerReadTests : UnitTestFixture
   {
@@ -96,6 +96,5 @@ namespace EntityGeneratorTests
       Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("dbo", StringComparison.InvariantCultureIgnoreCase)));
       Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("core", StringComparison.InvariantCultureIgnoreCase)));
     }
-
   }
 }

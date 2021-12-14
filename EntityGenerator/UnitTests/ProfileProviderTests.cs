@@ -1,12 +1,15 @@
-using EntityGenerator.Profile;
+﻿using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace EntityGeneratorTests
+namespace UnitTests
 {
   public class ProfileProviderTests : UnitTestFixture
   {
+    /// <summary>
+    /// Standard json mock profile for test
+    /// </summary>
     string jsonProfile = @"
 {
  ""Global"":
@@ -66,6 +69,10 @@ namespace EntityGeneratorTests
        }
    }
 }";
+
+    /// <summary>
+    /// Standard xml mock profile for test
+    /// </summary>
     string xmlProfile = @"<?xml version = ""1.0"" encoding=""utf-16""?>
    <ProfileDTO xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
    <Global>
