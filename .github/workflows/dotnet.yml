@@ -6,13 +6,17 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  NET_SDK: 6.0.x
+  CONFIGURATION: Release
+
 jobs:
-  build-and-publish:
+  build-and-test:
+    name: build-and-test-${{matrix.RUNTIME}}
     runs-on: ubuntu-latest
-    env:
-      NET_SDK: 6.0.x
-      CONFIGURATION: Release
-      RUNTIME: win-x64
+    strategy:
+      matrix:
+        RUNTIME: [win-x64, linux-x64, osx-x64]
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
@@ -20,14 +24,15 @@ jobs:
       with:
         dotnet-version: ${{env.NET_SDK}}
     - name: Restore dependencies
-      run: dotnet restore EntityGenerator/EntityGenerator.sln
+      run: dotnet restore EntityGenerator/EntityGenerator.sln --runtime ${{matrix.RUNTIME}}
     - name: Build
       run: dotnet build EntityGenerator/EntityGenerator.sln --configuration ${{env.CONFIGURATION}} --no-restore
-      
+    - name: Test
+      run: dotnet test EntityGenerator/EntityGenerator.sln --no-restore --verbosity normal
     - name: Publish
-      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{env.RUNTIME}} --output ${{env.GITHUB_WORKSPACE}}output/artifact --self-contained
+      run: dotnet publish EntityGenerator/EntityGeneratorCLI/EntityGeneratorCLI.csproj --configuration ${{env.CONFIGURATION}} --runtime ${{matrix.RUNTIME}} --output ${{env.GITHUB_WORKSPACE}}artifacts/${{matrix.RUNTIME}} --no-restore --self-contained true -p:PublishSingleFile=true -p:IncludeAllContentForSelfExtract=true -p:DebugType=None
     
     - uses: actions/upload-artifact@v2
       with:
-        name: Upload Artifact
-        path: ${{env.GITHUB_WORKSPACE}}output/artifact
+        name: entitygenerator-artifact-${{matrix.RUNTIME}}
+        path: ${{env.GITHUB_WORKSPACE}}artifacts/${{matrix.RUNTIME}}
