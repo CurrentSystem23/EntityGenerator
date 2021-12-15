@@ -224,6 +224,45 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
       }
     }
 
+    /// <inheritdoc />
+    public override List<ForeignKeyDTO> DatabaseForeignKeys()
+    {
+      List<ForeignKeyDTO> columns = new List<ForeignKeyDTO>();
+      using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
+      {
+        using (SqlCommand cmd = con.CreateCommand())
+        {
+          cmd.Parameters.Clear();
+          cmd.CommandType = CommandType.Text;
+          cmd.CommandText = GetSqlForForeignKeys(ProfileProvider.DatabaseName);
+
+          con.Open();
+          using (SqlDataReader reader = cmd.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              ForeignKeyDTO dto = new ForeignKeyDTO();
+              dto.DatabaseName = reader.GetString(0);
+              dto.ForeignKeyName = reader.GetString(1);
+              dto.SchemaName = reader.GetString(2);
+              dto.TableName = reader.GetString(3);
+              dto.FieldName = reader.GetString(4);
+              dto.ReferencedSchemaName = reader.GetString(5);
+              dto.ReferencedTableName = reader.GetString(6);
+              dto.ReferencedFieldName= reader.GetString(7);
+              dto.DeleteStatement = reader.GetString(8);
+              dto.CreateStatement = reader.GetString(9);
+              columns.Add(dto);
+            }
+            reader.Close();
+          }
+          con.Close();
+          return columns;
+        }
+      }
+    }
+
+
     /// <summary>
     /// Gets the SQL statement to determine the count of all database objects for the generator
     /// </summary>
@@ -393,8 +432,6 @@ SELECT obj.[object_id] AS [object_id],
     /// Gets the SQL statement to get all columns in the database for the generator
     /// </summary>
     /// <param name="databaseName"> Name of the source database</param>
-    /// <param name="schemaName"> Name of the schema</param>
-    /// <param name="functionName"> Name of the function</param>
     /// <returns>The SQL statement <see cref="string"/></returns>
     private string GetSqlForReturnColumns(string databaseName)
     {
@@ -422,5 +459,38 @@ ORDER BY o.name, c.column_id
 ";
       return ret;
     }
+
+    /// <summary>
+    /// Gets the SQL statement to get all foreign keys in the database for the generator
+    /// </summary>
+    /// <param name="databaseName"> Name of the source database</param>
+    /// <returns>The SQL statement <see cref="string"/></returns>
+    private string GetSqlForForeignKeys(string databaseName)
+    {
+      string ret = $@"
+SELECT '{databaseName}' AS table_catalog,
+       f.name AS ForeignKeyName,
+       s1.name AS TableSchemaName,
+       o1.name AS TableName,
+       oCol1.column_name AS FieldName,
+       s2.name AS ReferencesTableSchemaName,
+       o2.name AS ReferencesTableName,
+       oCol2.column_name AS ReferencesFieldname,
+       'ALTER TABLE [' + s1.name + '].[' + o1.name + ']  DROP CONSTRAINT [' + f.name + ']' AS DeleteForeignKey,
+       'ALTER TABLE [' + s2.name + '].[' + o1.name + ']  WITH NOCHECK ADD CONSTRAINT [' + f.name + '] FOREIGN KEY([' + oCol2.column_name + ']) REFERENCES [' + s2.name + '].[' + o2.name + '] ([' + oCol2.column_name + '])' AS CreateForeignKey
+  FROM [{databaseName}].sys.foreign_keys AS f
+ INNER JOIN [{databaseName}].[sys].[sysobjects] AS o1 ON o1.id = f.parent_object_id
+ INNER JOIN [{databaseName}].[sys].[schemas] s1 ON s1.[SCHEMA_ID] = o1.[UID]
+ INNER JOIN [{databaseName}].sys.foreign_key_columns AS fc ON f.OBJECT_ID = fc.constraint_object_id
+ INNER JOIN [{databaseName}].sys.tables AS t2 ON t2.OBJECT_ID = fc.referenced_object_id
+ INNER JOIN [{databaseName}].[sys].[sysobjects] AS o2 ON o2.id = t2.object_id
+ INNER JOIN [{databaseName}].[sys].[schemas] s2 ON s2.[SCHEMA_ID] = o2.[UID]
+ INNER JOIN [{databaseName}].[information_schema].[columns] AS oCol1 ON oCol1.TABLE_SCHEMA = s1.name AND oCol1.TABLE_NAME = o1.name AND oCol1.ORDINAL_POSITION = fc.parent_column_id
+ INNER JOIN [{databaseName}].[information_schema].[columns] AS oCol2 ON oCol2.TABLE_SCHEMA = s2.name AND oCol2.TABLE_NAME = o2.name AND oCol2.ORDINAL_POSITION = fc.referenced_column_id
+ ORDER BY TableName, FieldName;
+";
+      return ret;
+    }
+
   }
 }

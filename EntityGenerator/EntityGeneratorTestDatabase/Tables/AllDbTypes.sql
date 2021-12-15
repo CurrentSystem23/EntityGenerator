@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[AllDbTypes]
+﻿CREATE TABLE [core].[AllDbTypes]
 (
     [Id] INT NOT NULL PRIMARY KEY, 
     [BigIntValue] BIGINT NOT NULL, 

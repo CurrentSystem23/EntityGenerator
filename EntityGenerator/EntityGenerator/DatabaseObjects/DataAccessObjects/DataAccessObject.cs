@@ -40,18 +40,23 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     public abstract List<SchemaDTO> DatabaseSchemas();
 
     ///<summary>Determine the table value objects of a database for the generator</summary>
-    ///<returns>the <see cref="List<TableValueObjectDataTransferObject>"/> of all schemas in the database for the generator</returns>
+    ///<returns>the <see cref="List<TableValueObjectDataTransferObject>"/> of all table value objects in the database for the generator</returns>
     public abstract List<TableValueObjectDTO> DatabaseTableValueObjects();
 
     ///<summary>Determine the columns of a database for the generator</summary>
-    ///<returns>the <see cref="List<ColumnDataTransferObject>"/> of all schemas in the database for the generator</returns>
+    ///<returns>the <see cref="List<ColumnDataTransferObject>"/> of all columns in the database for the generator</returns>
     public abstract List<ColumnDTO> DatabaseColumns();
 
     ///<summary>Determine the user defined functions of a database for the generator</summary>
-    ///<returns>the <see cref="List<FunctionDataTransferObject>"/> of all schemas in the database for the generator</returns>
+    ///<returns>the <see cref="List<FunctionDataTransferObject>"/> of all user defined functions in the database for the generator</returns>
     public abstract List<FunctionDTO> DatabaseFunctions();
 
     ///<summary>Determine the return column information for user defined functions of a database for the generator</summary>
     public abstract void DatabaseFunctionReturnColumns(List<FunctionDTO> databaseFunctions);
+
+    ///<summary>Determine the foreign keys of a database for the generator</summary>
+    ///<returns>the <see cref="List<ForeignKeyDTO>"/> of all foreign keys in the database for the generator</returns>
+    public abstract List<ForeignKeyDTO> DatabaseForeignKeys();
+
   }
 }

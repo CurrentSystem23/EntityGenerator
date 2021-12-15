@@ -59,12 +59,22 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Schemas" />
+    <Folder Include="Functions" />
+    <Folder Include="Functions\InlineFunctions" />
+    <Folder Include="Functions\ScalarFunctions" />
+    <Folder Include="Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\AllDbTypes.sql" />
     <Build Include="Tables\TimeStampType.sql" />
     <Build Include="Tables\NullableTimeStampType.sql" />
     <Build Include="Schemas\core.sql" />
+    <Build Include="Tables\DomainType.sql" />
+    <Build Include="Tables\User.sql" />
+    <Build Include="Tables\DomainValue.sql" />
+    <Build Include="Functions\ScalarFunctions\CheckDomainType.sql" />
+    <Build Include="Functions\InlineFunctions\GetDomainValue.sql" />
+    <Build Include="Views\ConfigValues.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EntityGeneratorTestDatabase.publish.xml" />

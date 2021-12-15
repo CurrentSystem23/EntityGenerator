@@ -6,16 +6,18 @@ namespace IntegrationTests
 {
   public class UnitTestFixture : IDisposable
   {
-    internal ServiceProvider _serviceProvider;
     public UnitTestFixture()
     {
-      _serviceProvider = CreateServiceProdvider();
+      ServiceProvider = CreateServiceProdvider();
     }
+
+    internal ServiceProvider ServiceProvider { get; }
 
     public void Dispose()
     {
-      _serviceProvider.Dispose();
+      ServiceProvider.Dispose();
     }
+
     protected ServiceProvider CreateServiceProdvider()
     {
       IServiceCollection serviceCollection = new ServiceCollection();
