@@ -58,5 +58,8 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     ///<returns>the <see cref="List<ForeignKeyDTO>"/> of all foreign keys in the database for the generator</returns>
     public abstract List<ForeignKeyDTO> DatabaseForeignKeys();
 
+    ///<summary>Determine the check constraints of a database for the generator</summary>
+    ///<returns>the <see cref="List<CheckConstraintDTO>"/> of all check constraints in the database for the generator</returns>
+    public abstract List<CheckConstraintDTO> DatabaseCheckConstraints();
   }
 }

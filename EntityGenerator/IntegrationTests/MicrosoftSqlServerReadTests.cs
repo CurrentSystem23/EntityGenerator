@@ -165,11 +165,25 @@ namespace IntegrationTests
       MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
 
       // act
-      List<ForeignKeyDTO> columns = microsoftSqlServerDataAccessObject.DatabaseForeignKeys();
+      List<ForeignKeyDTO> foreignKeys = microsoftSqlServerDataAccessObject.DatabaseForeignKeys();
 
       // assert
-      Assert.True(0 < columns.Count);
+      Assert.True(0 < foreignKeys.Count);
     }
 
+    [RunnableInDebugOnly]
+    public void DatabaseCheckConstraints()
+    {
+      // arrange
+      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
+      profileProvider.LoadProfile(xmlProfile);
+      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+
+      // act
+      List<CheckConstraintDTO> checkConstraints = microsoftSqlServerDataAccessObject.DatabaseCheckConstraints();
+
+      // assert
+      Assert.True(0 < checkConstraints.Count);
+    }
   }
 }

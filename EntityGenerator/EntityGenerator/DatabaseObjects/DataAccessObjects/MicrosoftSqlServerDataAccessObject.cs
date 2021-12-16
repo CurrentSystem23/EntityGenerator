@@ -227,7 +227,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     /// <inheritdoc />
     public override List<ForeignKeyDTO> DatabaseForeignKeys()
     {
-      List<ForeignKeyDTO> columns = new List<ForeignKeyDTO>();
+      List<ForeignKeyDTO> foreignKeys = new List<ForeignKeyDTO>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -252,16 +252,52 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
               dto.ReferencedFieldName= reader.GetString(7);
               dto.DeleteStatement = reader.GetString(8);
               dto.CreateStatement = reader.GetString(9);
-              columns.Add(dto);
+              foreignKeys.Add(dto);
             }
             reader.Close();
           }
           con.Close();
-          return columns;
+          return foreignKeys;
         }
       }
     }
 
+    public override List<CheckConstraintDTO> DatabaseCheckConstraints()
+    {
+      List<CheckConstraintDTO> checkConstraints = new List<CheckConstraintDTO>();
+      using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
+      {
+        using (SqlCommand cmd = con.CreateCommand())
+        {
+          cmd.Parameters.Clear();
+          cmd.CommandType = CommandType.Text;
+          cmd.CommandText = GetSqlForCheckConstraints(ProfileProvider.DatabaseName);
+
+          con.Open();
+          using (SqlDataReader reader = cmd.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              CheckConstraintDTO dto = new CheckConstraintDTO();
+              dto.DatabaseName = reader.GetString(0);
+              dto.CheckConstraintName = reader.GetString(1);
+              dto.SchemaName = reader.GetString(2);
+              dto.TableName = reader.GetString(3);
+              dto.FieldName = reader.GetString(4);
+              dto.Definition = reader.GetString(5);
+              dto.Status = reader.GetString(6);
+              dto.IsDisabled = reader.GetBoolean(7);
+              dto.DeleteStatement = reader.GetString(8);
+              dto.CreateStatement = reader.GetString(9);
+              checkConstraints.Add(dto);
+            }
+            reader.Close();
+          }
+          con.Close();
+          return checkConstraints;
+        }
+      }
+    }
 
     /// <summary>
     /// Gets the SQL statement to determine the count of all database objects for the generator
@@ -492,5 +528,34 @@ SELECT '{databaseName}' AS table_catalog,
       return ret;
     }
 
+    /// <summary>
+    /// Gets the SQL statement to get all foreign keys in the database for the generator
+    /// </summary>
+    /// <param name="databaseName"> Name of the source database</param>
+    /// <returns>The SQL statement <see cref="string"/></returns>
+    private string GetSqlForCheckConstraints(string databaseName)
+    {
+      string ret = $@"
+SELECT '{databaseName}' AS table_catalog,
+       con.name AS constraint_name,
+       s.name AS TableSchemaName,
+       t.name AS TableName,
+       col.name AS FieldName,
+       con.definition,
+       CASE WHEN con.is_disabled = 0 
+            THEN 'Active' 
+            ELSE 'Disabled' 
+       END AS Status,
+       con.is_disabled,
+       'ALTER TABLE [' + s.name + '].[' + t.name + '] DROP CONSTRAINT [' + con.name + ']' AS DeleteCheckConstraint,
+       'ALTER TABLE [' + s.name + '].[' + t.name + '] WITH CHECK ADD CONSTRAINT [' + con.name + '] CHECK ' + con.definition AS CreateCheckConstraint
+  FROM [{databaseName}].sys.check_constraints con
+  LEFT OUTER JOIN [{databaseName}].sys.objects t ON con.parent_object_id = t.object_id
+  LEFT OUTER JOIN [{databaseName}].sys.all_columns col ON con.parent_column_id = col.column_id AND con.parent_object_id = col.object_id
+ INNER JOIN [{databaseName}].[sys].[schemas] s ON s.[SCHEMA_ID] = t.schema_id
+ ORDER BY con.name
+";
+      return ret;
+    }
   }
 }

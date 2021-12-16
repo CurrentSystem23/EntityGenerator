@@ -37,4 +37,5 @@ GO
 CREATE INDEX [ix_coreUser_EmailLinkExtension] ON [core].[User] ([EmailLinkExtension]);
 GO
 
-
+ALTER TABLE [core].[User] ADD CONSTRAINT chkDomainTypeCoreUserState CHECK ([core].[CheckDomainType] ([State], 63) = 1 );
+GO
