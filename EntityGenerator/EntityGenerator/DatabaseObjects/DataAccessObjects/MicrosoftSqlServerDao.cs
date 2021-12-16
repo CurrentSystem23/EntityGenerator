@@ -8,17 +8,17 @@ using System.Data;
 namespace EntityGenerator.DatabaseObjects.DataAccessObjects
 {
   /// <summary>
-  /// Class <see cref="MicrosoftSqlServerDataAccessObject"/> models the MS Sql-Server data access for the source database.
+  /// Class <see cref="MicrosoftSqlServerDao"/> models the MS Sql-Server data access for the source database.
   /// </summary>
-  public class MicrosoftSqlServerDataAccessObject : DataAccessObject
+  public class MicrosoftSqlServerDao : DataAccessObject
   {
 
     /// <summary>
-    /// The <see cref="MicrosoftSqlServerDataAccessObject"/> Constructor
+    /// The <see cref="MicrosoftSqlServerDao"/> Constructor
     /// </summary>
     /// <param name="serviceProvider"> The <see cref="IServiceProvider"/> dependency injection service provider.</param>
     /// <param name="profileProvider"> The <see cref="ProfileProvider"/> profile provider</param>
-    public MicrosoftSqlServerDataAccessObject(IServiceProvider serviceProvider, ProfileProvider profileProvider)
+    public MicrosoftSqlServerDao(IServiceProvider serviceProvider, ProfileProvider profileProvider)
       : base(serviceProvider, profileProvider)
     {}
 
@@ -42,9 +42,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<SchemaDTO> DatabaseSchemas()
+    public override List<SchemaDto> DatabaseSchemas()
     {
-      List<SchemaDTO> schemas = new List<SchemaDTO>();
+      List<SchemaDto> schemas = new List<SchemaDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -58,7 +58,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              SchemaDTO dto = new SchemaDTO();
+              SchemaDto dto = new SchemaDto();
               dto.DatabaseName = reader.GetString(0);
               dto.SchemaName = reader.GetString(1);
               dto.SchemaId = reader.GetInt32(2);
@@ -73,9 +73,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<TableValueObjectDTO> DatabaseTableValueObjects()
+    public override List<TableValueObjectDto> DatabaseTableValueObjects()
     {
-      List<TableValueObjectDTO> tableValueObjects = new List<TableValueObjectDTO>();
+      List<TableValueObjectDto> tableValueObjects = new List<TableValueObjectDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -89,7 +89,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              TableValueObjectDTO dto = new TableValueObjectDTO();
+              TableValueObjectDto dto = new TableValueObjectDto();
               dto.TableId = reader.GetInt32(0);
               dto.DatabaseName = reader.GetString(1);
               dto.SchemaName = reader.GetString(2);
@@ -107,9 +107,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<FunctionDTO> DatabaseFunctions()
+    public override List<FunctionDto> DatabaseFunctions()
     {
-      List<FunctionDTO> tableValueObjects = new List<FunctionDTO>();
+      List<FunctionDto> tableValueObjects = new List<FunctionDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -123,7 +123,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              FunctionDTO dto = new FunctionDTO();
+              FunctionDto dto = new FunctionDto();
               dto.FunctionId = reader.GetInt32(0);
               dto.DatabaseName = reader.GetString(1);
               dto.SchemaName = reader.GetString(2);
@@ -145,13 +145,13 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override void DatabaseFunctionReturnColumns(List<FunctionDTO> databaseFunctions)
+    public override void DatabaseFunctionReturnColumns(List<FunctionDto> databaseFunctions)
     {
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
         {
-          foreach (FunctionDTO functionData in databaseFunctions)
+          foreach (FunctionDto functionData in databaseFunctions)
           {
             cmd.Parameters.Clear();
             cmd.Parameters.Add("@schemaName", SqlDbType.VarChar).Value = functionData.SchemaName;
@@ -163,7 +163,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
             {
               while (reader.Read())
               {
-                TableValueFunctionReturnColumnDTO dto = new TableValueFunctionReturnColumnDTO();
+                TableValueFunctionReturnColumnDto dto = new TableValueFunctionReturnColumnDto();
                 dto.DatabaseName = reader.GetString(0);
                 dto.SchemaName = reader.GetString(1);
                 dto.DatabaseObjectName = reader.GetString(2);
@@ -184,9 +184,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<ColumnDTO> DatabaseColumns()
+    public override List<ColumnDto> DatabaseColumns()
     {
-      List<ColumnDTO> columns = new List<ColumnDTO>();
+      List<ColumnDto> columns = new List<ColumnDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -200,7 +200,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              ColumnDTO dto = new ColumnDTO();
+              ColumnDto dto = new ColumnDto();
               dto.DatabaseName = reader.GetString(0);
               dto.SchemaName = reader.GetString(1);
               dto.DatabaseObjectName = reader.GetString(2);
@@ -225,9 +225,9 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<ForeignKeyDTO> DatabaseForeignKeys()
+    public override List<ForeignKeyDto> DatabaseForeignKeys()
     {
-      List<ForeignKeyDTO> foreignKeys = new List<ForeignKeyDTO>();
+      List<ForeignKeyDto> foreignKeys = new List<ForeignKeyDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -241,7 +241,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              ForeignKeyDTO dto = new ForeignKeyDTO();
+              ForeignKeyDto dto = new ForeignKeyDto();
               dto.DatabaseName = reader.GetString(0);
               dto.ForeignKeyName = reader.GetString(1);
               dto.SchemaName = reader.GetString(2);
@@ -262,9 +262,10 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
       }
     }
 
-    public override List<CheckConstraintDTO> DatabaseCheckConstraints()
+    /// <inheritdoc />
+    public override List<CheckConstraintDto> DatabaseCheckConstraints()
     {
-      List<CheckConstraintDTO> checkConstraints = new List<CheckConstraintDTO>();
+      List<CheckConstraintDto> checkConstraints = new List<CheckConstraintDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
         using (SqlCommand cmd = con.CreateCommand())
@@ -278,7 +279,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           {
             while (reader.Read())
             {
-              CheckConstraintDTO dto = new CheckConstraintDTO();
+              CheckConstraintDto dto = new CheckConstraintDto();
               dto.DatabaseName = reader.GetString(0);
               dto.CheckConstraintName = reader.GetString(1);
               dto.SchemaName = reader.GetString(2);
@@ -295,6 +296,45 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
           }
           con.Close();
           return checkConstraints;
+        }
+      }
+    }
+
+    /// <inheritdoc />
+    public override List<IndexDto> DatabaseIndices()
+    {
+      List<IndexDto> indices = new List<IndexDto>();
+      using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
+      {
+        using (SqlCommand cmd = con.CreateCommand())
+        {
+          cmd.Parameters.Clear();
+          cmd.CommandType = CommandType.Text;
+          cmd.CommandText = GetSqlForIndices(ProfileProvider.DatabaseName);
+
+          con.Open();
+          using (SqlDataReader reader = cmd.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              IndexDto dto = new IndexDto();
+              dto.DatabaseName = reader.GetString(0);
+              dto.IndexName = reader.GetString(1);
+              dto.SchemaName = reader.GetString(2);
+              dto.TableName = reader.GetString(3);
+              dto.IndexColumns = reader.GetString(4);
+              dto.IncludedColumns = reader.GetString(5);
+              dto.IndexType = reader.GetString(6);
+              dto.Unique = reader.GetString(7);
+              dto.ObjectType = reader.GetString(8);
+              dto.DeleteStatement = reader.GetString(9);
+              dto.CreateStatement = reader.GetString(10);
+              indices.Add(dto);
+            }
+            reader.Close();
+          }
+          con.Close();
+          return indices;
         }
       }
     }
@@ -529,7 +569,7 @@ SELECT '{databaseName}' AS table_catalog,
     }
 
     /// <summary>
-    /// Gets the SQL statement to get all foreign keys in the database for the generator
+    /// Gets the SQL statement to get all check constraints in the database for the generator
     /// </summary>
     /// <param name="databaseName"> Name of the source database</param>
     /// <returns>The SQL statement <see cref="string"/></returns>
@@ -554,6 +594,67 @@ SELECT '{databaseName}' AS table_catalog,
   LEFT OUTER JOIN [{databaseName}].sys.all_columns col ON con.parent_column_id = col.column_id AND con.parent_object_id = col.object_id
  INNER JOIN [{databaseName}].[sys].[schemas] s ON s.[SCHEMA_ID] = t.schema_id
  ORDER BY con.name
+";
+      return ret;
+    }
+
+    /// <summary>
+    /// Gets the SQL statement to get all indices keys in the database for the generator
+    /// </summary>
+    /// <param name="databaseName"> Name of the source database</param>
+    /// <returns>The SQL statement <see cref="string"/></returns>
+    private string GetSqlForIndices(string databaseName)
+    {
+      string ret = $@"
+SELECT '{databaseName}' AS table_catalog,
+       i.[name] as IndexName,
+       s.[name] AS TableSchemaName,
+       t.[name] AS TableName,
+       SUBSTRING(column_names, 1, LEN(column_names)-1) AS [Columns],
+       CASE WHEN included_column_names IS NULL THEN '' ELSE SUBSTRING(included_column_names, 1, LEN(included_column_names)-1) END AS [IncludedColumns],
+       CASE
+	     WHEN i.[type] = 1 THEN 'Clustered index'
+         WHEN i.[type] = 2 THEN 'Nonclustered index'
+         WHEN i.[type] = 3 THEN 'XML index'
+         WHEN i.[type] = 4 THEN 'Spatial index'
+         WHEN i.[type] = 5 THEN 'Clustered columnstore index'
+         WHEN i.[type] = 6 THEN 'Nonclustered columnstore index'
+         WHEN i.[type] = 7 THEN 'Nonclustered hash index'
+        END AS IndexType,
+        CASE 
+          WHEN i.is_unique = 1 THEN 'Unique'
+          ELSE 'Not unique' 
+        END AS [Unique],
+        CASE 
+          WHEN t.[type] = 'U' THEN 'Table'
+          WHEN t.[type] = 'V' THEN 'View'
+        END AS [ObjectType],
+        'DROP INDEX [' + i.[name] + '] ON [' + s.[name] + '].[' + t.[name] + ']' AS DeleteStatement,
+        'CREATE INDEX [' + i.[name] + '] ON [' + s.[name] + '].[' + t.[name] + '] (' + SUBSTRING(column_names, 1, LEN(column_names)-1) + ')' + CASE WHEN included_column_names IS NULL THEN '' ELSE ' INCLUDE (' + SUBSTRING(included_column_names, 1, LEN(included_column_names)-1) + ')' END AS CreateStatement
+   FROM [{databaseName}].[sys].[objects] t
+  INNER JOIN [{databaseName}].[sys].[schemas] s ON s.[SCHEMA_ID] = t.schema_id
+  INNER JOIN [{databaseName}].[sys].[indexes] i ON t.object_id = i.object_id
+  CROSS APPLY (SELECT col.[name] + ', '
+                 FROM [{databaseName}].[sys].[index_columns] ic
+                INNER JOIN [{databaseName}].[sys].[columns] col ON ic.object_id = col.object_id AND ic.column_id = col.column_id
+                WHERE ic.object_id = t.object_id
+                  AND ic.index_id = i.index_id
+                  AND ic.is_included_column = 0
+                ORDER BY key_ordinal
+                  FOR XML PATH ('') 
+              ) D (column_names)
+  CROSS APPLY (SELECT col.[name] + ', '
+                 FROM [{databaseName}].[sys].[index_columns] ic
+                INNER JOIN [{databaseName}].[sys].[columns] col ON ic.object_id = col.object_id AND ic.column_id = col.column_id
+                WHERE ic.object_id = t.object_id
+                  AND ic.index_id = i.index_id
+                  AND ic.is_included_column = 1
+                ORDER BY key_ordinal
+                  FOR XML PATH ('') 
+              ) E (included_column_names)
+  WHERE t.is_ms_shipped <> 1
+    AND index_id > 0
+  ORDER BY i.[name]
 ";
       return ret;
     }

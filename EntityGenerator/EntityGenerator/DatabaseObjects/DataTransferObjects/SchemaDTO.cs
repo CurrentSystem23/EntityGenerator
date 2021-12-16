@@ -1,9 +1,9 @@
 ﻿namespace EntityGenerator.DatabaseObjects.DataTransferObjects
 {
   /// <summary>
-  /// Class <see cref="SchemaDTO"/> models the data transfer object for schemas.
+  /// Class <see cref="SchemaDto"/> models the data transfer object for schemas.
   /// </summary>
-  public class SchemaDTO : DataTransferObject
+  public class SchemaDto : DataTransferObject
   {
 
     /// <summary>

@@ -1,9 +1,9 @@
 ﻿namespace EntityGenerator.DatabaseObjects.DataTransferObjects
 {
   /// <summary>
-  /// Class <see cref="ColumnDTO"/> models the data transfer object for columns.
+  /// Class <see cref="ColumnDto"/> models the data transfer object for columns.
   /// </summary>
-  public class ColumnDTO : DataTransferObject
+  public class ColumnDto : DataTransferObject
   {
     /// <summary>
     /// The column name of the column.

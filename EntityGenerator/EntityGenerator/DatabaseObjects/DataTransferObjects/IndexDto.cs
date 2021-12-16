@@ -1,9 +1,9 @@
 ﻿namespace EntityGenerator.DatabaseObjects.DataTransferObjects
 {
   /// <summary>
-  /// Class <see cref="ForeignKeyDto"/> models the data transfer object for foreign keys.
+  /// Class <see cref="IndexDto"/> models the data transfer object for check constraints.
   /// </summary>
-  public class ForeignKeyDto
+  public class IndexDto
   {
     /// <summary>
     /// The database name of the schema in the source database.
@@ -13,7 +13,7 @@
     /// <summary>
     /// The foreign key name of the foreign key in the source database.
     /// </summary>
-    public string ForeignKeyName { get; set; }
+    public string IndexName { get; set; }
 
     /// <summary>
     /// The schema name of the table in the source database.
@@ -26,32 +26,37 @@
     public string TableName { get; set; }
 
     /// <summary>
-    /// The name of the field in the source database.
+    /// The names of the index fields in the source database.
     /// </summary>
-    public string FieldName { get; set; }
+    public string IndexColumns { get; set; }
 
     /// <summary>
-    /// The schema name of the referenced table in the source database.
+    /// The names of the included fields in the source database.
     /// </summary>
-    public string ReferencedSchemaName { get; set; }
+    public string IncludedColumns { get; set; }
 
     /// <summary>
-    /// The name of the referenced table in the source database.
+    /// The index type in the source database.
     /// </summary>
-    public string ReferencedTableName { get; set; }
+    public string IndexType { get; set; }
 
     /// <summary>
-    /// The name of the referenced field in the source database.
+    /// Is it a unique index in the source database.
     /// </summary>
-    public string ReferencedFieldName { get; set; }
+    public string Unique { get; set; }
 
     /// <summary>
-    /// The delete statement for the foreign key.
+    /// The object type (table - view).
+    /// </summary>
+    public string ObjectType { get; set; }
+
+    /// <summary>
+    /// The delete statement for the index.
     /// </summary>
     public string DeleteStatement { get; set; }
 
     /// <summary>
-    /// The create statement for the foreign key.
+    /// The create statement for the index.
     /// </summary>
     public string CreateStatement { get; set; }
   }

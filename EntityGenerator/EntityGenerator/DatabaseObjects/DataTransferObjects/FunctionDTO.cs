@@ -3,16 +3,16 @@
 namespace EntityGenerator.DatabaseObjects.DataTransferObjects
 {
   /// <summary>
-  /// Class <see cref="SchemaDTO"/> models the data transfer object for schemas.
+  /// Class <see cref="SchemaDto"/> models the data transfer object for schemas.
   /// </summary>
-  public class FunctionDTO : DataTransferObject
+  public class FunctionDto : DataTransferObject
   {
     /// <summary>
-    /// Constructor for <see cref="SchemaDTO"/>
+    /// Constructor for <see cref="SchemaDto"/>
     /// </summary>
-    public FunctionDTO()
+    public FunctionDto()
     {
-      ReturnColumns = new List<TableValueFunctionReturnColumnDTO>();
+      ReturnColumns = new List<TableValueFunctionReturnColumnDto>();
     }
 
     /// <summary>
@@ -53,6 +53,6 @@ namespace EntityGenerator.DatabaseObjects.DataTransferObjects
     /// <summary>
     /// The <see cref="List<TableValueFunctionReturnColumnDataTransferObject>"/> of the function in the source database.
     /// </summary>
-    public List<TableValueFunctionReturnColumnDTO> ReturnColumns { get; }
+    public List<TableValueFunctionReturnColumnDto> ReturnColumns { get; }
   }
 }

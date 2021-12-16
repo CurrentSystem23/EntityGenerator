@@ -1,9 +1,9 @@
 ﻿namespace EntityGenerator.DatabaseObjects.DataTransferObjects
 {
   /// <summary>
-  /// Class <see cref="TableValueFunctionReturnColumnDTO"/> models the data transfer object for columns.
+  /// Class <see cref="TableValueFunctionReturnColumnDto"/> models the data transfer object for columns.
   /// </summary>
-  public class TableValueFunctionReturnColumnDTO : DataTransferObject
+  public class TableValueFunctionReturnColumnDto : DataTransferObject
   {
     /// <summary>
     /// The column name of the column.

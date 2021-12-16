@@ -72,10 +72,10 @@ namespace IntegrationTests
       // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
 
       // act
-      int dbObjectCount = microsoftSqlServerDataAccessObject.DatabaseObjectCount();
+      int dbObjectCount = microsoftSqlServerDao.DatabaseObjectCount();
 
       // assert
       Assert.True(0 < dbObjectCount);
@@ -87,10 +87,10 @@ namespace IntegrationTests
       // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
 
       // act
-      List<SchemaDTO> schemas = microsoftSqlServerDataAccessObject.DatabaseSchemas();
+      List<SchemaDto> schemas = microsoftSqlServerDao.DatabaseSchemas();
 
       // assert
       Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("dbo", StringComparison.InvariantCultureIgnoreCase)));
@@ -103,10 +103,10 @@ namespace IntegrationTests
       // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
 
       // act
-      List<TableValueObjectDTO> tableValueObjects = microsoftSqlServerDataAccessObject.DatabaseTableValueObjects();
+      List<TableValueObjectDto> tableValueObjects = microsoftSqlServerDao.DatabaseTableValueObjects();
 
       // assert
       Assert.True(0 < tableValueObjects.Count);
@@ -118,10 +118,10 @@ namespace IntegrationTests
       // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
 
       // act
-      List<FunctionDTO> functions = microsoftSqlServerDataAccessObject.DatabaseFunctions();
+      List<FunctionDto> functions = microsoftSqlServerDao.DatabaseFunctions();
 
       // assert
       Assert.True(0 == functions.Count);
@@ -133,10 +133,10 @@ namespace IntegrationTests
       // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
 
       // act
-      //void microsoftSqlServerDataAccessObject.DatabaseFunctionReturnColumns(List<FunctionDTO> databaseFunctions)
+      //void microsoftSqlServerDao.DatabaseFunctionReturnColumns(List<FunctionDto> databaseFunctions)
 
       // assert
     }
@@ -147,10 +147,10 @@ namespace IntegrationTests
       // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
 
       // act
-      List<ColumnDTO> columns = microsoftSqlServerDataAccessObject.DatabaseColumns();
+      List<ColumnDto> columns = microsoftSqlServerDao.DatabaseColumns();
 
       // assert
       Assert.True(0 < columns.Count);
@@ -162,10 +162,10 @@ namespace IntegrationTests
       // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
 
       // act
-      List<ForeignKeyDTO> foreignKeys = microsoftSqlServerDataAccessObject.DatabaseForeignKeys();
+      List<ForeignKeyDto> foreignKeys = microsoftSqlServerDao.DatabaseForeignKeys();
 
       // assert
       Assert.True(0 < foreignKeys.Count);
@@ -177,13 +177,28 @@ namespace IntegrationTests
       // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDataAccessObject microsoftSqlServerDataAccessObject = ServiceProvider.GetRequiredService<MicrosoftSqlServerDataAccessObject>();
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
 
       // act
-      List<CheckConstraintDTO> checkConstraints = microsoftSqlServerDataAccessObject.DatabaseCheckConstraints();
+      List<CheckConstraintDto> checkConstraints = microsoftSqlServerDao.DatabaseCheckConstraints();
 
       // assert
       Assert.True(0 < checkConstraints.Count);
+    }
+
+    [RunnableInDebugOnly]
+    public void DatabaseIndices()
+    {
+      // arrange
+      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
+      profileProvider.LoadProfile(xmlProfile);
+      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
+
+      // act
+      List<IndexDto> indices = microsoftSqlServerDao.DatabaseIndices();
+
+      // assert
+      Assert.True(0 < indices.Count);
     }
   }
 }

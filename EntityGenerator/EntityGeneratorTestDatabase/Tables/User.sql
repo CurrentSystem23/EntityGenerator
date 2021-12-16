@@ -31,10 +31,10 @@ GO
 CREATE INDEX [ix_coreUser_State] ON [core].[User] ([State]);
 GO
 
-CREATE INDEX [ix_coreUser_PasswordLinkExtension] ON [core].[User] ([PasswordLinkExtension]);
+CREATE INDEX [ix_coreUser_PasswordLinkExtension] ON [core].[User] ([PasswordLinkExtension], [EmailLinkExtension]);
 GO
 
-CREATE INDEX [ix_coreUser_EmailLinkExtension] ON [core].[User] ([EmailLinkExtension]);
+CREATE INDEX [ix_coreUser_EmailLinkExtension] ON [core].[User] ([EmailLinkExtension]) INCLUDE ([EmailDateOfExpiry], [LastLogin]);
 GO
 
 ALTER TABLE [core].[User] ADD CONSTRAINT chkDomainTypeCoreUserState CHECK ([core].[CheckDomainType] ([State], 63) = 1 );

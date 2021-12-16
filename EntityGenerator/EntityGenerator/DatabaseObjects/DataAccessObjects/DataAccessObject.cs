@@ -37,29 +37,34 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
 
     ///<summary>Determine the schemas of a database for the generator</summary>
     ///<returns>the <see cref="List<SchemaDataTransferObject>"/> of all schemas in the database for the generator</returns>
-    public abstract List<SchemaDTO> DatabaseSchemas();
+    public abstract List<SchemaDto> DatabaseSchemas();
 
     ///<summary>Determine the table value objects of a database for the generator</summary>
     ///<returns>the <see cref="List<TableValueObjectDataTransferObject>"/> of all table value objects in the database for the generator</returns>
-    public abstract List<TableValueObjectDTO> DatabaseTableValueObjects();
+    public abstract List<TableValueObjectDto> DatabaseTableValueObjects();
 
     ///<summary>Determine the columns of a database for the generator</summary>
     ///<returns>the <see cref="List<ColumnDataTransferObject>"/> of all columns in the database for the generator</returns>
-    public abstract List<ColumnDTO> DatabaseColumns();
+    public abstract List<ColumnDto> DatabaseColumns();
 
     ///<summary>Determine the user defined functions of a database for the generator</summary>
     ///<returns>the <see cref="List<FunctionDataTransferObject>"/> of all user defined functions in the database for the generator</returns>
-    public abstract List<FunctionDTO> DatabaseFunctions();
+    public abstract List<FunctionDto> DatabaseFunctions();
 
     ///<summary>Determine the return column information for user defined functions of a database for the generator</summary>
-    public abstract void DatabaseFunctionReturnColumns(List<FunctionDTO> databaseFunctions);
+    public abstract void DatabaseFunctionReturnColumns(List<FunctionDto> databaseFunctions);
 
     ///<summary>Determine the foreign keys of a database for the generator</summary>
-    ///<returns>the <see cref="List<ForeignKeyDTO>"/> of all foreign keys in the database for the generator</returns>
-    public abstract List<ForeignKeyDTO> DatabaseForeignKeys();
+    ///<returns>the <see cref="List<ForeignKeyDto>"/> of all foreign keys in the database for the generator</returns>
+    public abstract List<ForeignKeyDto> DatabaseForeignKeys();
 
     ///<summary>Determine the check constraints of a database for the generator</summary>
-    ///<returns>the <see cref="List<CheckConstraintDTO>"/> of all check constraints in the database for the generator</returns>
-    public abstract List<CheckConstraintDTO> DatabaseCheckConstraints();
+    ///<returns>the <see cref="List<CheckConstraintDto>"/> of all check constraints in the database for the generator</returns>
+    public abstract List<CheckConstraintDto> DatabaseCheckConstraints();
+
+    ///<summary>Determine the indices of a database for the generator</summary>
+    ///<returns>the <see cref="List<IndexDto>"/> of all indices in the database for the generator</returns>
+    public abstract List<IndexDto> DatabaseIndices();
+
   }
 }

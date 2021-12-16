@@ -1,9 +1,9 @@
 ﻿namespace EntityGenerator.DatabaseObjects.DataTransferObjects
 {
   /// <summary>
-  /// Class <see cref="CheckConstraintDTO"/> models the data transfer object for check constraints.
+  /// Class <see cref="CheckConstraintDto"/> models the data transfer object for check constraints.
   /// </summary>
-  public class CheckConstraintDTO
+  public class CheckConstraintDto
   {
     /// <summary>
     /// The database name of the schema in the source database.
