@@ -134,11 +134,22 @@ namespace IntegrationTests
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
       MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
+      List<FunctionDto> functions = new List<FunctionDto>()
+      {
+        new FunctionDto
+        {
+          SchemaName = "core",
+          DatabaseObjectName = "GetDomainValue"
+        }
+      };
 
       // act
-      //void microsoftSqlServerDao.DatabaseFunctionReturnColumns(List<FunctionDto> databaseFunctions)
+      microsoftSqlServerDao.DatabaseFunctionReturnColumns(functions);
 
       // assert
+      FunctionDto? function = functions.FirstOrDefault();
+      Assert.NotNull(function);
+      Assert.True(0 < function?.ReturnColumns?.Count);
     }
 
     [RunnableInDebugOnly]

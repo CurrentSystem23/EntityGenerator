@@ -63,6 +63,7 @@
     <Folder Include="Functions\InlineFunctions" />
     <Folder Include="Functions\ScalarFunctions" />
     <Folder Include="Views" />
+    <Folder Include="Functions\TableValuedFunctions" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\AllDbTypes.sql" />
@@ -75,6 +76,7 @@
     <Build Include="Functions\ScalarFunctions\CheckDomainType.sql" />
     <Build Include="Functions\InlineFunctions\GetDomainValue.sql" />
     <Build Include="Views\ConfigValues.sql" />
+    <Build Include="Functions\TableValuedFunctions\Function1.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EntityGeneratorTestDatabase.publish.xml" />

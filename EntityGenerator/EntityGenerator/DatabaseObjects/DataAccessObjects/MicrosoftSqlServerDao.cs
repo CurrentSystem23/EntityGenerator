@@ -171,7 +171,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
                 dto.ColumnDefault = reader.IsDBNull(4) ? "NULL" : reader.GetString(4);
                 dto.IsNullable = reader.GetString(5);
                 dto.DataType = reader.GetString(6);
-                dto.MaximumLength = reader.GetInt32(7);
+                dto.MaximumLength = reader.GetInt16(7);
                 dto.Order = reader.GetInt32(8);
                 functionData.ReturnColumns.Add(dto);
               }
@@ -490,14 +490,14 @@ SELECT obj.[object_id] AS [object_id],
        SUBSTRING(par.[parameters], 0, LEN(par.[parameters])) as [parameters],
        TYPE_NAME(ret.[user_type_id]) as [return_type],
        mod.[definition]
-  FROM [sys].[objects] obj
- INNER JOIN [sys].[sql_modules] mod ON mod.[object_id] = obj.[object_id]
+  FROM [{databaseName}].[sys].[objects] obj
+ INNER JOIN [{databaseName}].[sys].[sql_modules] mod ON mod.[object_id] = obj.[object_id]
  CROSS APPLY (SELECT p.[name] + ' ' + TYPE_NAME(p.[user_type_id]) + ', ' 
-                FROM [sys].[parameters] p
+                FROM [{databaseName}].[sys].[parameters] p
                WHERE p.[object_id] = obj.[object_id]
                  AND p.[parameter_id] != 0 
                  FOR XML PATH ('') ) AS par ([parameters])
-  LEFT JOIN [sys].[parameters] ret ON obj.[object_id] = ret.[object_id] AND ret.[parameter_id] = 0
+  LEFT JOIN [{databaseName}].[sys].[parameters] ret ON obj.[object_id] = ret.[object_id] AND ret.[parameter_id] = 0
  WHERE obj.[type] in ('FN', 'TF', 'IF')
  ORDER BY [schema_name], [function_name];
 ";
@@ -524,10 +524,10 @@ SELECT '{databaseName}' AS [table_catalog],
        t.[name] AS [data_type],
        c.[max_length],
        [column_id] AS [order]
-  FROM sys.columns AS c
- INNER JOIN sys.types AS t ON  t.system_type_id = c.system_type_id
- INNER JOIN sys.sysobjects o ON o.id = c.object_id
- INNER JOIN sys.schemas s ON o.UID = s.SCHEMA_ID
+  FROM [{databaseName}].sys.columns AS c
+ INNER JOIN [{databaseName}].sys.types AS t ON  t.system_type_id = c.system_type_id
+ INNER JOIN [{databaseName}].sys.sysobjects o ON o.id = c.object_id
+ INNER JOIN [{databaseName}].sys.schemas s ON o.UID = s.SCHEMA_ID
  WHERE s.name = @schemaName
    AND o.name = @functionName
    AND t.name <> 'sysname'
