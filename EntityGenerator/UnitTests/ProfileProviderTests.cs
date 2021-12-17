@@ -126,6 +126,7 @@ namespace UnitTests
 ";
 
     [Fact]
+    [Trait("Category", "Unit-Tests")]
     public void LoadJsonStructureToProfile()
     {
       // arrange
@@ -171,6 +172,7 @@ namespace UnitTests
     }
 
     [Fact]
+    [Trait("Category", "Unit-Tests")]
     public void LoadXmlStructureToProfile()
     {
       // arrange

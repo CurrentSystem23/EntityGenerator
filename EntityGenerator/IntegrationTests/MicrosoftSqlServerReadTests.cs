@@ -11,10 +11,142 @@ namespace IntegrationTests
 {
   public class MicrosoftSqlServerReadTests : UnitTestFixture
   {
-    /// <summary>
-    /// xmlProfile to connect test database
-    /// </summary>
-    string xmlProfile = @"<?xml version = ""1.0"" encoding=""utf-16""?>
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseObjectCount()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      int dbObjectCount = microsoftSqlServerDao.DatabaseObjectCount();
+
+      // assert
+      Assert.True(0 < dbObjectCount);
+    }
+
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseSchemas()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      List<SchemaDto> schemas = microsoftSqlServerDao.DatabaseSchemas();
+
+      // assert
+      Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("dbo", StringComparison.InvariantCultureIgnoreCase)));
+      Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("core", StringComparison.InvariantCultureIgnoreCase)));
+    }
+
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseTableValueObjects()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      List<TableValueObjectDto> tableValueObjects = microsoftSqlServerDao.DatabaseTableValueObjects();
+
+      // assert
+      Assert.True(0 < tableValueObjects.Count);
+    }
+
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseFunctions()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      List<FunctionDto> functions = microsoftSqlServerDao.DatabaseFunctions();
+
+      // assert
+      Assert.True(0 < functions.Count);
+    }
+
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseFunctionReturnColumns()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+      List<FunctionDto> functions = new List<FunctionDto>
+      {
+        new() { SchemaName = "core", FunctionName = "GetDomainValue" }
+      };
+
+      // act
+      microsoftSqlServerDao.DatabaseFunctionReturnColumns(functions);
+
+      // assert
+      FunctionDto? function = functions.FirstOrDefault();
+      Assert.NotNull(function);
+      Assert.True(0 < function?.ReturnColumns?.Count);
+    }
+
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseColumns()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      List<ColumnDto> columns = microsoftSqlServerDao.DatabaseColumns();
+
+      // assert
+      Assert.True(0 < columns.Count);
+    }
+
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseForeignKeys()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      List<ForeignKeyDto> foreignKeys = microsoftSqlServerDao.DatabaseForeignKeys();
+
+      // assert
+      Assert.True(0 < foreignKeys.Count);
+    }
+
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseCheckConstraints()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      List<CheckConstraintDto> checkConstraints = microsoftSqlServerDao.DatabaseCheckConstraints();
+
+      // assert
+      Assert.True(0 < checkConstraints.Count);
+    }
+
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseIndices()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      List<IndexDto> indices = microsoftSqlServerDao.DatabaseIndices();
+
+      // assert
+      Assert.True(0 < indices.Count);
+    }
+
+    private MicrosoftSqlServerDao GetMicrosoftSqlServerDao(string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False")
+    {
+      string xmlProfile = $@"<?xml version = ""1.0"" encoding=""utf-16""?>
    <ProfileDTO xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
    <Global>
      <ProjectName>TestProject</ProjectName>
@@ -26,7 +158,7 @@ namespace IntegrationTests
      <NoWipe>false</NoWipe>
    </Global>
    <Database>
-     <ConnectionString>Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False</ConnectionString>
+     <ConnectionString>{connectionString}</ConnectionString>
      <DatabaseName>EntityGeneratorTestDatabase</DatabaseName>
      <SourceDatabaseType>MicrosoftSqlServer</SourceDatabaseType>
      <TargetDatabaseTypes>
@@ -66,150 +198,9 @@ namespace IntegrationTests
 </ProfileDTO>
 ";
 
-    [RunnableInDebugOnly]
-    public void DatabaseObjectCount()
-    {
-      // arrange
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
       profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-
-      // act
-      int dbObjectCount = microsoftSqlServerDao.DatabaseObjectCount();
-
-      // assert
-      Assert.True(0 < dbObjectCount);
-    }
-
-    [RunnableInDebugOnly]
-    public void DatabaseSchemas()
-    {
-      // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
-      profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-
-      // act
-      List<SchemaDto> schemas = microsoftSqlServerDao.DatabaseSchemas();
-
-      // assert
-      Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("dbo", StringComparison.InvariantCultureIgnoreCase)));
-      Assert.NotNull(schemas.FirstOrDefault(s => s.SchemaName.Equals("core", StringComparison.InvariantCultureIgnoreCase)));
-    }
-
-    [RunnableInDebugOnly]
-    public void DatabaseTableValueObjects()
-    {
-      // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
-      profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-
-      // act
-      List<TableValueObjectDto> tableValueObjects = microsoftSqlServerDao.DatabaseTableValueObjects();
-
-      // assert
-      Assert.True(0 < tableValueObjects.Count);
-    }
-
-    [RunnableInDebugOnly]
-    public void DatabaseFunctions()
-    {
-      // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
-      profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-
-      // act
-      List<FunctionDto> functions = microsoftSqlServerDao.DatabaseFunctions();
-
-      // assert
-      Assert.True(0 == functions.Count);
-    }
-
-    [RunnableInDebugOnly]
-    public void DatabaseFunctionReturnColumns()
-    {
-      // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
-      profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-      List<FunctionDto> functions = new List<FunctionDto>()
-      {
-        new FunctionDto
-        {
-          SchemaName = "core",
-          DatabaseObjectName = "GetDomainValue"
-        }
-      };
-
-      // act
-      microsoftSqlServerDao.DatabaseFunctionReturnColumns(functions);
-
-      // assert
-      FunctionDto? function = functions.FirstOrDefault();
-      Assert.NotNull(function);
-      Assert.True(0 < function?.ReturnColumns?.Count);
-    }
-
-    [RunnableInDebugOnly]
-    public void DatabaseColumns()
-    {
-      // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
-      profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-
-      // act
-      List<ColumnDto> columns = microsoftSqlServerDao.DatabaseColumns();
-
-      // assert
-      Assert.True(0 < columns.Count);
-    }
-
-    [RunnableInDebugOnly]
-    public void DatabaseForeignKeys()
-    {
-      // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
-      profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-
-      // act
-      List<ForeignKeyDto> foreignKeys = microsoftSqlServerDao.DatabaseForeignKeys();
-
-      // assert
-      Assert.True(0 < foreignKeys.Count);
-    }
-
-    [RunnableInDebugOnly]
-    public void DatabaseCheckConstraints()
-    {
-      // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
-      profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-
-      // act
-      List<CheckConstraintDto> checkConstraints = microsoftSqlServerDao.DatabaseCheckConstraints();
-
-      // assert
-      Assert.True(0 < checkConstraints.Count);
-    }
-
-    [RunnableInDebugOnly]
-    public void DatabaseIndices()
-    {
-      // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
-      profileProvider.LoadProfile(xmlProfile);
-      MicrosoftSqlServerDao microsoftSqlServerDao = ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
-
-      // act
-      List<IndexDto> indices = microsoftSqlServerDao.DatabaseIndices();
-
-      // assert
-      Assert.True(0 < indices.Count);
+      return ServiceProvider.GetRequiredService<MicrosoftSqlServerDao>();
     }
   }
 }
