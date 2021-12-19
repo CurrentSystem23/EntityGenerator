@@ -3,15 +3,15 @@
 namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfilePathDTO"/> models path settings for the project.
+  /// Class <see cref="ProfilePathDto"/> models path settings for the project.
   /// </summary>
   [Serializable]
-  public class ProfilePathDTO
+  public class ProfilePathDto
   {
     /// <summary>
-    /// Constructor for <see cref="ProfilePathDTO"/> class.
+    /// Constructor for <see cref="ProfilePathDto"/> class.
     /// </summary>
-    public ProfilePathDTO()
+    public ProfilePathDto()
     {
     }
 

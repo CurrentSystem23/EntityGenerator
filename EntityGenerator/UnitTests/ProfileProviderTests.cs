@@ -74,7 +74,7 @@ namespace UnitTests
     /// Standard xml mock profile for test
     /// </summary>
     string xmlProfile = @"<?xml version = ""1.0"" encoding=""utf-16""?>
-   <ProfileDTO xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+   <ProfileDto xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
    <Global>
      <ProjectName>TestProject</ProjectName>
      <GeneratedPrefix />
@@ -122,7 +122,7 @@ namespace UnitTests
          <CheckConstraintScripts>false</CheckConstraintScripts>
       </GeneratorDatabase>
    </Generator>
-</ProfileDTO>
+</ProfileDto>
 ";
 
     [Fact]

@@ -147,7 +147,7 @@ namespace IntegrationTests
     private MicrosoftSqlServerDao GetMicrosoftSqlServerDao(string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False")
     {
       string xmlProfile = $@"<?xml version = ""1.0"" encoding=""utf-16""?>
-   <ProfileDTO xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+   <ProfileDto xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
    <Global>
      <ProjectName>TestProject</ProjectName>
      <GeneratedPrefix />
@@ -195,7 +195,7 @@ namespace IntegrationTests
          <CheckConstraintScripts>false</CheckConstraintScripts>
       </GeneratorDatabase>
    </Generator>
-</ProfileDTO>
+</ProfileDto>
 ";
 
       ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();

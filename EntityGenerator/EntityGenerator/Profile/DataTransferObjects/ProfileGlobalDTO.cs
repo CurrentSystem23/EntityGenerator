@@ -5,15 +5,15 @@ using System.Text.Json.Serialization;
 namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileGlobalDTO"/> models global settings for the project.
+  /// Class <see cref="ProfileGlobalDto"/> models global settings for the project.
   /// </summary>
   [Serializable]
-  public class ProfileGlobalDTO
+  public class ProfileGlobalDto
   {
     /// <summary>
-    /// Constructor for <see cref="ProfileGlobalDTO"/> class.
+    /// Constructor for <see cref="ProfileGlobalDto"/> class.
     /// </summary>
-    public ProfileGlobalDTO()
+    public ProfileGlobalDto()
     {
     }
 

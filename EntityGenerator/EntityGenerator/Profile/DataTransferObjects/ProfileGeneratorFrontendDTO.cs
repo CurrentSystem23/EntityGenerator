@@ -3,15 +3,15 @@
 namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileGeneratorFrontendDTO"/> models generator settings for the frontend project.
+  /// Class <see cref="ProfileGeneratorFrontendDto"/> models generator settings for the frontend project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorFrontendDTO
+  public class ProfileGeneratorFrontendDto
   {
     /// <summary>
-    /// Constructor for <see cref="ProfileGeneratorFrontendDTO"/> class.
+    /// Constructor for <see cref="ProfileGeneratorFrontendDto"/> class.
     /// </summary>
-    public ProfileGeneratorFrontendDTO()
+    public ProfileGeneratorFrontendDto()
     {
     }
 

@@ -3,40 +3,40 @@
 namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileDTO"/> models the settings for a project.
+  /// Class <see cref="ProfileDto"/> models the settings for a project.
   /// </summary>
   [Serializable]
-  public class ProfileDTO
+  public class ProfileDto
   {
     /// <summary>
-    /// Constructor for <see cref="ProfileDTO"/> class.
+    /// Constructor for <see cref="ProfileDto"/> class.
     /// </summary>
-    public ProfileDTO()
+    public ProfileDto()
     {
-      Global = new ProfileGlobalDTO();
-      Database = new ProfileDatabaseDTO();
-      Path = new ProfilePathDTO();
-      Generator = new ProfileGeneratorDTO();
+      Global = new ProfileGlobalDto();
+      Database = new ProfileDatabaseDto();
+      Path = new ProfilePathDto();
+      Generator = new ProfileGeneratorDto();
     }
 
     /// <summary>
     /// The global settings for the project.
     /// </summary>
-    public ProfileGlobalDTO Global { get; set; }
+    public ProfileGlobalDto Global { get; set; }
 
     /// <summary>
     /// The database settings for the project.
     /// </summary>
-    public ProfileDatabaseDTO Database { get; set; }
+    public ProfileDatabaseDto Database { get; set; }
 
     /// <summary>
     /// The path settings for the project.
     /// </summary>
-    public ProfilePathDTO Path { get; set; }
+    public ProfilePathDto Path { get; set; }
 
     /// <summary>
     /// The generator settings for the project.
     /// </summary>
-    public ProfileGeneratorDTO Generator { get; set; }
+    public ProfileGeneratorDto Generator { get; set; }
   }
 }

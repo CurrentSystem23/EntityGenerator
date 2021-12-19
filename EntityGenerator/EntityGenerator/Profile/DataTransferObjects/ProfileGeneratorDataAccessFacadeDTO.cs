@@ -3,15 +3,15 @@
 namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileGeneratorDataAccessFacadeDTO"/> models generator settings for the data access facade project.
+  /// Class <see cref="ProfileGeneratorDataAccessFacadeDto"/> models generator settings for the data access facade project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorDataAccessFacadeDTO
+  public class ProfileGeneratorDataAccessFacadeDto
   {
     /// <summary>
-    /// Constructor for <see cref="ProfileGeneratorDataAccessFacadeDTO"/> class.
+    /// Constructor for <see cref="ProfileGeneratorDataAccessFacadeDto"/> class.
     /// </summary>
-    public ProfileGeneratorDataAccessFacadeDTO()
+    public ProfileGeneratorDataAccessFacadeDto()
     {
     }
 

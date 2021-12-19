@@ -6,15 +6,15 @@ using System.Text.Json.Serialization;
 namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileDatabaseDTO"/> models database settings for a project.
+  /// Class <see cref="ProfileDatabaseDto"/> models database settings for a project.
   /// </summary>
   [Serializable] 
-  public class ProfileDatabaseDTO
+  public class ProfileDatabaseDto
   {
     /// <summary>
-    /// Constructor for <see cref="ProfileDatabaseDTO"/> class.
+    /// Constructor for <see cref="ProfileDatabaseDto"/> class.
     /// </summary>
-    public ProfileDatabaseDTO()
+    public ProfileDatabaseDto()
     {
     }
 

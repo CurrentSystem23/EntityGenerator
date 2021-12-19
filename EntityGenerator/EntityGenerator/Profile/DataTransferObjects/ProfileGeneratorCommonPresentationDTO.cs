@@ -3,15 +3,15 @@
 namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileGeneratorCommonPresentationDTO"/> models generator settings for the common presentation project.
+  /// Class <see cref="ProfileGeneratorCommonPresentationDto"/> models generator settings for the common presentation project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorCommonPresentationDTO
+  public class ProfileGeneratorCommonPresentationDto
   {
     /// <summary>
-    /// Constructor for <see cref="ProfileGeneratorCommonPresentationDTO"/> class.
+    /// Constructor for <see cref="ProfileGeneratorCommonPresentationDto"/> class.
     /// </summary>
-    public ProfileGeneratorCommonPresentationDTO()
+    public ProfileGeneratorCommonPresentationDto()
     {
     }
 

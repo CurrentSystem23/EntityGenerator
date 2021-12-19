@@ -3,40 +3,40 @@
 namespace EntityGenerator.Profile.DataTransferObject
 {
   /// <summary>
-  /// Class <see cref="ProfileGeneratorDTO"/> models generator settings for a project.
+  /// Class <see cref="ProfileGeneratorDto"/> models generator settings for a project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorDTO
+  public class ProfileGeneratorDto
   {
     /// <summary>
-    /// Constructor for <see cref="ProfileGeneratorDTO"/> class.
+    /// Constructor for <see cref="ProfileGeneratorDto"/> class.
     /// </summary>
-    public ProfileGeneratorDTO()
+    public ProfileGeneratorDto()
     {
-      GeneratorFrontend = new ProfileGeneratorFrontendDTO();
-      GeneratorBusinessLogic = new ProfileGeneratorBusinessLogicDTO();
-      GeneratorCommon = new ProfileGeneratorCommonDTO();
-      GeneratorDatabase = new ProfileGeneratorDatabaseDTO();
+      GeneratorFrontend = new ProfileGeneratorFrontendDto();
+      GeneratorBusinessLogic = new ProfileGeneratorBusinessLogicDto();
+      GeneratorCommon = new ProfileGeneratorCommonDto();
+      GeneratorDatabase = new ProfileGeneratorDatabaseDto();
     }
 
     /// <summary>
     /// The generator settings for the frontend project.
     /// </summary>
-    public ProfileGeneratorFrontendDTO GeneratorFrontend { get; set; }
+    public ProfileGeneratorFrontendDto GeneratorFrontend { get; set; }
 
     /// <summary>
     /// The generator settings for the business logic project.
     /// </summary>
-    public ProfileGeneratorBusinessLogicDTO GeneratorBusinessLogic { get; set; }
+    public ProfileGeneratorBusinessLogicDto GeneratorBusinessLogic { get; set; }
 
     /// <summary>
     /// The generator settings for the common project.
     /// </summary>
-    public ProfileGeneratorCommonDTO GeneratorCommon { get; set; }
+    public ProfileGeneratorCommonDto GeneratorCommon { get; set; }
 
     /// <summary>
     /// The generator settings for the business logic project.
     /// </summary>
-    public ProfileGeneratorDatabaseDTO GeneratorDatabase { get; set; }
+    public ProfileGeneratorDatabaseDto GeneratorDatabase { get; set; }
   }
 }

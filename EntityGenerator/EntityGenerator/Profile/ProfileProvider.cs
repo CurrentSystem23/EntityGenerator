@@ -14,7 +14,7 @@ namespace EntityGenerator.Profile
     /// <summary>
     /// The profile data.
     /// </summary>
-    ProfileDTO _profile;
+    ProfileDto _profile;
 
     /// <summary>
     /// The service provider.
@@ -53,7 +53,7 @@ namespace EntityGenerator.Profile
     {
       try
       {
-        _profile = JsonSerializer.Deserialize<ProfileDTO>(profile);
+        _profile = JsonSerializer.Deserialize<ProfileDto>(profile);
       }
       catch (Exception)
       {
@@ -69,10 +69,10 @@ namespace EntityGenerator.Profile
     {
       try
       {
-        XmlSerializer serializer = new XmlSerializer(typeof(ProfileDTO));
+        XmlSerializer serializer = new XmlSerializer(typeof(ProfileDto));
         using (TextReader reader = new StringReader(profile))
         {
-          _profile = (ProfileDTO)serializer.Deserialize(reader);
+          _profile = (ProfileDto)serializer.Deserialize(reader);
         }
       }
       catch (Exception)
@@ -121,7 +121,7 @@ namespace EntityGenerator.Profile
     /// <param name="profilePath"> The path of the json profile file.</param>
     public void SaveProfileToFileJson(string profilePath)
     {
-      _profile = new ProfileDTO();
+      _profile = new ProfileDto();
 
       string profileDto = JsonSerializer.Serialize(_profile);
     }
@@ -132,7 +132,7 @@ namespace EntityGenerator.Profile
     /// <param name="profilePath"> The path of the xml profile file.</param>
     public void SaveProfileToFileXml(string profilePath)
     {
-      _profile = new ProfileDTO();
+      _profile = new ProfileDto();
 
       XmlSerializer xmlSerializer = new XmlSerializer(_profile.GetType());
 
@@ -146,7 +146,7 @@ namespace EntityGenerator.Profile
     /// <summary>
     /// The current profile.
     /// </summary>
-    public ProfileDTO Profile => _profile;
+    public ProfileDto Profile => _profile;
 
     /// <summary>
     /// The connection string of the source database.
