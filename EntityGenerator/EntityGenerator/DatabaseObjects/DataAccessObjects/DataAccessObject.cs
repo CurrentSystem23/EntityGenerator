@@ -66,5 +66,8 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     ///<returns>the <see cref="List<IndexDto>"/> of all indices in the database for the generator</returns>
     public abstract List<IndexDto> DatabaseIndices();
 
+    ///<summary>Determine the triggers of a database for the generator</summary>
+    ///<returns>the <see cref="List<TriggerDto>"/> of all triggers in the database for the generator</returns>
+    public abstract List<TriggerDto> DatabaseTriggers();
   }
 }

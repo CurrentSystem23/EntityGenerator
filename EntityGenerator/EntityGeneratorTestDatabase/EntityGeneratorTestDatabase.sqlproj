@@ -64,6 +64,7 @@
     <Folder Include="Functions\ScalarFunctions" />
     <Folder Include="Views" />
     <Folder Include="Functions\TableValuedFunctions" />
+    <Folder Include="Triggers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\AllDbTypes.sql" />
@@ -77,6 +78,7 @@
     <Build Include="Functions\InlineFunctions\GetDomainValue.sql" />
     <Build Include="Views\ConfigValues.sql" />
     <Build Include="Functions\TableValuedFunctions\Function1.sql" />
+    <Build Include="Triggers\SampleTrigger.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EntityGeneratorTestDatabase.publish.xml" />

@@ -144,6 +144,20 @@ namespace IntegrationTests
       Assert.True(0 < indices.Count);
     }
 
+    [RunnableInDebugOnly]
+    [Trait("Category", "Integration-Tests")]
+    public void DatabaseTriggers()
+    {
+      // arrange
+      MicrosoftSqlServerDao microsoftSqlServerDao = GetMicrosoftSqlServerDao();
+
+      // act
+      List<TriggerDto> triggers = microsoftSqlServerDao.DatabaseTriggers();
+
+      // assert
+      Assert.True(0 < triggers.Count);
+    }
+
     private MicrosoftSqlServerDao GetMicrosoftSqlServerDao(string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False")
     {
       string xmlProfile = $@"<?xml version = ""1.0"" encoding=""utf-16""?>

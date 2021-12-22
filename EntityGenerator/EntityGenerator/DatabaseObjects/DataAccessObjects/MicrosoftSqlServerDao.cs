@@ -339,6 +339,44 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
       }
     }
 
+    /// <inheritdoc />
+    public override List<TriggerDto> DatabaseTriggers()
+    {
+      List<TriggerDto> triggers = new List<TriggerDto>();
+      using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
+      {
+        using (SqlCommand cmd = con.CreateCommand())
+        {
+          cmd.Parameters.Clear();
+          cmd.CommandType = CommandType.Text;
+          cmd.CommandText = GetSqlForTriggers(ProfileProvider.DatabaseName);
+
+          con.Open();
+          using (SqlDataReader reader = cmd.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              TriggerDto dto = new TriggerDto();
+              dto.DatabaseName = reader.GetString(0);
+              dto.SchemaName = reader.GetString(1);
+              dto.TriggerName = reader.GetString(2);
+              dto.ParentObjectName = reader.GetString(3);
+              dto.ParentObjectXtype = reader.GetString(4);
+              dto.Definition = reader.GetString(5);
+              dto.IsDisabled = reader.GetBoolean(6);
+              dto.IsInsteadOfTrigger = reader.GetBoolean(7);
+              dto.IsNotForReplication = reader.GetBoolean(8);
+              dto.IsMsShipped = reader.GetBoolean(9);
+              triggers.Add(dto);
+            }
+            reader.Close();
+          }
+          con.Close();
+          return triggers;
+        }
+      }
+    }
+
     /// <summary>
     /// Gets the SQL statement to determine the count of all database objects for the generator
     /// </summary>
@@ -658,6 +696,33 @@ SELECT '{databaseName}' AS table_catalog,
   WHERE t.is_ms_shipped <> 1
     AND index_id > 0
   ORDER BY i.[name]
+";
+      return ret;
+    }
+
+    /// <summary>
+    /// Gets the SQL statement to get all triggers in the database for the generator
+    /// </summary>
+    /// <param name="databaseName"> Name of the source database</param>
+    /// <returns>The SQL statement <see cref="string"/></returns>
+    private string GetSqlForTriggers(string databaseName)
+    {
+      string ret = $@"
+SELECT '{databaseName}' AS DatabaseName,
+       s.[name] AS SchemaName,
+       tr.[name] AS TriggerName,
+       o.[name] AS ParentObjectName,
+       o.[xtype] AS ParentObjectXtype,
+       m.[definition] AS [Definition],
+       tr.[is_disabled],
+       tr.[is_instead_of_trigger],
+       tr.[is_not_for_replication],
+       tr.[is_ms_shipped]
+  FROM [{databaseName}].[sys].[triggers] AS tr
+ INNER JOIN [{databaseName}].[sys].[sysobjects] AS o ON o.[id] = tr.[parent_id]
+ INNER JOIN [{databaseName}].[sys].[schemas] s ON o.[UID] = s.[SCHEMA_ID]
+ INNER JOIN [{databaseName}].[sys].[sql_modules] m ON m.[object_id] = tr.[object_id]
+ ORDER BY s.[name], tr.[name]
 ";
       return ret;
     }
