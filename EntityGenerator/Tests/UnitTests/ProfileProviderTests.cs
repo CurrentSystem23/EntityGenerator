@@ -1,6 +1,8 @@
+using EntityGenerator.DatabaseObjects.DataAccessObjects;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject.Enums;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NUnit.Framework;
 
 namespace Tests.UnitTests
@@ -131,44 +133,45 @@ namespace Tests.UnitTests
     public void LoadJsonStructureToProfile()
     {
       // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
+      ProfileProvider? profileProvider = ServiceProvider?.GetRequiredService<ProfileProvider>();
 
       // act
-      profileProvider.LoadProfile(jsonProfile);
+      profileProvider?.LoadProfile(jsonProfile);
 
       // assert
-      Assert.AreEqual("TestProject", profileProvider.Profile.Global.ProjectName);
-      Assert.AreEqual(string.Empty, profileProvider.Profile.Global.GeneratedPrefix);
-      Assert.AreEqual(".Generated", profileProvider.Profile.Global.GeneratedSuffix);
-      Assert.AreEqual("_Generated", profileProvider.Profile.Global.GeneratedFolder);
-      Assert.AreEqual(Languages.CSharp, profileProvider.Profile.Global.LanguageBackend);
-      Assert.AreEqual(Languages.TypeScript, profileProvider.Profile.Global.LanguageFrontend);
-      Assert.False(profileProvider.Profile.Global.NoWipe);
+      Assert.NotNull(profileProvider);
+      Assert.AreEqual("TestProject", profileProvider?.Profile.Global.ProjectName);
+      Assert.AreEqual(string.Empty, profileProvider?.Profile.Global.GeneratedPrefix);
+      Assert.AreEqual(".Generated", profileProvider?.Profile.Global.GeneratedSuffix);
+      Assert.AreEqual("_Generated", profileProvider?.Profile.Global.GeneratedFolder);
+      Assert.AreEqual(Languages.CSharp, profileProvider?.Profile.Global.LanguageBackend);
+      Assert.AreEqual(Languages.TypeScript, profileProvider?.Profile.Global.LanguageFrontend);
+      Assert.False(profileProvider?.Profile.Global.NoWipe);
 
-      Assert.AreEqual("TestConnection", profileProvider.Profile.Database.ConnectionString);
-      Assert.AreEqual("TestDatabase", profileProvider.Profile.Database.DatabaseName);
-      Assert.AreEqual(DatabaseTypes.MicrosoftSqlServer, profileProvider.Profile.Database.SourceDatabaseType);
-      Assert.AreEqual(DatabaseTypes.MicrosoftSqlServer, profileProvider.Profile.Database.TargetDatabaseTypes[0]);
-      Assert.AreEqual(DatabaseTypes.Oracle, profileProvider.Profile.Database.TargetDatabaseTypes[1]);
+      Assert.AreEqual("TestConnection", profileProvider?.Profile.Database.ConnectionString);
+      Assert.AreEqual("TestDatabase", profileProvider?.Profile.Database.DatabaseName);
+      Assert.AreEqual(DatabaseTypes.MicrosoftSqlServer, profileProvider?.Profile.Database.SourceDatabaseType);
+      Assert.AreEqual(DatabaseTypes.MicrosoftSqlServer, profileProvider?.Profile.Database.TargetDatabaseTypes[0]);
+      Assert.AreEqual(DatabaseTypes.Oracle, profileProvider?.Profile.Database.TargetDatabaseTypes[1]);
 
-      Assert.AreEqual(@"C:\RootDir", profileProvider.Profile.Path.RootDir);
-      Assert.AreEqual(@"C:\SqlDir", profileProvider.Profile.Path.SqlDir);
-      Assert.AreEqual(@"C:\DataAccessDir", profileProvider.Profile.Path.DataAccessDir);
-      Assert.AreEqual(@"C:\DataAccessFacadeDir", profileProvider.Profile.Path.DataAccessFacadeDir);
-      Assert.AreEqual(@"C:\CommonDir", profileProvider.Profile.Path.CommonDir);
-      Assert.AreEqual(@"C:\AbstractionsDir", profileProvider.Profile.Path.AbstractionsDir);
-      Assert.AreEqual(@"C:\BusinessLogicDir", profileProvider.Profile.Path.BusinessLogicDir);
-      Assert.AreEqual(@"C:\FrontendDir", profileProvider.Profile.Path.FrontendDir);
+      Assert.AreEqual(@"C:\RootDir", profileProvider?.Profile.Path.RootDir);
+      Assert.AreEqual(@"C:\SqlDir", profileProvider?.Profile.Path.SqlDir);
+      Assert.AreEqual(@"C:\DataAccessDir", profileProvider?.Profile.Path.DataAccessDir);
+      Assert.AreEqual(@"C:\DataAccessFacadeDir", profileProvider?.Profile.Path.DataAccessFacadeDir);
+      Assert.AreEqual(@"C:\CommonDir", profileProvider?.Profile.Path.CommonDir);
+      Assert.AreEqual(@"C:\AbstractionsDir", profileProvider?.Profile.Path.AbstractionsDir);
+      Assert.AreEqual(@"C:\BusinessLogicDir", profileProvider?.Profile.Path.BusinessLogicDir);
+      Assert.AreEqual(@"C:\FrontendDir", profileProvider?.Profile.Path.FrontendDir);
 
-      Assert.True(profileProvider.Profile.Generator.GeneratorFrontend.Constants);
-      Assert.False(profileProvider.Profile.Generator.GeneratorFrontend.ViewModels);
-      Assert.False(profileProvider.Profile.Generator.GeneratorBusinessLogic.Logic);
-      Assert.False(profileProvider.Profile.Generator.GeneratorCommon.ConstantsBackend);
-      Assert.False(profileProvider.Profile.Generator.GeneratorCommon.DataTransferObjects);
-      Assert.False(profileProvider.Profile.Generator.GeneratorDatabase.HistoryTables);
-      Assert.False(profileProvider.Profile.Generator.GeneratorDatabase.HistoryTriggers);
-      Assert.False(profileProvider.Profile.Generator.GeneratorDatabase.MergeScripts);
-      Assert.False(profileProvider.Profile.Generator.GeneratorDatabase.CheckConstraintScripts);
+      Assert.True(profileProvider?.Profile.Generator.GeneratorFrontend.Constants);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorFrontend.ViewModels);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorBusinessLogic.Logic);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorCommon.ConstantsBackend);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorCommon.DataTransferObjects);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorDatabase.HistoryTables);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorDatabase.HistoryTriggers);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorDatabase.MergeScripts);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorDatabase.CheckConstraintScripts);
     }
 
     [Test]
@@ -176,46 +179,50 @@ namespace Tests.UnitTests
     public void LoadXmlStructureToProfile()
     {
       // arrange
-      ProfileProvider profileProvider = ServiceProvider.GetRequiredService<ProfileProvider>();
+      ProfileProvider? profileProvider = ServiceProvider?.GetRequiredService<ProfileProvider>();
 
       // act
-      profileProvider.LoadProfile(xmlProfile);
+      profileProvider?.LoadProfile(xmlProfile);
 
       // assert
-      Assert.AreEqual("TestProject", profileProvider.Profile.Global.ProjectName);
-      Assert.AreEqual(string.Empty, profileProvider.Profile.Global.GeneratedPrefix);
-      Assert.AreEqual(".Generated", profileProvider.Profile.Global.GeneratedSuffix);
-      Assert.AreEqual("_Generated", profileProvider.Profile.Global.GeneratedFolder);
-      Assert.AreEqual(Languages.CSharp, profileProvider.Profile.Global.LanguageBackend);
-      Assert.AreEqual(Languages.TypeScript, profileProvider.Profile.Global.LanguageFrontend);
-      Assert.False(profileProvider.Profile.Global.NoWipe);
+      Assert.NotNull(profileProvider);
+      Assert.AreEqual("TestProject", profileProvider?.Profile.Global.ProjectName);
+      Assert.AreEqual(string.Empty, profileProvider?.Profile.Global.GeneratedPrefix);
+      Assert.AreEqual(".Generated", profileProvider?.Profile.Global.GeneratedSuffix);
+      Assert.AreEqual("_Generated", profileProvider?.Profile.Global.GeneratedFolder);
+      Assert.AreEqual(Languages.CSharp, profileProvider?.Profile.Global.LanguageBackend);
+      Assert.AreEqual(Languages.TypeScript, profileProvider?.Profile.Global.LanguageFrontend);
+      Assert.False(profileProvider?.Profile.Global.NoWipe);
 
-      Assert.AreEqual("TestConnection", profileProvider.Profile.Database.ConnectionString);
-      Assert.AreEqual("TestDatabase", profileProvider.Profile.Database.DatabaseName);
-      Assert.AreEqual(DatabaseTypes.MicrosoftSqlServer, profileProvider.Profile.Database.SourceDatabaseType);
-      Assert.AreEqual(DatabaseTypes.MicrosoftSqlServer, profileProvider.Profile.Database.TargetDatabaseTypes[0]);
-      Assert.AreEqual(DatabaseTypes.Oracle, profileProvider.Profile.Database.TargetDatabaseTypes[1]);
+      Assert.AreEqual("TestConnection", profileProvider?.Profile.Database.ConnectionString);
+      Assert.AreEqual("TestDatabase", profileProvider?.Profile.Database.DatabaseName);
+      Assert.AreEqual(DatabaseTypes.MicrosoftSqlServer, profileProvider?.Profile.Database.SourceDatabaseType);
+      Assert.AreEqual(DatabaseTypes.MicrosoftSqlServer, profileProvider?.Profile.Database.TargetDatabaseTypes[0]);
+      Assert.AreEqual(DatabaseTypes.Oracle, profileProvider?.Profile.Database.TargetDatabaseTypes[1]);
 
-      Assert.AreEqual(@"C:\RootDir", profileProvider.Profile.Path.RootDir);
-      Assert.AreEqual(@"C:\SqlDir", profileProvider.Profile.Path.SqlDir);
-      Assert.AreEqual(@"C:\DataAccessDir", profileProvider.Profile.Path.DataAccessDir);
-      Assert.AreEqual(@"C:\DataAccessFacadeDir", profileProvider.Profile.Path.DataAccessFacadeDir);
-      Assert.AreEqual(@"C:\CommonDir", profileProvider.Profile.Path.CommonDir);
-      Assert.AreEqual(@"C:\AbstractionsDir", profileProvider.Profile.Path.AbstractionsDir);
-      Assert.AreEqual(@"C:\BusinessLogicDir", profileProvider.Profile.Path.BusinessLogicDir);
-      Assert.AreEqual(@"C:\FrontendDir", profileProvider.Profile.Path.FrontendDir);
+      Assert.AreEqual(@"C:\RootDir", profileProvider?.Profile.Path.RootDir);
+      Assert.AreEqual(@"C:\SqlDir", profileProvider?.Profile.Path.SqlDir);
+      Assert.AreEqual(@"C:\DataAccessDir", profileProvider?.Profile.Path.DataAccessDir);
+      Assert.AreEqual(@"C:\DataAccessFacadeDir", profileProvider?.Profile.Path.DataAccessFacadeDir);
+      Assert.AreEqual(@"C:\CommonDir", profileProvider?.Profile.Path.CommonDir);
+      Assert.AreEqual(@"C:\AbstractionsDir", profileProvider?.Profile.Path.AbstractionsDir);
+      Assert.AreEqual(@"C:\BusinessLogicDir", profileProvider?.Profile.Path.BusinessLogicDir);
+      Assert.AreEqual(@"C:\FrontendDir", profileProvider?.Profile.Path.FrontendDir);
 
-      Assert.True(profileProvider.Profile.Generator.GeneratorFrontend.Constants);
-      Assert.False(profileProvider.Profile.Generator.GeneratorFrontend.ViewModels);
-      Assert.False(profileProvider.Profile.Generator.GeneratorBusinessLogic.Logic);
-      Assert.False(profileProvider.Profile.Generator.GeneratorCommon.ConstantsBackend);
-      Assert.False(profileProvider.Profile.Generator.GeneratorCommon.DataTransferObjects);
-      Assert.False(profileProvider.Profile.Generator.GeneratorDatabase.HistoryTables);
-      Assert.False(profileProvider.Profile.Generator.GeneratorDatabase.HistoryTriggers);
-      Assert.False(profileProvider.Profile.Generator.GeneratorDatabase.MergeScripts);
-      Assert.False(profileProvider.Profile.Generator.GeneratorDatabase.CheckConstraintScripts);
+      Assert.True(profileProvider?.Profile.Generator.GeneratorFrontend.Constants);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorFrontend.ViewModels);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorBusinessLogic.Logic);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorCommon.ConstantsBackend);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorCommon.DataTransferObjects);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorDatabase.HistoryTables);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorDatabase.HistoryTriggers);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorDatabase.MergeScripts);
+      Assert.False(profileProvider?.Profile.Generator.GeneratorDatabase.CheckConstraintScripts);
 
     }
 
+    protected override void MockDataAccess(IServiceCollection serviceCollection, Mock<IDataAccessObject> dataAccessMock)
+    {
+    }
   }
 }

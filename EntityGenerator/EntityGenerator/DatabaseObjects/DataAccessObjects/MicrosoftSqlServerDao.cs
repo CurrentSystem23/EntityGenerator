@@ -522,8 +522,8 @@ SELECT obj.[object_id] AS [object_id],
        obj.[name] AS [function_name],
        CASE type
             WHEN 'FN' THEN 'SQL scalar function'
-            WHEN 'TF' THEN 'SQL inline table-valued function'
-            WHEN 'IF' THEN 'SQL table-valued-function'
+            WHEN 'IF' THEN 'SQL inline table-valued function'
+            WHEN 'TF' THEN 'SQL table-valued-function'
        END AS [type],
        obj.[type] AS [xtype],
        SUBSTRING(par.[parameters], 0, LEN(par.[parameters])) as [parameters],
