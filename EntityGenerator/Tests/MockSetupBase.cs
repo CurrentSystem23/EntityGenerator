@@ -20,12 +20,10 @@ namespace Tests
       dataAccessMock.As<IDataAccessObject>().Setup(x => x.DatabaseCheckConstraints()).Returns(GetMockedCheckConstraints);
       dataAccessMock.As<IDataAccessObject>().Setup(x => x.DatabaseIndices()).Returns(GetMockedIndices);
       dataAccessMock.As<IDataAccessObject>().Setup(x => x.DatabaseTriggers()).Returns(GetMockedTriggers);
-
       dataAccessMock.As<IDataAccessObject>().Setup(x => x.DatabaseFunctionReturnColumns(It.IsAny<List<FunctionDto>>())).Callback((List<FunctionDto> databaseFunctions) => { ProcessFunctionReturnColumns(databaseFunctions); });
-        
     }
 
-    public static List<SchemaDto> GetMockedSchemas()
+    private static List<SchemaDto> GetMockedSchemas()
     {
       return new List<SchemaDto>()
       {
@@ -33,7 +31,7 @@ namespace Tests
         new SchemaDto() { DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "dbo", SchemaId = 1 }
       };
     }
-    public static List<TableValueObjectDto> GetMockedTableValueObjects()
+    private static List<TableValueObjectDto> GetMockedTableValueObjects()
     {
       return new List<TableValueObjectDto>
       {
@@ -47,7 +45,7 @@ namespace Tests
         new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "User", TypeName = "Table", XType = "U"}
       };
     }
-    public static List<FunctionDto> GetMockedFunctions()
+    private static List<FunctionDto> GetMockedFunctions()
     {
       return new List<FunctionDto>
       {
@@ -56,7 +54,7 @@ namespace Tests
         new FunctionDto { FunctionId = 1845581613, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  FunctionName = "TableValuedFunction", TypeName = "SQL table-valued-function", XType = "TF", Parameters = "@paramInt int, @paramChar5 char", ReturnType = "", FunctionBody = "CREATE FUNCTION[core].[TableValuedFunction](@paramInt int, @paramChar5 char(5))  RETURNS @returntable TABLE(c1 int, c2 char(5))  AS BEGIN    INSERT @returntable    SELECT @paramInt, @paramChar5    RETURN END"},
       };
     }
-    public static List<ColumnDto> GetMockedColumns()
+    private static List<ColumnDto> GetMockedColumns()
     {
       return new List<ColumnDto>
       {
@@ -188,7 +186,7 @@ namespace Tests
       };
 
     }
-    public static List<ForeignKeyDto> GetMockedForeignKeys()
+    private static List<ForeignKeyDto> GetMockedForeignKeys()
     {
       return new List<ForeignKeyDto>
       {
@@ -199,14 +197,14 @@ namespace Tests
         new ForeignKeyDto { DatabaseName = "EntityGeneratorTestDatabase", ForeignKeyName = "fkUserDomainValuesState", SchemaName = "core",  TableName = "User", FieldName = "State", ReferencedSchemaName = "core", ReferencedTableName = "DomainValue", ReferencedFieldName = "Id", DeleteStatement = "ALTER TABLE[core].[User]  DROP CONSTRAINT[fkUserDomainValuesState]", CreateStatement = "ALTER TABLE[core].[User]  WITH NOCHECK ADD CONSTRAINT[fkUserDomainValuesState] FOREIGN KEY([Id]) REFERENCES[core].[DomainValue]([Id])" }
       };
     }
-    public static List<CheckConstraintDto> GetMockedCheckConstraints()
+    private static List<CheckConstraintDto> GetMockedCheckConstraints()
     {
       return new List<CheckConstraintDto>
       {
         new CheckConstraintDto { DatabaseName = "EntityGeneratorTestDatabase", CheckConstraintName = "chkDomainTypeCoreUserState", SchemaName = "core",  TableName = "User", FieldName = "State", Definition = "([core].[CheckDomainType]([State],(63))=(1))", Status = "Active", IsDisabled = true, DeleteStatement = "ALTER TABLE [core].[User] DROP CONSTRAINT [chkDomainTypeCoreUserState]", CreateStatement = "ALTER TABLE[core].[User] WITH CHECK ADD CONSTRAINT[chkDomainTypeCoreUserState] CHECK([core].[CheckDomainType]([State],(63))= (1))" }
       };
     }
-    public static List<IndexDto> GetMockedIndices()
+    private static List<IndexDto> GetMockedIndices()
     {
       return new List<IndexDto>
       {
@@ -226,7 +224,7 @@ namespace Tests
         new IndexDto { DatabaseName = "EntityGeneratorTestDatabase", IndexName = "ucUserLogin", SchemaName = "core",  TableName = "User", IndexColumns = "Login", IncludedColumns = "", IndexType = "Nonclustered index", Unique = "Unique", ObjectType = "Table", DeleteStatement = "DROP INDEX [ucUserLogin] ON [core].[User]", CreateStatement = "CREATE INDEX [ucUserLogin] ON [core].[User] (Login)" }
       };
     }
-    public static List<TriggerDto> GetMockedTriggers()
+    private static List<TriggerDto> GetMockedTriggers()
     {
       return new List<TriggerDto>
       {
@@ -234,7 +232,7 @@ namespace Tests
       };
     }
 
-    public static void ProcessFunctionReturnColumns(List<FunctionDto> databaseFunctions)
+    private static void ProcessFunctionReturnColumns(List<FunctionDto> databaseFunctions)
     {
       foreach (FunctionDto function in databaseFunctions)
       {

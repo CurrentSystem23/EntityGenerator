@@ -10,20 +10,22 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
   /// <summary>
   /// Class <see cref="MicrosoftSqlServerDao"/> models the MS Sql-Server data access for the source database.
   /// </summary>
-  public class MicrosoftSqlServerDao : DataAccessObject
+  public class MicrosoftSqlServerDao : IDataAccessObject
   {
+    public ProfileProvider ProfileProvider { get; }
 
     /// <summary>
     /// The <see cref="MicrosoftSqlServerDao"/> Constructor
     /// </summary>
     /// <param name="serviceProvider"> The <see cref="IServiceProvider"/> dependency injection service provider.</param>
     /// <param name="profileProvider"> The <see cref="ProfileProvider"/> profile provider</param>
-    public MicrosoftSqlServerDao(IServiceProvider serviceProvider, ProfileProvider profileProvider)
-      : base(serviceProvider, profileProvider)
-    {}
+    public MicrosoftSqlServerDao(ProfileProvider profileProvider)
+    {
+      ProfileProvider = profileProvider;
+    }
 
     /// <inheritdoc />
-    public override int DatabaseObjectCount()
+    public int DatabaseObjectCount()
     {
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
@@ -42,7 +44,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<SchemaDto> DatabaseSchemas()
+    public List<SchemaDto> DatabaseSchemas()
     {
       List<SchemaDto> schemas = new List<SchemaDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
@@ -73,7 +75,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<TableValueObjectDto> DatabaseTableValueObjects()
+    public List<TableValueObjectDto> DatabaseTableValueObjects()
     {
       List<TableValueObjectDto> tableValueObjects = new List<TableValueObjectDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
@@ -107,7 +109,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<FunctionDto> DatabaseFunctions()
+    public List<FunctionDto> DatabaseFunctions()
     {
       List<FunctionDto> tableValueObjects = new List<FunctionDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
@@ -145,7 +147,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override void DatabaseFunctionReturnColumns(List<FunctionDto> databaseFunctions)
+    public void DatabaseFunctionReturnColumns(List<FunctionDto> databaseFunctions)
     {
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
       {
@@ -184,7 +186,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<ColumnDto> DatabaseColumns()
+    public List<ColumnDto> DatabaseColumns()
     {
       List<ColumnDto> columns = new List<ColumnDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
@@ -225,7 +227,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<ForeignKeyDto> DatabaseForeignKeys()
+    public List<ForeignKeyDto> DatabaseForeignKeys()
     {
       List<ForeignKeyDto> foreignKeys = new List<ForeignKeyDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
@@ -263,7 +265,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<CheckConstraintDto> DatabaseCheckConstraints()
+    public List<CheckConstraintDto> DatabaseCheckConstraints()
     {
       List<CheckConstraintDto> checkConstraints = new List<CheckConstraintDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
@@ -301,7 +303,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<IndexDto> DatabaseIndices()
+    public List<IndexDto> DatabaseIndices()
     {
       List<IndexDto> indices = new List<IndexDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))
@@ -340,7 +342,7 @@ namespace EntityGenerator.DatabaseObjects.DataAccessObjects
     }
 
     /// <inheritdoc />
-    public override List<TriggerDto> DatabaseTriggers()
+    public List<TriggerDto> DatabaseTriggers()
     {
       List<TriggerDto> triggers = new List<TriggerDto>();
       using (SqlConnection con = new SqlConnection(ProfileProvider.ConnectionString))

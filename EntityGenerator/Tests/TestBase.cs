@@ -27,6 +27,7 @@ namespace Tests
     {
       IServiceCollection serviceCollection = new ServiceCollection();
       serviceCollection.AddSingleton(new EntityGeneratorInitializer(serviceCollection));
+      serviceCollection.AddTransient<MicrosoftSqlServerDao>();
 
       MockDataAccess(serviceCollection, dataAccessMock);
 

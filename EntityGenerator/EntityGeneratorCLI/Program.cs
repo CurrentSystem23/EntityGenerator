@@ -1,4 +1,5 @@
-﻿using EntityGenerator.Initializer;
+﻿using EntityGenerator.DatabaseObjects.DataAccessObjects;
+using EntityGenerator.Initializer;
 using EntityGenerator.Profile;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -21,6 +22,8 @@ namespace EntityGeneratorCLI
     {
       IServiceCollection serviceCollection = new ServiceCollection();
       serviceCollection.AddSingleton(new EntityGeneratorInitializer(serviceCollection));
+      serviceCollection.AddTransient<IDataAccessObject, DataAccessObject>();
+      serviceCollection.AddTransient<MicrosoftSqlServerDao>();
 
       return serviceCollection.BuildServiceProvider();
     }
