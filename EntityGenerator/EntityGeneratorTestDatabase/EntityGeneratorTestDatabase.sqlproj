@@ -69,7 +69,7 @@
   <ItemGroup>
     <Build Include="Tables\AllDbTypes.sql" />
     <Build Include="Tables\TimeStampType.sql" />
-    <Build Include="Tables\NullableTimeStampType.sql" />
+    <Build Include="Tables\TimeStampNullableType.sql" />
     <Build Include="Schemas\core.sql" />
     <Build Include="Tables\DomainType.sql" />
     <Build Include="Tables\User.sql" />
@@ -79,6 +79,8 @@
     <Build Include="Views\ConfigValues.sql" />
     <Build Include="Functions\TableValuedFunctions\Function1.sql" />
     <Build Include="Triggers\SampleTrigger.sql" />
+    <Build Include="Tables\DateOnlyNullableType.sql" />
+    <Build Include="Tables\DateOnlyType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EntityGeneratorTestDatabase.publish.xml" />

@@ -1,4 +1,4 @@
-﻿CREATE TRIGGER [SampleTrigger]
+﻿CREATE TRIGGER [core].[SampleTrigger]
   ON [core].[TimeStampType]
   FOR DELETE, INSERT, UPDATE
   AS
