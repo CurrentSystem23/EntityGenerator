@@ -12,7 +12,13 @@ namespace EntityGenerator.Core.Models
     public string Name { get; set; }
     public long Id { get; set; }
     public List<Column> Parameters { get; } = new();
-    public List<Column> Columns { get; } = new();
+    public List<Column> ReturnTable { get; } = new();
     public List<ExtendedProperty> ExtendedProperties { get; } = new();
+
+    public override string ToString()
+    {
+      return Name;
+    }
+
   }
 }

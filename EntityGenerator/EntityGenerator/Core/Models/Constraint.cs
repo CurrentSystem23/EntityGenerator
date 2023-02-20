@@ -14,5 +14,10 @@ namespace EntityGenerator.Core.Models
     public string TargetTable { get; set; }
     public string ConstraintDefinition { get; set; }
 
+    public override string ToString()
+    {
+      return Name;
+    }
+
   }
 }

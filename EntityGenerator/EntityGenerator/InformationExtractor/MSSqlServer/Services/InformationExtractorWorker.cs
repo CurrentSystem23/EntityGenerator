@@ -1,11 +1,11 @@
 ﻿using EntityGenerator.Core.Interfaces;
+using EntityGenerator.Core.Models;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EntityGenerator.InformationExtractor.MSSqlServer.Services
 {
@@ -26,7 +26,6 @@ namespace EntityGenerator.InformationExtractor.MSSqlServer.Services
     /// </summary>
     /// <param name="serviceProvider"> The dependency injection service provider.</param>
     /// <param name="informationExtractor"> The information extractor service.</param>
-    /// <param name="outputProvider"> The output provider.</param>
     public InformationExtractorWorker(IServiceProvider serviceProvider, IInformationExtractor informationExtractor)
     {
       _serviceProvider = serviceProvider;
@@ -42,7 +41,8 @@ namespace EntityGenerator.InformationExtractor.MSSqlServer.Services
     /// <summary>
     /// Extract the information of the database.
     /// </summary>
-    public void ExtractData(ProfileDto profile)
+    /// <param name="profile"> The profile with database connection information.</param>
+    public Database ExtractData(ProfileDto profile)
     {
       InitializeOutputProvider(profile);
       using SqlConnection con = new(profile.Database.ConnectionString);
@@ -62,6 +62,24 @@ namespace EntityGenerator.InformationExtractor.MSSqlServer.Services
       ICollection<TypeDto> types = _informationExtractor.UsedTypeGets(con, profile.Database.DatabaseName);
       ICollection<UserDefinedTableTypeColumnDto> userDefinedTableTypeColumns = _informationExtractor.UserDefinedTableTypeGets(con, profile.Database.DatabaseName);
       con.Close();
+
+      return CoreMapper.MapToCoreModel(
+        databases,
+        schemas,
+        databaseObjects,
+        functions,
+        tableValueFunctionsReturnValues,
+        columns,
+        extendedTableProperties,
+        extendedColumnProperties,
+        types,
+        userDefinedTableTypeColumns,
+        constraints,
+        foreignKeys,
+        indexes,
+        triggers
+      );
+
     }
 
     /// <summary>

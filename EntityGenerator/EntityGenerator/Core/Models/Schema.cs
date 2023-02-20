@@ -13,5 +13,10 @@ namespace EntityGenerator.Core.Models
     public List<View> Views { get; } = new();
     public List<Function> Functions { get; } = new();
 
+    public override string ToString()
+    {
+      return Name;
+    }
+
   }
 }
