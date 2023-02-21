@@ -9,7 +9,7 @@ namespace EntityGenerator.Profile
   /// <summary>
   /// Class <see cref="ProfileProvider"/> models profile provider.
   /// </summary>
-  public class ProfileProvider
+  public class ProfileProvider : IProfileProvider
   {
     /// <summary>
     /// The profile data.

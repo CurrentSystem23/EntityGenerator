@@ -11,6 +11,11 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EntityGeneratorTestDatabase
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{41E2CC88-9AEA-41AB-99CC-848F04E51F03}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution", "_Solution", "{01B1FAE0-83E5-40F9-BF93-CB26A1AD6DA6}"
+	ProjectSection(SolutionItems) = preProject
+		_Solution\SqlServerAbfragen.sql = _Solution\SqlServerAbfragen.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

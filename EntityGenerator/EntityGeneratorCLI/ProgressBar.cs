@@ -25,6 +25,7 @@ namespace EntityGeneratorCLI
 
     public ProgressBar(bool redirectedOutputOverwrite)
     {
+      RedirectedOutputOverwrite = redirectedOutputOverwrite;
       _timer = new Timer(TimerHandler);
 
       if (!Console.IsOutputRedirected || redirectedOutputOverwrite)

@@ -1,0 +1,35 @@
+﻿namespace EntityGenerator.Core.Models.Enums
+{
+  public enum DataTypes
+  {
+    Unknown,
+    Boolean,
+    Byte,
+    Int16,
+    Int32,
+    Int64,
+    SByte,
+    UInt16,
+    UInt32,
+    UInt64,
+    Decimal,
+    Single,
+    Double,
+    Enum,
+    Char,
+    String,
+    CharArray,
+    XDocument,
+    XElement,
+    DateTime,
+    DateTimeOffset,
+    TimeSpan,
+    DateOnly,
+    TimeOnly,
+    Binary,
+    ByteArray,
+    ISerializeable,
+    Guid,
+    Object,
+  }
+}
