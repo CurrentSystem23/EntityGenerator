@@ -14,5 +14,11 @@ namespace EntityGenerator.Core.Models
     public bool IsUnique { get; set; }
 
     public string ObjectType { get; set; }
+
+    public override string ToString()
+    {
+      return Name;
+    }
+
   }
 }

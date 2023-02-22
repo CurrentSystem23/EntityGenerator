@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using EntityGenerator.Core.Interfaces;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.Profile;
+using EntityGenerator.Profile.DataTransferObject;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace EntityGenerator.Core.Services
 {
@@ -40,7 +42,7 @@ namespace EntityGenerator.Core.Services
     /// For Test only!
     /// </summary>
     /// <param name="profile"></param>
-    public void ExtractData( ProfileDto profile )
+    public void ExtractData(ProfileDto profile)
     {
       _profile = profile;
       IInformationExtractorWorker informationExtractorWorker = _serviceProvider.GetRequiredService<IInformationExtractorWorker>();

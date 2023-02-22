@@ -12,5 +12,10 @@ namespace EntityGenerator.Core.Models
     public string Table { get; set; }
     public string Column { get; set; }
 
+    public override string ToString()
+    {
+      return Name;
+    }
+
   }
 }

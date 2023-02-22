@@ -1,5 +1,6 @@
 ﻿using EntityGenerator.DatabaseObjects.DataAccessObjects;
 using EntityGenerator.Initializer;
+using EntityGenerator.Profile;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
@@ -14,7 +15,7 @@ namespace Tests
     public void SetUp()
     {
       Mock<IDataAccessObject> dataAccessMock = new Mock<IDataAccessObject>();
-      ServiceProvider = CreateServiceProdvider(dataAccessMock);
+      ServiceProvider = CreateServiceProvider(dataAccessMock);
     }
 
     [OneTimeTearDown]
@@ -23,11 +24,12 @@ namespace Tests
       ServiceProvider?.Dispose();
     }
 
-    protected ServiceProvider CreateServiceProdvider(Mock<IDataAccessObject> dataAccessMock)
+    protected ServiceProvider CreateServiceProvider(Mock<IDataAccessObject> dataAccessMock)
     {
       IServiceCollection serviceCollection = new ServiceCollection();
       serviceCollection.AddSingleton(new EntityGeneratorInitializer(serviceCollection));
       serviceCollection.AddTransient<MicrosoftSqlServerDao>();
+      serviceCollection.AddTransient<ProfileProvider>();
 
       MockDataAccess(serviceCollection, dataAccessMock);
 

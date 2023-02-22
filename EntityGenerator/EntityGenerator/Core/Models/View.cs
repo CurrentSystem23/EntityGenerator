@@ -15,5 +15,11 @@ namespace EntityGenerator.Core.Models
     public List<ExtendedProperty> ExtendedProperties { get; } = new();
     public List<Constraint> Constraints { get; } = new();
     public List<Index> Indexes { get; } = new();
+
+    public override string ToString()
+    {
+      return Name;
+    }
+
   }
 }

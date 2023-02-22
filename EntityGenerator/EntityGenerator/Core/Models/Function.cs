@@ -11,8 +11,12 @@ namespace EntityGenerator.Core.Models
     public string FunctionType { get; set; }
     public List<Column> Parameters { get; } = new();
     public Column ReturnType { get; set; }
-    public List<Column> ReturnTable { get; } = new();
     public string Definition { get; set; }
+
+    public override string ToString()
+    {
+      return Name;
+    }
 
   }
 }

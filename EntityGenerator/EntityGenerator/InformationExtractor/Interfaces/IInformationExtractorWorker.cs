@@ -1,10 +1,11 @@
-﻿using EntityGenerator.Profile.DataTransferObject;
+﻿using EntityGenerator.Core.Models;
+using EntityGenerator.Profile.DataTransferObject;
 
 namespace EntityGenerator.InformationExtractor.Interfaces
 {
   public interface IInformationExtractorWorker
   {
-    void ExtractData(ProfileDto profile);
+    Database ExtractData(ProfileDto profile);
     long GetDataCount(ProfileDto profile);
   }
 }
