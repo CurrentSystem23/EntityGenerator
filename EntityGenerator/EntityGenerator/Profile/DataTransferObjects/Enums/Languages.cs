@@ -1,24 +1,18 @@
-﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace EntityGenerator.Profile.DataTransferObject.Enums
+namespace EntityGenerator.Profile.DataTransferObjects.Enums
 {
-  /// <summary>
-  /// Types <see cref="Languages"/> of supported programming languages
-  /// </summary>
-  [DataContract]
   public enum Languages
   {
-    /// <summary>
-    /// CSharp
-    /// </summary>
-    [EnumMember(Value = "CSharp")]
-    CSharp,
+    [EnumMember(Value = "NET5CSharp")]
+    DOTNET_5_CSHARP,
 
-    /// <summary>
-    /// TypeScript
-    /// </summary>
-    [EnumMember(Value = "TypeScript")]
-    TypeScript,
+    [EnumMember(Value = "Angular15TypeScript")]
+    ANGULAR_15_TYPESCRIPT,
   }
 }
