@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Profile.DataTransferObjects;
+using System;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -6,12 +8,12 @@ namespace EntityGenerator.Profile.DataTransferObject
   /// Class <see cref="ProfileGeneratorDataAccessDto"/> models generator settings for the data access project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorDataAccessDto
+  public class ProfileGeneratorDataAccessDto : ProfileCodeGenerationBase
   {
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorDataAccessDto"/> class.
     /// </summary>
-    public ProfileGeneratorDataAccessDto()
+    public ProfileGeneratorDataAccessDto() : base(DataTransferObjects.Enums.CodeGenerationModules.DATA_ACCESS)
     {
     }
 

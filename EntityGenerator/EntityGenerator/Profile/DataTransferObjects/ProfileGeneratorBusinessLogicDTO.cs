@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Profile.DataTransferObjects;
+using System;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -6,12 +8,12 @@ namespace EntityGenerator.Profile.DataTransferObject
   /// Class <see cref="ProfileGeneratorBusinessLogicDto"/> models generator settings for the business logic project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorBusinessLogicDto
+  public class ProfileGeneratorBusinessLogicDto : ProfileCodeGenerationBase
   {
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorBusinessLogicDto"/> class.
     /// </summary>
-    public ProfileGeneratorBusinessLogicDto()
+    public ProfileGeneratorBusinessLogicDto() : base(DataTransferObjects.Enums.CodeGenerationModules.BUSINESS_LOGIC)
     {
     }
 

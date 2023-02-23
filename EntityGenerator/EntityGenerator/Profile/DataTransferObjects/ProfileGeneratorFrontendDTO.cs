@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Profile.DataTransferObjects;
+using System;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -6,12 +8,12 @@ namespace EntityGenerator.Profile.DataTransferObject
   /// Class <see cref="ProfileGeneratorFrontendDto"/> models generator settings for the frontend project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorFrontendDto
+  public class ProfileGeneratorFrontendDto : ProfileCodeGenerationBase
   {
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorFrontendDto"/> class.
     /// </summary>
-    public ProfileGeneratorFrontendDto()
+    public ProfileGeneratorFrontendDto() : base(DataTransferObjects.Enums.CodeGenerationModules.FRONTEND)
     {
     }
 
