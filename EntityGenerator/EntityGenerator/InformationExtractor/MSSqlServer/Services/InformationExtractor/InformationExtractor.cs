@@ -3,7 +3,7 @@ using EntityGenerator.InformationExtractor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace EntityGenerator.InformationExtractor.MSSqlServer.Services;
+namespace EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractor;
 
 /// <summary>
 /// Class <see cref="InformationExtractor"/> contains methods for information extraction from MS SqlServer.
@@ -39,7 +39,7 @@ public partial class InformationExtractor : IInformationExtractor
     _outputProvider = outputProvider;
   }
   #endregion
-
+  
   /// <summary>
   /// Increase the output step by one.
   /// </summary>

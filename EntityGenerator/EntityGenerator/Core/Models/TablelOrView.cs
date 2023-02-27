@@ -1,26 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using EntityGenerator.Core.Models.Enums;
 
 namespace EntityGenerator.Core.Models
 {
   [Serializable]
-  public class Function
+  public class TablelOrView
   {
     public string Name { get; set; }
     public long Id { get; set; }
-    public string FunctionType { get; set; }
-    public List<Column> Parameters { get; } = new();
-    public DataTypes ReturnType { get; set; }
-    public List<Column> ReturnTable { get; } = new();
+    public List<Column> Columns { get; } = new();
     public List<ExtendedProperty> ExtendedProperties { get; } = new();
-
-    public string Definition { get; set; }
+    public List<Index> Indexes { get; } = new();
 
     public override string ToString()
     {
       return Name;
     }
-
   }
 }

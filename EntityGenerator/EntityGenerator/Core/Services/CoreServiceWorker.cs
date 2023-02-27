@@ -1,10 +1,4 @@
-﻿using EntityGenerator.Profile.DataTransferObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EntityGenerator.Core.Interfaces;
+﻿using EntityGenerator.Core.Interfaces;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;

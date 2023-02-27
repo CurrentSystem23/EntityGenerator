@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace EntityGenerator.InformationExtractor.MSSqlServer.Services;
+namespace EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractor;
 
 public partial class InformationExtractor
 {
@@ -65,7 +65,7 @@ public partial class InformationExtractor
   #endregion
 
   #region sync
-  
+
   /// <inheritdoc/>
   long IInformationExtractor.TriggerCountGet(SqlConnection con, string databaseName)
   {

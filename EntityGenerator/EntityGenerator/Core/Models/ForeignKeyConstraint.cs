@@ -7,6 +7,7 @@ namespace EntityGenerator.Core.Models
   {
     public string Name { get; set; }
     public long Id { get; set; }
+    public string SourceColumn { get; set; }
 
     public string Schema { get; set; }
     public string Table { get; set; }
