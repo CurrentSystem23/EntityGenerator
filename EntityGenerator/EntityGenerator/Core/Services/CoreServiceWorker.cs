@@ -4,6 +4,7 @@ using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using EntityGenerator.Core.Models;
 
 namespace EntityGenerator.Core.Services
 {
@@ -42,7 +43,7 @@ namespace EntityGenerator.Core.Services
       IInformationExtractorWorker informationExtractorWorker = _serviceProvider.GetRequiredService<IInformationExtractorWorker>();
 
       informationExtractorWorker.GetDataCount(profile);
-      informationExtractorWorker.ExtractData(profile);
+      Database database = informationExtractorWorker.ExtractData(profile);
     }
 
   }

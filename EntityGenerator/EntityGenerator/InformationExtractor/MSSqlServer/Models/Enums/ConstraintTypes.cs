@@ -14,31 +14,30 @@ public enum ConstraintTypes
   Unknown,
   ///<summary>check SQL Server constraint</summary>
   [Description("Check constraint")]
-  [StringValue("Check constraint")]
+  [StringValue("CheckConstraint")]
   CheckConstraint,
   ///<summary>primary key SQL Server constraint</summary>
   [Description("Primary key")]
-  [StringValue("Primary key")]
+  [StringValue("PrimaryKey")]
   PrimaryKeyConstraint,
   ///<summary>unique SQL Server constraint</summary>
   [Description("Unique constraint")]
-  [StringValue("Unique constraint")]
+  [StringValue("UniqueConstraint")]
   UniqueConstraint,
   ///<summary>unique clustered index SQL Server constraint</summary>
   [Description("Unique clustered index")]
-  [StringValue("Unique clustered index")]
+  [StringValue("UniqueClusteredIndex")]
   UniqueClusteredIndex,
   ///<summary>unique index SQL Server constraint</summary>
   [Description("Unique index")]
-  [StringValue("Unique index")]
+  [StringValue("UniqueIndex")]
   UniqueIndex,
   ///<summary>default SQL Server constraint</summary>
   [Description("Default constraint")]
-  [StringValue("Default constraint")]
+  [StringValue("DefaultConstraint")]
   DefaultConstraint,
   ///<summary>foreign key SQL Server constraint</summary>
   [Description("Foreign key constraint")]
-  [StringValue("Foreign key constraint")]
+  [StringValue("ForeignKeyConstraint")]
   ForeignKeyConstraint,
 }
-

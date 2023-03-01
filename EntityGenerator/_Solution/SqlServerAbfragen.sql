@@ -50,7 +50,7 @@ SELECT DISTINCT
 --FN : Scalar Function
 --FS : Assembly (CLR) Scalar-Function
 --FT : Assembly (CLR) Table-Valued Function
---IF : In-lined Table Function
+--IF : In-line Table Function
 --IT : Internal Table
 --L  : Log
 --P  : Stored Procedure
