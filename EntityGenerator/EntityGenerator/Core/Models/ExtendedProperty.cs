@@ -8,7 +8,7 @@ namespace EntityGenerator.Core.Models
     public string Name { get; set; }
     public long Id { get; set; }
     public long MinorId { get; set; }
-    public long Value { get; set; }
+    public string Value { get; set; }
 
     public override string ToString()
     {

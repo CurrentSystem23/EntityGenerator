@@ -1,4 +1,6 @@
-﻿namespace EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects
+﻿using EntityGenerator.InformationExtractor.MSSqlServer.Models.Enums;
+
+namespace EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects
 {
   public class ConstraintDto : BaseDto
   {
@@ -9,6 +11,7 @@
     public string TableType { get; set; }
 
     public string ConstraintType { get; set; }
+    public ConstraintTypes ConstraintTypeType { get; set; }
     public string Columns { get; set; }
     public string TargetSchema { get; set; }
     public string TargetTable { get; set; }

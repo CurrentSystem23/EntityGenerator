@@ -13,8 +13,8 @@ namespace EntityGenerator.Initializer
     {
       serviceCollection.AddSingleton<IProfileProvider, ProfileProvider>();
       serviceCollection.AddTransient<MicrosoftSqlServerDao>();
-      serviceCollection.AddTransient<IInformationExtractor, EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractor>();
-      serviceCollection.AddTransient<IInformationExtractorWorker, EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractorWorker>();
+      serviceCollection.AddTransient<IInformationExtractor, EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractor.InformationExtractor>();
+      serviceCollection.AddTransient<IInformationExtractorWorker, InformationExtractor.MSSqlServer.Services.InformationExtractor.InformationExtractorWorker>();
       serviceCollection.AddTransient<ICoreServiceWorker, CoreServiceWorker>();
 
     }

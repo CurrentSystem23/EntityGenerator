@@ -7,6 +7,7 @@
     public string DatabaseName { get; set; }
 
     public string IndexColumns { get; set; }
+    public string IncludedColumns { get; set; }
     public byte IndexTypeId { get; set; }
     public string IndexType { get; set; }
     public bool IsUnique { get; set; }

@@ -378,6 +378,17 @@ namespace Microsoft.Data.SqlClient
 
       return defaultValue;
     }
+    public static T GetEnum<T>(this SqlDataReader reader, string value) where T : struct, Enum
+    {
+      return Enum.Parse<T>(value);
+    }
+    public static T GetEnum<T>(this SqlDataReader reader, string value, T defaultValue) where T : struct, Enum
+    {
+      if (Enum.TryParse(value, out T columnDataType))
+        return columnDataType;
+
+      return defaultValue;
+    }
 
   }
 

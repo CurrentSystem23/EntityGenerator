@@ -8,7 +8,8 @@ namespace EntityGenerator.Core.Models
   {
     public string Name { get; set; }
     public long Id { get; set; }
-    public List<Column> Columns { get; }= new ();
+    public List<Column> ColumnsIndexed { get; }= new ();
+    public List<Column> ColumnsIncluded { get; } = new();
 
     public int IndexTypeId { get; set; }
     public bool IsUnique { get; set; }
