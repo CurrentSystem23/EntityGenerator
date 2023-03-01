@@ -2,11 +2,11 @@
 using EntityGenerator.Core.Models;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects;
+using EntityGenerator.InformationExtractor.MSSqlServer.Services.Mapper;
 using EntityGenerator.Profile.DataTransferObject;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EntityGenerator.InformationExtractor.MSSqlServer.Services
 {
@@ -27,7 +27,6 @@ namespace EntityGenerator.InformationExtractor.MSSqlServer.Services
     /// </summary>
     /// <param name="serviceProvider"> The dependency injection service provider.</param>
     /// <param name="informationExtractor"> The information extractor service.</param>
-    /// <param name="outputProvider"> The output provider.</param>
     public InformationExtractorWorker(IServiceProvider serviceProvider, IInformationExtractor informationExtractor)
     {
       _serviceProvider = serviceProvider;

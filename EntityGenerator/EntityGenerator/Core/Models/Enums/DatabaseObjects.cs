@@ -20,90 +20,90 @@ namespace EntityGenerator.Core.Models.Enums
     [Description("Column")]
     [StringValue("Column")]
     Column,
-    [Description("ColumnExtendedProperty")]
+    [Description("Column Extended Property")]
     [StringValue("ColumnExtendedProperty")]
     ColumnExtendedProperty,
-    [Description("TableExtendedProperty")]
+    [Description("Table Extended Property")]
     [StringValue("TableExtendedProperty")]
     TableExtendedProperty,
-    [Description("UserDefinedTableTypeColumn")]
+    [Description("User Defined Table Type Column")]
     [StringValue("UserDefinedTableTypeColumn")]
     UserDefinedTableTypeColumn,
 
     [Description("Aggregate function(CLR)")]
-    [StringValue("Aggregate function(CLR)")]
+    [StringValue("AggregateFunctionClr")]
     AF,
     [Description("CHECK Constraint")]
-    [StringValue("CHECK Constraint")]
+    [StringValue("CheckConstraint")]
     C,
     [Description("Default or DEFAULT Constraint")]
-    [StringValue("Default or DEFAULT Constraint")]
+    [StringValue("DefaultOrDEFAULTConstraint")]
     D,
     [Description("FOREIGN KEY Constraint")]
-    [StringValue("FOREIGN KEY Constraint")]
+    [StringValue("ForeignKeyConstraint")]
     F,
     [Description("Scalar Function")]
-    [StringValue("Scalar Function")]
+    [StringValue("ScalarFunction")]
     FN,
     [Description("Assembly (CLR) Scalar-Function")]
-    [StringValue("Assembly (CLR) Scalar-Function")]
+    [StringValue("AssemblyClrScalarFunction")]
     FS,
     [Description("Assembly (CLR) Table-Valued Function")]
-    [StringValue("Assembly (CLR) Table-Valued Function")]
+    [StringValue("AssemblyClrTableValuedFunction")]
     FT,
     [Description("In-lined Table Function")]
-    [StringValue("In-lined Table Function")]
+    [StringValue("InLinedTableFunction")]
     IF,
     [Description("Internal Table")]
-    [StringValue("Internal Table")]
+    [StringValue("InternalTable")]
     IT,
     [Description("Log")]
     [StringValue("Log")]
     L,
     [Description("Stored Procedure")]
-    [StringValue("Stored Procedure")]
+    [StringValue("StoredProcedure")]
     P,
     [Description("Assembly (CLR) Stored Procedure")]
-    [StringValue("Assembly (CLR) Stored Procedure")]
+    [StringValue("AssemblyClrStoredProcedure")]
     PC,
     [Description("PRIMARY KEY Constraint (Type is K)")]
-    [StringValue("PRIMARY KEY Constraint (Type is K)")]
+    [StringValue("PrimaryKeyConstraint")]
     PK,
     [Description("Replication Filter Stored Procedure")]
-    [StringValue("Replication Filter Stored Procedure")]
+    [StringValue("ReplicationFilterStoredProcedure")]
     RF,
     [Description("System Table")]
-    [StringValue("System Table")]
+    [StringValue("SystemTable")]
     S,
     [Description("Synonym")]
     [StringValue("Synonym")]
     SN,
     [Description("Service Queue")]
-    [StringValue("Service Queue")]
+    [StringValue("ServiceQueue")]
     SQ,
     [Description("Assembly (CLR) Trigger")]
-    [StringValue("Assembly (CLR) Trigger")]
+    [StringValue("AssemblyClrTrigger")]
     TA,
     [Description("Table Function")]
-    [StringValue("Table Function")]
+    [StringValue("TableFunction")]
     TF,
     [Description("SQL Trigger")]
-    [StringValue("SQL Trigger")]
+    [StringValue("SqlTrigger")]
     TR,
     [Description("Table Type")]
-    [StringValue("Table Type")]
+    [StringValue("TableType")]
     TT,
     [Description("User Table")]
-    [StringValue("User Table")]
+    [StringValue("UserTable")]
     U,
     [Description("UNIQUE Constraint")]
-    [StringValue("UNIQUE Constraint")]
+    [StringValue("UniqueConstraint")]
     UQ,
     [Description("View")]
     [StringValue("View")]
     V,
     [Description("Extended Stored Procedure")]
-    [StringValue("Extended Stored Procedure")]
+    [StringValue("ExtendedStoredProcedure")]
     X,
 
   }

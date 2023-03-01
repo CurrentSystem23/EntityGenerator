@@ -1,15 +1,10 @@
-﻿using EntityGenerator.Profile.DataTransferObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EntityGenerator.Core.Interfaces;
+﻿using EntityGenerator.Core.Interfaces;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using EntityGenerator.Core.Models;
 
 namespace EntityGenerator.Core.Services
 {
@@ -48,7 +43,7 @@ namespace EntityGenerator.Core.Services
       IInformationExtractorWorker informationExtractorWorker = _serviceProvider.GetRequiredService<IInformationExtractorWorker>();
 
       informationExtractorWorker.GetDataCount(profile);
-      informationExtractorWorker.ExtractData(profile);
+      Database database = informationExtractorWorker.ExtractData(profile);
     }
 
   }
