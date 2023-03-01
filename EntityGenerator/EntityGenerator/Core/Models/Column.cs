@@ -23,6 +23,12 @@ namespace EntityGenerator.Core.Models
     public short? ColumnDatetimePrecision { get; set; }
 
     public List<ExtendedProperty> ExtendedProperties { get; } = new ();
+    public List<Constraint> ConstraintsPrimary { get; } = new();
+    public List<Constraint> ConstraintsUnique { get; } = new();
+    public List<Constraint> ConstraintsUniqueClusteredIndex{ get; } = new();
+    public List<Constraint> ConstraintsUniqueIndex { get; } = new();
+    public List<Constraint> ConstraintsDefault { get; } = new();
+
     public List<ForeignKeyConstraint> ForeignKeyConstraints { get; } = new ();
 
     public override string ToString()

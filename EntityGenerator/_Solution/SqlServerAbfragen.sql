@@ -390,14 +390,15 @@ SELECT a.[constraint_name] AS [object_name],
           a.[constraint_name]
 
 -- List all indexes
-SELECT i.[name]                                        AS [object_name],
-       i.[object_id]                                   AS [object_id],
-       'Index'                                         AS [object_type],
-       t.[name]                                        AS [table_name],
-       SCHEMA_NAME(t.schema_id)                        AS [schema_name],
-       iss.[catalog_name]                              AS [database_name],
-       SUBSTRING(column_names, 1, LEN(column_names)-1) AS [index_columns],
-       i.[type]                                        AS [index_type_id],
+SELECT i.[name]                                                          AS [object_name],
+       i.[object_id]                                                     AS [object_id],
+       'Index'                                                           AS [object_type],
+       t.[name]                                                          AS [table_name],
+       SCHEMA_NAME(t.schema_id)                                          AS [schema_name],
+       iss.[catalog_name]                                                AS [database_name],
+       SUBSTRING(column_names, 1, LEN(column_names)-1)                   AS [index_columns],
+       SUBSTRING(included_column_names, 1, LEN(included_column_names)-1) AS [included_columns],
+       i.[type]                                                          AS [index_type_id],
        CASE 
          WHEN i.[type] = 1 THEN 'Clustered index'
          WHEN i.[type] = 2 THEN 'Nonclustered unique index'
@@ -424,8 +425,17 @@ SELECT i.[name]                                        AS [object_name],
                INNER JOIN sys.columns col ON ic.[object_id] = col.[object_id] AND ic.[column_id] = col.[column_id]
                WHERE ic.[object_id] = t.[object_id]
                  AND ic.[index_id] = i.[index_id]
+                 AND ic.[is_included_column] = 0
                ORDER BY key_ordinal
                  FOR XML PATH ('') ) AS D (column_names)
+ CROSS APPLY (SELECT col.[name] + ', '
+                FROM sys.index_columns ic
+               INNER JOIN sys.columns col ON ic.[object_id] = col.[object_id] AND ic.[column_id] = col.[column_id]
+               WHERE ic.[object_id] = t.[object_id]
+                 AND ic.[index_id] = i.[index_id]
+                 AND ic.[is_included_column] = 1
+               ORDER BY key_ordinal
+                 FOR XML PATH ('') ) AS Dincluded (included_column_names)
  INNER JOIN information_schema.schemata AS iss ON SCHEMA_NAME(t.[schema_id]) = iss.[schema_name]
  WHERE iss.[catalog_name] = 'Lenny'
    AND t.[is_ms_shipped] <> 1
