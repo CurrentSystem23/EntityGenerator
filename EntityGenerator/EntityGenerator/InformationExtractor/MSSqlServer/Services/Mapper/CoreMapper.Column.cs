@@ -9,15 +9,15 @@ namespace EntityGenerator.InformationExtractor.MSSqlServer.Services.Mapper;
 public static partial class CoreMapper
 {
   /// <summary>
-  /// Maps all <see cref="Column"/> and all subnodes into a <see cref="TablelOrView"/>.
+  /// Maps all <see cref="Column"/> and all subnodes into a <see cref="TableOrView"/>.
   /// </summary>
-  /// <param name="tableOrView">The given <see cref="TablelOrView"/></param>
+  /// <param name="tableOrView">The given <see cref="TableOrView"/></param>
   /// <param name="parentObjectDto">The given <see cref="DatabaseObjectDto"/></param>
   /// <param name="columnDtos">The given <see cref="ICollection&lt;ColumnDto&gt;"/></param>
   /// <param name="extendedColumnPropertyDtos">The given <see cref="ICollection&lt;ExtendedColumnPropertyDto&gt;"/></param>
   /// <param name="constraintDtos">The given <see cref="ICollection&lt;ConstraintDto&gt;"/></param>
   private static void MapColumn(
-    TablelOrView tableOrView,
+    TableOrView tableOrView,
     DatabaseObjectDto parentObjectDto,
     ICollection<ColumnDto> columnDtos,
     ICollection<ExtendedColumnPropertyDto> extendedColumnPropertyDtos,

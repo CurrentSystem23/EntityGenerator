@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace EntityGenerator.Core.Models
 {
   [Serializable]
-  public class TablelOrView
+  public class TableOrView
   {
     public string Name { get; set; }
     public long Id { get; set; }

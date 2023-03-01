@@ -9,13 +9,13 @@ namespace EntityGenerator.InformationExtractor.MSSqlServer.Services.Mapper;
 public static partial class CoreMapper
 {
   /// <summary>
-  /// Maps all <see cref="ICollection&lt;ExtendedTablePropertyDto&gt;"/> and all subnodes into a <see cref="TablelOrView"/>.
+  /// Maps all <see cref="ICollection&lt;ExtendedTablePropertyDto&gt;"/> and all subnodes into a <see cref="TableOrView"/>.
   /// </summary>
-  /// <param name="tableOrView">The given <see cref="TablelOrView"/></param>
+  /// <param name="tableOrView">The given <see cref="TableOrView"/></param>
   /// <param name="parentObject">The given <see cref="DatabaseObjectDto"/></param>
   /// <param name="extendedTableProperties">The given <see cref="ICollection&lt;ExtendedTablePropertyDto&gt;"/></param>
   private static void MapExtendedProperty(
-    TablelOrView tableOrView,
+    TableOrView tableOrView,
     DatabaseObjectDto parentObject,
     ICollection<ExtendedTablePropertyDto> extendedTableProperties
   )

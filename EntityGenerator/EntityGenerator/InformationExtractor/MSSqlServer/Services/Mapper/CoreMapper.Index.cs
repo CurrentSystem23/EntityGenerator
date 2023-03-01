@@ -9,13 +9,13 @@ namespace EntityGenerator.InformationExtractor.MSSqlServer.Services.Mapper;
 public static partial class CoreMapper
 {
   /// <summary>
-  /// Maps all <see cref="ICollection&lt;IndexDto&gt;"/> into a <see cref="TablelOrView"/>.
+  /// Maps all <see cref="ICollection&lt;IndexDto&gt;"/> into a <see cref="TableOrView"/>.
   /// </summary>
-  /// <param name="tableOrView">The given <see cref="TablelOrView"/></param>
+  /// <param name="tableOrView">The given <see cref="TableOrView"/></param>
   /// <param name="parentObjectDto">The given <see cref="DatabaseObjectDto"/></param>
   /// <param name="indexDtos">The given <see cref="ICollection&lt;IndexDto&gt;"/></param>
   private static void MapIndex(
-    TablelOrView tableOrView,
+    TableOrView tableOrView,
     DatabaseObjectDto parentObjectDto,
     ICollection<IndexDto> indexDtos
     )
@@ -36,9 +36,9 @@ public static partial class CoreMapper
   /// Maps all <see cref="IndexDto"/> into a <see cref="EntityGenerator.Core.Models.Index"/>.
   /// </summary>
   /// <param name="indexDto">The given <see cref="IndexDto"/></param>
-  /// <param name="tableOrView">The given <see cref="TablelOrView"/></param>
+  /// <param name="tableOrView">The given <see cref="TableOrView"/></param>
   /// <returns>A <see cref="Database"/> with the core database structure.</returns>
-  private static EntityGenerator.Core.Models.Index MapIndex(IndexDto indexDto, TablelOrView tableOrView)
+  private static EntityGenerator.Core.Models.Index MapIndex(IndexDto indexDto, TableOrView tableOrView)
   {
     EntityGenerator.Core.Models.Index index = new()
     {
@@ -59,9 +59,9 @@ public static partial class CoreMapper
   /// Maps all <see cref="string"/> column names information into a <see cref="ICollection&lt;Column&gt;"/>.
   /// </summary>
   /// <param name="colNames">The given <see cref="string"/></param>
-  /// <param name="tableOrView">The given <see cref="TablelOrView"/></param>
+  /// <param name="tableOrView">The given <see cref="TableOrView"/></param>
   /// <returns>A <see cref="ICollection&lt;Column&gt;"/> with the columns structure.</returns>
-  private static ICollection<Column> MapReferencedColumns(string colNames, TablelOrView tableOrView)
+  private static ICollection<Column> MapReferencedColumns(string colNames, TableOrView tableOrView)
   {
     List<Column> columns = new();
     string[] columnNames = colNames.Split(',');
