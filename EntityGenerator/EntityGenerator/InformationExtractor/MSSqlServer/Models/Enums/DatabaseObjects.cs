@@ -69,8 +69,8 @@ public enum DatabaseObjects
   [StringValue("AssemblyClrTableValuedFunction")]
   FT,
   ///<summary>inline table function SQL Server object</summary>
-  [Description("In-lined Table Function")]
-  [StringValue("InLinedTableFunction")]
+  [Description("In-line Table Function")]
+  [StringValue("InLineTableFunction")]
   IF,
   ///<summary>internal table SQL Server object</summary>
   [Description("Internal Table")]

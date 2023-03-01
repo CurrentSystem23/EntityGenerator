@@ -51,8 +51,8 @@ namespace EntityGenerator.Core.Models.Enums
     [Description("Assembly (CLR) Table-Valued Function")]
     [StringValue("AssemblyClrTableValuedFunction")]
     FT,
-    [Description("In-lined Table Function")]
-    [StringValue("InLinedTableFunction")]
+    [Description("In-line Table Function")]
+    [StringValue("InLineTableFunction")]
     IF,
     [Description("Internal Table")]
     [StringValue("InternalTable")]
