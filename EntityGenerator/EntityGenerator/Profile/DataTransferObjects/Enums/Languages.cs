@@ -10,7 +10,7 @@ namespace EntityGenerator.Profile.DataTransferObjects.Enums
   public enum Languages
   {
     [EnumMember(Value = "NET5CSharp")]
-    DOTNET_5_CSHARP,
+    DOTNET_6_CSHARP,
 
     [EnumMember(Value = "Angular15TypeScript")]
     ANGULAR_15_TYPESCRIPT,

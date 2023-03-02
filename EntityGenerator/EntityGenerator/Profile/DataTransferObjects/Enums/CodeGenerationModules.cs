@@ -27,5 +27,16 @@ namespace EntityGenerator.Profile.DataTransferObjects.Enums
     [EnumMember(Value = "IFrontendGenerator")]
     FRONTEND,
 
+    [EnumMember(Value = "IAPIGenerator")]
+    API,
+    
+    [EnumMember(Value = "ITestGenerator")]
+    TEST,
+
+    [EnumMember(Value = "IUserRightsGenerator")]
+    USER_RIGHTS,
+
+    [EnumMember(Value = "IDBScriptsGenerator")]
+    DB_SCRIPTS,
   }
 }

@@ -23,5 +23,6 @@ namespace EntityGenerator.Profile.DataTransferObjects
     /// The language this component will be written in.
     /// </summary>
     public Languages Language { get; set; }
+    public bool Cleanup { get; set; } = true;
   }
 }
