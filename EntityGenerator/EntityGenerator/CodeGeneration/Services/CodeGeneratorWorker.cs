@@ -70,7 +70,7 @@ namespace EntityGenerator.CodeGeneration.Services
 
       foreach (ProfileCodeGenerationBase generator in activeGenerators)
       {
-        GetGeneratorFunctionHandle(generator).Invoke(_codeGenerator, new[] { ConvertToGeneratorProfile(generator), _writerService });
+        GetGeneratorFunctionHandle(generator).Invoke(_codeGenerator, new object[] { db, _profile, _writerService });
       }
     }
 

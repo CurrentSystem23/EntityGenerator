@@ -36,33 +36,82 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       _formatterService = new NETCSharpFormatterService();
     }
 
-    public void GenerateBusinessLogicForSchema(Schema schema, ProfileGeneratorDto profile, IFileWriterService writerService)
+    public override void GenerateBusinessLogic(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
     {
       // TODO Implement
       IBusinessLogicGenerator generator = _language as IBusinessLogicGenerator;
-
-      foreach (Table table in schema.Tables)
+      foreach (Schema schema in db.Schemas)
       {
-        StringBuilder sb = new();
-        generator.BuildTableInterfaceHeader(sb, profile, schema, table);
-        foreach (MethodType methodType in Enum.GetValues(typeof(MethodType))) // TODO: limit to types in use!
+        foreach (Table table in schema.Tables)
         {
-          generator.BuildTableInterfaceMethod(sb, profile, schema, table, methodType);
-          
+          StringBuilder sb = new();
+          generator.BuildTableInterfaceHeader(sb, profile, schema, table);
+          foreach (MethodType methodType in Enum.GetValues(typeof(MethodType))) // TODO: limit to types in use!
+          {
+            generator.BuildTableInterfaceMethod(sb, profile, schema, table, methodType);
+
+          }
+          _formatterService.CloseFile(sb);
         }
-        _formatterService.CloseFile(sb);
-        
+
+        foreach (View view in schema.Views)
+        {
+          StringBuilder sb = new();
+          generator.BuildViewInterfaceHeader(sb, profile, schema, view);
+          foreach (MethodType methodType in Enum.GetValues(typeof(MethodType)))
+          {
+            generator.BuildViewInterfaceMethod(sb, profile, schema, view, methodType);
+          }
+          _formatterService.CloseFile(sb);
+        }
+
+        foreach (Function function in schema.Functions.Where(x => x.FunctionType == "InlineFunction")) // TODO: Check string
+        {
+          StringBuilder sb = new();
+          generator.BuildFunctionInterfaceHeader(sb, profile, schema, function);
+          foreach (MethodType methodType in Enum.GetValues(typeof(MethodType)))
+          {
+            generator.BuildViewInterfaceMethod(sb, profile, schema, function, methodType);
+          }
+          _formatterService.CloseFile(sb);
+        }
+
+        foreach (TableValueFunction tableValueFunction in schema.Functions.Where(x => x.FunctionType == "TableValueFunction")) // TODO: Check string, Function?
+        {
+          StringBuilder sb = new();
+          generator.BuildTableValueFunctionInterfaceHeader(sb, profile, schema, tableValueFunction);
+          foreach (MethodType methodType in Enum.GetValues(typeof(MethodType)))
+          {
+            generator.BuildTableValueFunctionInterfaceMethod(sb, profile, schema, tableValueFunction, methodType);
+          }
+          _formatterService.CloseFile(sb);
+        }
       }
+    }
 
-      foreach (View view in schema.Views)
-      {
+    public override void GenerateCommon(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    {
+      throw new NotImplementedException();
+    }
 
-      }
+    public override void GenerateCommonPresentation(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    {
+      throw new NotImplementedException();
+    }
 
-      foreach (Function function in schema.Functions)
-      {
+    public override void GenerateDataAccess(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    {
+      throw new NotImplementedException();
+    }
 
-      }
+    public override void GenerateDataAccessFacade(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    {
+      throw new NotImplementedException();
+    }
+
+    public override void GenerateFrontend(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    {
+      throw new NotImplementedException();
     }
   }
 }

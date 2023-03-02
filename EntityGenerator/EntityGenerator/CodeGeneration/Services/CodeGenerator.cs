@@ -18,36 +18,36 @@ namespace EntityGenerator.CodeGeneration.Services
       _languageProvider = languageProvider;
     }
 
-    public void GenerateBusinessLogic(Database db, ProfileGeneratorBusinessLogicDto businessLogicProfile, IFileWriterService writerService)
+    public void GenerateBusinessLogic(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
     {
       foreach (Schema schema in db.Schemas)
       {
-        LanguageService languageService = _languageProvider.GetLanguageService(businessLogicProfile.Language);
-        _languageProvider
+        LanguageService languageService = _languageProvider.GetLanguageService(profile.GeneratorBusinessLogic.Language);
+        languageService.GenerateBusinessLogicForSchema(schema, profile, writerService);
       }
     }
 
-    public void GenerateCommon(ProfileGeneratorCommonDto commonProfile, IFileWriterService writerService)
+    public void GenerateCommon(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public void GenerateCommonPresentation(ProfileGeneratorCommonPresentationDto commonPresentationProfile, IFileWriterService writerService)
+    public void GenerateCommonPresentation(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public void GenerateDataAccess(ProfileGeneratorDataAccessDto dataAccessProfile, IFileWriterService writerService)
+    public void GenerateDataAccess(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public void GenerateDataAccessFacade(ProfileGeneratorDataAccessFacadeDto dataAccessFacadeProfile, IFileWriterService writerService)
+    public void GenerateDataAccessFacade(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public void GenerateFrontend(ProfileGeneratorFrontendDto frontendProfile, IFileWriterService writerService)
+    public void GenerateFrontend(Database db, ProfileGeneratorDto frontendProfile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }

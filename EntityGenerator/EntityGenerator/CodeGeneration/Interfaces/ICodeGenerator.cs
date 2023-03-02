@@ -10,11 +10,11 @@ namespace EntityGenerator.CodeGeneration.Interfaces
 {
   public interface ICodeGenerator
   {
-    void GenerateBusinessLogic(Database db, ProfileGeneratorBusinessLogicDto businessLogicProfile, IFileWriterService writerService);
-    void GenerateCommon(ProfileGeneratorCommonDto commonProfile, IFileWriterService writerService);
-    void GenerateCommonPresentation(ProfileGeneratorCommonPresentationDto commonPresentationProfile, IFileWriterService writerService);
-    void GenerateDataAccess(ProfileGeneratorDataAccessDto dataAccessProfile, IFileWriterService writerService);
-    void GenerateDataAccessFacade(ProfileGeneratorDataAccessFacadeDto dataAccessFacadeProfile, IFileWriterService writerService);
-    void GenerateFrontend(ProfileGeneratorFrontendDto frontendProfile, IFileWriterService writerService);
+    void GenerateBusinessLogic(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
+    void GenerateCommon(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
+    void GenerateCommonPresentation(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
+    void GenerateDataAccess(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
+    void GenerateDataAccessFacade(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
+    void GenerateFrontend(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
   }
 }

@@ -10,28 +10,28 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessFacadeGenerator
   {
-    StringBuilder BuildWhereParameterClass(ProfileGeneratorDto profile);
+    void BuildWhereParameterClass(StringBuilder sb, ProfileGeneratorDto profile);
 
-    StringBuilder BuildADOInterface(ProfileGeneratorDto profile, Database db);
+    void BuildADOInterface(StringBuilder sb, ProfileGeneratorDto profile, Database db);
 
-    StringBuilder BuildDataAccessTableExternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, Table table);
-    StringBuilder BuildDataAccessFunctionExternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, Function function);
-    StringBuilder BuildDataAccessTableValueFunctionExternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction);
-    StringBuilder BuildDataAccessViewExternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, View view);
+    void BuildDataAccessTableExternalInterfaceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table);
+    void BuildDataAccessFunctionExternalInterfaceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function);
+    void BuildDataAccessTableValueFunctionExternalInterfaceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction);
+    void BuildDataAccessViewExternalInterfaceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view);
 
-    StringBuilder BuildDataAccessTableExternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType);
-    StringBuilder BuildDataAccessFunctionExternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType);
-    StringBuilder BuildDataAccessTableValueFunctionExternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType);
-    StringBuilder BuildDataAccessViewExternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessTableExternalInterfaceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildDataAccessFunctionExternalInterfaceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildDataAccessTableValueFunctionExternalInterfaceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType);
+    void BuildDataAccessViewExternalInterfaceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType);
 
-    StringBuilder BuildDataAccessTableInternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, Table table);
-    StringBuilder BuildDataAccessFunctionInternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, Function function);
-    StringBuilder BuildDataAccessTableValueFunctionInternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction);
-    StringBuilder BuildDataAccessViewInternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, View view);
+    void BuildDataAccessTableInternalInterfaceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table);
+    void BuildDataAccessFunctionInternalInterfaceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function);
+    void BuildDataAccessTableValueFunctionInternalInterfaceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction);
+    void BuildDataAccessViewInternalInterfaceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view);
 
-    StringBuilder BuildDataAccessTableInternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType);
-    StringBuilder BuildDataAccessFunctionInternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType);
-    StringBuilder BuildDataAccessTableValuefunctionInternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType);
-    StringBuilder BuildDataAccessViewInternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessTableInternalInterfaceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildDataAccessFunctionInternalInterfaceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildDataAccessTableValuefunctionInternalInterfaceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType);
+    void BuildDataAccessViewInternalInterfaceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType);
   }
 }

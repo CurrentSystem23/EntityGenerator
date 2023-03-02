@@ -10,15 +10,15 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   internal interface IFrontendGenerator
   {
-    StringBuilder BuildTableServiceHeader(ProfileGeneratorDto profile, Schema schema, Table table);
-    StringBuilder BuildFunctionServiceHeader(ProfileGeneratorDto profile, Schema schema, Function function);
-    StringBuilder BuildTableValueFunctionServiceHeader(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction);
-    StringBuilder BuildViewServiceHeader(ProfileGeneratorDto profile, Schema schema, View view);
+    void BuildTableServiceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table);
+    void BuildFunctionServiceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function);
+    void BuildTableValueFunctionServiceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction);
+    void BuildViewServiceHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view);
 
-    StringBuilder BuildTableServiceMethod(ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType);
-    StringBuilder BuildFunctionServiceMethod(ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType);
-    StringBuilder BuildTableValueFunctionServiceMethod(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType);
-    StringBuilder BuildViewServiceMethod(ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType);
+    void BuildTableServiceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildFunctionServiceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildTableValueFunctionServiceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType);
+    void BuildViewServiceMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType);
 
   }
 }
