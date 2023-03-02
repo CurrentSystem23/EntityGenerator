@@ -1,5 +1,5 @@
 ﻿using EntityGenerator.Core.Interfaces;
-using EntityGenerator.Core.Models;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects;
 using EntityGenerator.InformationExtractor.MSSqlServer.Services.Mapper;

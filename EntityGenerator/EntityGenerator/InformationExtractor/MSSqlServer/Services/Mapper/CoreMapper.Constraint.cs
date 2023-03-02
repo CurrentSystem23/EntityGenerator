@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.Enums;
 using System;
@@ -62,7 +62,7 @@ public static partial class CoreMapper
         }
         else if (constraintDto.ConstraintTypeType == ConstraintTypes.PrimaryKeyConstraint)
         {
-          column.ConstraintsPrimary.Add(MapConstraint(constraintDto));
+          column.ConstraintsPrimaryKey.Add(MapConstraint(constraintDto));
         }
         else if (constraintDto.ConstraintTypeType == ConstraintTypes.UniqueConstraint)
         {

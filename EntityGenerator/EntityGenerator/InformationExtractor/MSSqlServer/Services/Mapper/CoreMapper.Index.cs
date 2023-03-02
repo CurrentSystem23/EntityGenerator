@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects;
 using System;
 using System.Collections.Generic;
@@ -33,14 +33,14 @@ public static partial class CoreMapper
   }
 
   /// <summary>
-  /// Maps all <see cref="IndexDto"/> into a <see cref="EntityGenerator.Core.Models.Index"/>.
+  /// Maps all <see cref="IndexDto"/> into a <see cref="Core.Models.ModelObjects.Index"/>.
   /// </summary>
   /// <param name="indexDto">The given <see cref="IndexDto"/></param>
   /// <param name="tableOrView">The given <see cref="TableOrView"/></param>
   /// <returns>A <see cref="Database"/> with the core database structure.</returns>
-  private static EntityGenerator.Core.Models.Index MapIndex(IndexDto indexDto, TableOrView tableOrView)
+  private static Core.Models.ModelObjects.Index MapIndex(IndexDto indexDto, TableOrView tableOrView)
   {
-    EntityGenerator.Core.Models.Index index = new()
+    Core.Models.ModelObjects.Index index = new()
     {
       Name = indexDto.ObjectName,
       Id = indexDto.ObjectId,

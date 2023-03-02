@@ -4,7 +4,7 @@ using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using EntityGenerator.Core.Models;
+using EntityGenerator.Core.Models.ModelObjects;
 
 namespace EntityGenerator.Core.Services
 {

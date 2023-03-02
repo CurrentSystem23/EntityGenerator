@@ -16,11 +16,6 @@ public partial class InformationExtractor : IInformationExtractor
   private readonly ILogger<InformationExtractor> _logger;
 
   /// <summary>
-  /// The service provider.
-  /// </summary>
-  private readonly IServiceProvider _provider;
-
-  /// <summary>
   /// The output provider.
   /// </summary>
   private readonly IOutputProvider _outputProvider;
@@ -32,10 +27,9 @@ public partial class InformationExtractor : IInformationExtractor
   /// <param name="provider"> The dependency injection service provider.</param>
   /// <param name="logger"> The logging provider.</param>
   /// <param name="outputProvider"> The output provider.</param>
-  public InformationExtractor(IServiceProvider provider, ILogger<InformationExtractor> logger = null, IOutputProvider outputProvider = null)
+  public InformationExtractor(ILogger<InformationExtractor> logger = null, IOutputProvider outputProvider = null)
   {
     _logger = logger;
-    _provider = provider;
     _outputProvider = outputProvider;
   }
   #endregion
