@@ -1,4 +1,6 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces.Modules;
+using EntityGenerator.Core.Models;
+using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,24 +9,44 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
-  public partial class NETCSharp : ICommonGenerator
+  public abstract partial class NETCSharp : ICommonGenerator
   {
-    public void BuildBaseDTO()
+    StringBuilder ICommonGenerator.BuildBaseDTO(ProfileGeneratorDto profile)
     {
       throw new NotImplementedException();
     }
 
-    public void BuildDatabaseDTOs()
+    StringBuilder ICommonGenerator.BuildConstants(ProfileGeneratorDto profile)
     {
       throw new NotImplementedException();
     }
 
-    public void BuildSchemaDTO()
+    StringBuilder ICommonGenerator.BuildDatabaseFunctionDTO(ProfileGeneratorDto profile, Schema schema, Function function)
     {
       throw new NotImplementedException();
     }
 
-    public void BuildTenantBase()
+    StringBuilder ICommonGenerator.BuildDatabaseTableDTO(ProfileGeneratorDto profile, Schema schema, Table table)
+    {
+      throw new NotImplementedException();
+    }
+
+    StringBuilder ICommonGenerator.BuildDatabaseTableValueFunctionDTO(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction)
+    {
+      throw new NotImplementedException();
+    }
+
+    StringBuilder ICommonGenerator.BuildDatabaseViewDTO(ProfileGeneratorDto profile, Schema schema, View view)
+    {
+      throw new NotImplementedException();
+    }
+
+    StringBuilder ICommonGenerator.BuildSchemaDTO(ProfileGeneratorDto profile)
+    {
+      throw new NotImplementedException();
+    }
+
+    StringBuilder ICommonGenerator.BuildTenantBase(ProfileGeneratorDto profile)
     {
       throw new NotImplementedException();
     }

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp.NET_5
+namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp.NET_6
 {
-  public partial class NET5CSharp : NETCSharp
+  public partial class NET6CSharp
   {
   }
 }
