@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Attributes;
+using EntityGenerator.Core.Attributes;
 using System.ComponentModel;
 
 namespace EntityGenerator.Core.Models.Enums;
@@ -140,6 +140,5 @@ public enum DatabaseObjects
   [Description("Extended Stored Procedure")]
   [StringValue("ExtendedStoredProcedure")]
   X,
-
 }
 

@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Interfaces;
+using EntityGenerator.Core.Interfaces;
 using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects;

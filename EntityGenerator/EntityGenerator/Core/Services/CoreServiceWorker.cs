@@ -1,10 +1,10 @@
-﻿using EntityGenerator.Core.Interfaces;
+using EntityGenerator.Core.Interfaces;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using EntityGenerator.Core.Models.ModelObjects;
 
 namespace EntityGenerator.Core.Services
 {
