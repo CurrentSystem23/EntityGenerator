@@ -1,4 +1,5 @@
-﻿using EntityGenerator.Core.Interfaces;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Core.Interfaces;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
@@ -22,14 +23,20 @@ namespace EntityGenerator.Core.Services
     private readonly IProfileProvider _profileProvider;
 
     /// <summary>
+    /// The code generator worker.
+    /// </summary>
+    private readonly ICodeGeneratorWorker _codeGeneratorWorker;
+
+    /// <summary>
     /// Constructor for <see cref="CoreServiceWorker"/> class.
     /// </summary>
     /// <param name="serviceProvider"> The dependency injection service provider.</param>
     /// <param name="profileProvider"> The profile provider.</param>
-    public CoreServiceWorker(IServiceProvider serviceProvider, IProfileProvider profileProvider)
+    public CoreServiceWorker(IServiceProvider serviceProvider, IProfileProvider profileProvider, ICodeGeneratorWorker codeGeneratorWorker)
     {
       _serviceProvider = serviceProvider;
       _profileProvider = profileProvider;
+      _codeGeneratorWorker = codeGeneratorWorker;
     }
 
     /// <summary>
@@ -45,5 +52,10 @@ namespace EntityGenerator.Core.Services
       informationExtractorWorker.ExtractData(profile);
     }
 
+    public void GenerateCode()
+    {
+      _codeGeneratorWorker.LoadProfile(_profile);
+      _codeGeneratorWorker.Generate();
+    }
   }
 }

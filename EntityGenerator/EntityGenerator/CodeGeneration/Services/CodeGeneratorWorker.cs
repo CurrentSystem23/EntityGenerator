@@ -1,4 +1,5 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Core.Models;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
 using EntityGenerator.Profile.DataTransferObjects;
@@ -20,7 +21,7 @@ namespace EntityGenerator.CodeGeneration.Services
     /// <summary>
     /// The writer service.
     /// </summary>
-    private readonly IWriterService _writerService;
+    private readonly IFileWriterService _writerService;
 
     /// <summary>
     /// The profile provider.
@@ -37,7 +38,7 @@ namespace EntityGenerator.CodeGeneration.Services
     /// </summary>
     private readonly ICodeGenerator _codeGenerator;
 
-    public CodeGeneratorWorker(IProfileProvider profileProvider, ILanguageProvider languageProvider, IWriterService writerService, ICodeGenerator codeGenerator)
+    public CodeGeneratorWorker(IProfileProvider profileProvider, ILanguageProvider languageProvider, IFileWriterService writerService, ICodeGenerator codeGenerator)
     {
       _profileProvider = profileProvider;
       _languageProvider = languageProvider;
@@ -53,7 +54,7 @@ namespace EntityGenerator.CodeGeneration.Services
         .ToList().ConvertAll(prop => (ProfileCodeGenerationBase)prop.GetValue(generatorProfile));
     }
 
-    private dynamic ConvertToRegisteredGenerator(ProfileCodeGenerationBase generator)
+    private dynamic ConvertToGeneratorProfile(ProfileCodeGenerationBase generator)
     {
       return Convert.ChangeType(generator, Type.GetType(generator.GetType().Name));
     }
@@ -63,13 +64,13 @@ namespace EntityGenerator.CodeGeneration.Services
       return typeof(ICodeGenerator).GetMethod(generator.ModuleName.ToString());
     }
 
-    public void Generate()
+    public void Generate(Database db)
     {
       List<ProfileCodeGenerationBase> activeGenerators = GetActiveModulesList(_profile.Generator);
 
       foreach (ProfileCodeGenerationBase generator in activeGenerators)
       {
-        GetGeneratorFunctionHandle(generator).Invoke(_codeGenerator, new[] { ConvertToRegisteredGenerator(generator), _writerService });
+        GetGeneratorFunctionHandle(generator).Invoke(_codeGenerator, new[] { ConvertToGeneratorProfile(generator), _writerService });
       }
     }
 

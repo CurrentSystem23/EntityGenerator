@@ -1,7 +1,10 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,14 +12,28 @@ namespace EntityGenerator.CodeGeneration.Services
 {
   public class FileWriterService : IFileWriterService
   {
-    public void Write(string data)
+    public void WriteToFile(string path, string fileName, string data)
     {
-      WriteToFile(data);
-    }
+      string filePath = path;
 
-    public void WriteToFile(string data)
-    {
-      throw new NotImplementedException();
+      if (!(filePath.EndsWith('/') || filePath.EndsWith(@"\")))
+      {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+          filePath += @"\";
+        else
+          filePath += "/";
+      }
+
+      filePath += fileName;
+
+      if (!Directory.Exists(path))
+        Directory.CreateDirectory(path);
+
+      if (File.Exists(filePath))
+        File.Delete(filePath);
+
+      using StreamWriter sw = new StreamWriter(filePath);
+      sw.WriteLine(data);
     }
   }
 }

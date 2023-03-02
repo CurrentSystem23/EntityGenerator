@@ -1,4 +1,5 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Core.Models;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -10,32 +11,43 @@ namespace EntityGenerator.CodeGeneration.Services
 {
   internal class CodeGenerator : ICodeGenerator
   {
-    public void GenerateBusinessLogic(ProfileGeneratorBusinessLogicDto businessLogicProfile, IWriterService writerService)
+    private ILanguageProvider _languageProvider;
+
+    public CodeGenerator(ILanguageProvider languageProvider)
+    {
+      _languageProvider = languageProvider;
+    }
+
+    public void GenerateBusinessLogic(Database db, ProfileGeneratorBusinessLogicDto businessLogicProfile, IFileWriterService writerService)
+    {
+      foreach (Schema schema in db.Schemas)
+      {
+        LanguageService languageService = _languageProvider.GetLanguageService(businessLogicProfile.Language);
+        _languageProvider
+      }
+    }
+
+    public void GenerateCommon(ProfileGeneratorCommonDto commonProfile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public void GenerateCommon(ProfileGeneratorCommonDto commonProfile, IWriterService writerService)
+    public void GenerateCommonPresentation(ProfileGeneratorCommonPresentationDto commonPresentationProfile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public void GenerateCommonPresentation(ProfileGeneratorCommonPresentationDto commonPresentationProfile, IWriterService writerService)
+    public void GenerateDataAccess(ProfileGeneratorDataAccessDto dataAccessProfile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public void GenerateDataAccess(ProfileGeneratorDataAccessDto dataAccessProfile, IWriterService writerService)
+    public void GenerateDataAccessFacade(ProfileGeneratorDataAccessFacadeDto dataAccessFacadeProfile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public void GenerateDataAccessFacade(ProfileGeneratorDataAccessFacadeDto dataAccessFacadeProfile, IWriterService writerService)
-    {
-      throw new NotImplementedException();
-    }
-
-    public void GenerateFrontend(ProfileGeneratorFrontendDto frontendProfile, IWriterService writerService)
+    public void GenerateFrontend(ProfileGeneratorFrontendDto frontendProfile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }

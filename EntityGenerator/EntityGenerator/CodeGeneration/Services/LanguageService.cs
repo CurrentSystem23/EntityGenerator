@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Services
 {
-  public class LanguageService
+  public abstract class LanguageService
   {
   }
 }

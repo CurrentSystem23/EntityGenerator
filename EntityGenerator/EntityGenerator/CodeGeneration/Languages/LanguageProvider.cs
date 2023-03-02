@@ -1,7 +1,7 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Languages.Angular.TypeScript.Angular15;
 using EntityGenerator.CodeGeneration.Languages.NET;
-using EntityGenerator.CodeGeneration.Languages.NET.CSharp.NET_5;
+using EntityGenerator.CodeGeneration.Languages.NET.CSharp.NET_6;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Reflection;
 using EntityGenerator.Core.Extensions;
 using EntityGenerator.Profile.DataTransferObjects.Enums;
+using EntityGenerator.CodeGeneration.Services;
+using EntityGenerator.CodeGeneration.Languages.NET.CSharp;
 
 namespace EntityGenerator.CodeGeneration.Languages
 {
@@ -19,10 +21,23 @@ namespace EntityGenerator.CodeGeneration.Languages
     {
       switch (language)
       {
-        case Profile.DataTransferObjects.Enums.Languages.DOTNET_5_CSHARP:
-          return new NET5CSharp();
+        case Profile.DataTransferObjects.Enums.Languages.DOTNET_6_CSHARP:
+          return new NET6CSharp();
         case Profile.DataTransferObjects.Enums.Languages.ANGULAR_15_TYPESCRIPT:
           return new Angular15TypeScript();
+        default:
+          throw new NotSupportedException($"Language {language} is not supported.");
+      }
+    }
+
+    public LanguageService GetLanguageService(Profile.DataTransferObjects.Enums.Languages language)
+    {
+      switch (language)
+      {
+        case Profile.DataTransferObjects.Enums.Languages.DOTNET_6_CSHARP:
+          return new NETCSharpLanguageService();
+        case Profile.DataTransferObjects.Enums.Languages.ANGULAR_15_TYPESCRIPT:
+          //return new Angular15TypeScript(language);
         default:
           throw new NotSupportedException($"Language {language} is not supported.");
       }
