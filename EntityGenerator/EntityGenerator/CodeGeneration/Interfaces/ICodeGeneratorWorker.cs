@@ -1,4 +1,5 @@
-﻿using EntityGenerator.Profile.DataTransferObject;
+﻿using EntityGenerator.Core.Models;
+using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace EntityGenerator.CodeGeneration.Interfaces
   public interface ICodeGeneratorWorker
   {
     void LoadProfile(ProfileDto profile);
-    void Generate();
+    void Generate(Database db);
   }
 }

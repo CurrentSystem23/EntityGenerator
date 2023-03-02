@@ -1,4 +1,5 @@
-﻿using EntityGenerator.Profile.DataTransferObject;
+﻿using EntityGenerator.Core.Models;
+using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,11 @@ namespace EntityGenerator.CodeGeneration.Interfaces
 {
   public interface ICodeGenerator
   {
-    void GenerateBusinessLogic(ProfileGeneratorBusinessLogicDto businessLogicProfile, IWriterService writerService);
-    void GenerateCommon(ProfileGeneratorCommonDto commonProfile, IWriterService writerService);
-    void GenerateCommonPresentation(ProfileGeneratorCommonPresentationDto commonPresentationProfile, IWriterService writerService);
-    void GenerateDataAccess(ProfileGeneratorDataAccessDto dataAccessProfile, IWriterService writerService);
-    void GenerateDataAccessFacade(ProfileGeneratorDataAccessFacadeDto dataAccessFacadeProfile, IWriterService writerService);
-    void GenerateFrontend(ProfileGeneratorFrontendDto frontendProfile, IWriterService writerService);
+    void GenerateBusinessLogic(Database db, ProfileGeneratorBusinessLogicDto businessLogicProfile, IFileWriterService writerService);
+    void GenerateCommon(ProfileGeneratorCommonDto commonProfile, IFileWriterService writerService);
+    void GenerateCommonPresentation(ProfileGeneratorCommonPresentationDto commonPresentationProfile, IFileWriterService writerService);
+    void GenerateDataAccess(ProfileGeneratorDataAccessDto dataAccessProfile, IFileWriterService writerService);
+    void GenerateDataAccessFacade(ProfileGeneratorDataAccessFacadeDto dataAccessFacadeProfile, IFileWriterService writerService);
+    void GenerateFrontend(ProfileGeneratorFrontendDto frontendProfile, IFileWriterService writerService);
   }
 }

@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Interfaces
 {
-  public interface ILinterService
+  public interface IFormatterService
   {
-    void ApplyIndentation(ref StringBuilder stringBuilder);
+    int IndentSize { get; set; }
+
+    void ApplyIndentation(StringBuilder stringBuilder);
   }
 }

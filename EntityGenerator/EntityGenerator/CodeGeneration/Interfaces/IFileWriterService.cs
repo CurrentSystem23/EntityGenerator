@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Interfaces
 {
-  internal interface IFileWriterService : IWriterService
+  public interface IFileWriterService
   {
-    public void WriteToFile(string data);
+    public void WriteToFile(string path, string fileName, string data);
   }
 }

@@ -6,8 +6,17 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Interfaces
 {
-  public interface IWriterService
+  public enum MethodType
   {
-    public void Write(string data);
+    GET,
+    SAVE,
+    DELETE,
+    MERGE,
+    COUNT,
+    HAS_CHANGED,
+    BUlK_INSERT,
+    BULK_MERGE,
+    BULK_UPDATE,
+    HIST_GET,
   }
 }
