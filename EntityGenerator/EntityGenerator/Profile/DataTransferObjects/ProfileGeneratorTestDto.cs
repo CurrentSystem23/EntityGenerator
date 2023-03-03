@@ -5,7 +5,7 @@ namespace EntityGenerator.Profile.DataTransferObject
 {
   public class ProfileGeneratorTestDto : ProfileCodeGenerationBase
   {
-    public ProfileGeneratorTestDto() : base(CodeGenerationModules.TEST)
+    public ProfileGeneratorTestDto() : base(CodeGenerationModules.TestGenerator)
     {
     }
   }

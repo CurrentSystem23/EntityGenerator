@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;

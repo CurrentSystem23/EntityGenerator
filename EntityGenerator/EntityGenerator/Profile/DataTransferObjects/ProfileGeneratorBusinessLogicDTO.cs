@@ -13,7 +13,7 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorBusinessLogicDto"/> class.
     /// </summary>
-    public ProfileGeneratorBusinessLogicDto() : base(DataTransferObjects.Enums.CodeGenerationModules.BUSINESS_LOGIC)
+    public ProfileGeneratorBusinessLogicDto() : base(DataTransferObjects.Enums.CodeGenerationModules.BusinessLogicGenerator)
     {
     }
 

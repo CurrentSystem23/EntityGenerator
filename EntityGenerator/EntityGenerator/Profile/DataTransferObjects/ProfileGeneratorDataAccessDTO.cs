@@ -13,7 +13,7 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorDataAccessDto"/> class.
     /// </summary>
-    public ProfileGeneratorDataAccessDto() : base(DataTransferObjects.Enums.CodeGenerationModules.DATA_ACCESS)
+    public ProfileGeneratorDataAccessDto() : base(DataTransferObjects.Enums.CodeGenerationModules.DataAccessGenerator)
     {
     }
 

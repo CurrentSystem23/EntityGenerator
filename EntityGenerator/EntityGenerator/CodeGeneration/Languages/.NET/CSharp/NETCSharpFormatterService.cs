@@ -12,9 +12,11 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
   public class NETCSharpFormatterService : IFormatterService
   {
     public int IndentSize { get; set; }
+    private readonly StringBuilder _sb;
 
-    public NETCSharpFormatterService(int indentSize = 2)
+    public NETCSharpFormatterService(StringBuilder sb, int indentSize = 2)
     {
+      _sb = sb;
       IndentSize = indentSize;
     }
 
@@ -23,25 +25,30 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       return "".PadLeft(count * IndentSize);
     }
 
-    public void CloseFile(StringBuilder sb)
+    public string CloseFile()
     {
-      CloseAllScopes(sb);
-      ApplyIndentation(sb);
+      CloseAllScopes();
+      ApplyIndentation();
+
+      string outStr = _sb.ToString();
+      _sb.Clear();
+
+      return outStr;
     }
 
-    public void CloseAllScopes(StringBuilder sb)
+    public void CloseAllScopes()
     {
-      int openBrackets = sb.ToString().Count(x => x == '{');
-      for (int i = sb.ToString().Count(x => x == '}'); i < openBrackets; i++)
+      int openBrackets = _sb.ToString().Count(x => x == '{');
+      for (int i = _sb.ToString().Count(x => x == '}'); i < openBrackets; i++)
       {
-        sb.AppendLine("}");
+        _sb.AppendLine("}");
       }
     }
 
-    public void ApplyIndentation(StringBuilder sb)
+    public void ApplyIndentation()
     {
       string[] delim = { Environment.NewLine, "\n" }; // "\n" added in case you manually appended a newline
-      string[] lines = sb.ToString().Split(delim, StringSplitOptions.None);
+      string[] lines = _sb.ToString().Split(delim, StringSplitOptions.None);
       int currentIndent = 0;
 
       Regex rxOpenAndCloseBrackets = new Regex(@"{.*}", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -170,8 +177,8 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           }
         }
       }
-      sb = sbNew;
-
+      _sb.Clear();
+      _sb.Append(sbNew);
     }
   }
 }

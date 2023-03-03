@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -10,11 +10,11 @@ namespace EntityGenerator.CodeGeneration.Interfaces
 {
   public interface ICodeGenerator
   {
-    void GenerateBusinessLogic(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
-    void GenerateCommon(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
-    void GenerateCommonPresentation(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
-    void GenerateDataAccess(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
-    void GenerateDataAccessFacade(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
-    void GenerateFrontend(Database db, ProfileGeneratorDto profile, IFileWriterService writerService);
+    void ExecuteBusinessLogicGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
+    void ExecuteCommonGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
+    void ExecuteCommonPresentationGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
+    void ExecuteDataAccessGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
+    void ExecuteDataAccessFacadeGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
+    void ExecuteFrontendGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
   }
 }

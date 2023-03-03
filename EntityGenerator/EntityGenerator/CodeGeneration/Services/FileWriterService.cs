@@ -12,6 +12,7 @@ namespace EntityGenerator.CodeGeneration.Services
 {
   public class FileWriterService : IFileWriterService
   {
+    public FileWriterService() { }
     public void WriteToFile(string path, string fileName, string data)
     {
       string filePath = path;

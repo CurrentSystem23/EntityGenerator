@@ -1,6 +1,6 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
-using EntityGenerator.Core.Models;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -12,47 +12,47 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : IDataAccessGenerator
   {
-    StringBuilder IDataAccessGenerator.BuildBaseFile(ProfileGeneratorDto profile)
+    void IDataAccessGenerator.BuildBaseFile(StringBuilder sb, ProfileDto profile)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessGenerator.BuildFunctionDAOHeader(ProfileGeneratorDto profile, Schema schema, Function function)
+    void IDataAccessGenerator.BuildFunctionDAOHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessGenerator.BuildFunctionDAOMethod(ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType)
+    void IDataAccessGenerator.BuildFunctionDAOMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessGenerator.BuildTableDAOHeader(ProfileGeneratorDto profile, Schema schema, Table table)
+    void IDataAccessGenerator.BuildTableDAOHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessGenerator.BuildTableDAOMethod(ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType)
+    void IDataAccessGenerator.BuildTableDAOMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessGenerator.BuildTableValueFunctionDAOHeader(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction)
+    void IDataAccessGenerator.BuildTableValuedFunctionDAOHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessGenerator.BuildTableValueFunctionDAOMethod(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType)
+    void IDataAccessGenerator.BuildTableValuedFunctionDAOMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessGenerator.BuildViewDAOHeader(ProfileGeneratorDto profile, Schema schema, View view)
+    void IDataAccessGenerator.BuildViewDAOHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessGenerator.BuildViewDAOMethod(ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType)
+    void IDataAccessGenerator.BuildViewDAOMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType)
     {
       throw new NotImplementedException();
     }

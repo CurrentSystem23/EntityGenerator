@@ -9,6 +9,8 @@ namespace EntityGenerator.CodeGeneration.Languages.Angular
 {
   public abstract class AngularLanguageBase : LanguageBase
   {
+    public AngularLanguageBase(StringBuilder sb) : base(sb) { }
+
     public override string GetDataType(DataTypes type)
     {
       throw new NotImplementedException();

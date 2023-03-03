@@ -1,6 +1,6 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
-using EntityGenerator.Core.Models;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -12,42 +12,42 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : IFrontendGenerator
   {
-    StringBuilder IFrontendGenerator.BuildFunctionServiceHeader(ProfileGeneratorDto profile, Schema schema, Function function)
+    void IFrontendGenerator.BuildFunctionServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IFrontendGenerator.BuildFunctionServiceMethod(ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType)
+    void IFrontendGenerator.BuildFunctionServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IFrontendGenerator.BuildTableServiceHeader(ProfileGeneratorDto profile, Schema schema, Table table)
+    void IFrontendGenerator.BuildTableServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IFrontendGenerator.BuildTableServiceMethod(ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType)
+    void IFrontendGenerator.BuildTableServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IFrontendGenerator.BuildTableValueFunctionServiceHeader(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction)
+    void IFrontendGenerator.BuildTableValuedFunctionServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IFrontendGenerator.BuildTableValueFunctionServiceMethod(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType)
+    void IFrontendGenerator.BuildTableValuedFunctionServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IFrontendGenerator.BuildViewServiceHeader(ProfileGeneratorDto profile, Schema schema, View view)
+    void IFrontendGenerator.BuildViewServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IFrontendGenerator.BuildViewServiceMethod(ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType)
+    void IFrontendGenerator.BuildViewServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType)
     {
       throw new NotImplementedException();
     }

@@ -8,25 +8,42 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static Azure.Core.HttpHeader;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : NETLanguageBase
   {
-    protected bool openNamespace = false;
-    protected bool embeddedClass = false;
+    public NETCSharp(StringBuilder sb) : base(sb) { }
 
-    public override StringBuilder BuildClassHeader(string className, string baseClass = null, bool isStatic = false, bool isPartial = false, bool isAbstract = false, AccessType accessModifier = AccessType.PUBLIC)
+    public void BuildImports(List<string> imports)
+    {
+      foreach (string import in imports)
+      {
+        _sb.AppendLine($"using {import};");
+      }
+      _sb.AppendLine();
+    }
+    public void BuildNameSpace(string nameSpace)
+    {
+      _sb.AppendLine($"namespace {nameSpace};");
+    }
+
+    protected override void BuildClassHeader(string className, string baseClass = null, bool isStatic = false, bool isPartial = false, bool isAbstract = false, AccessType accessModifier = AccessType.PUBLIC)
     {
       throw new NotImplementedException();
     }
 
-    public override StringBuilder BuildInterfaceHeader(string interfaceName, string baseInterface = null, bool isPartial = false, AccessType accessModifier = AccessType.PUBLIC)
+    protected override void BuildInterfaceHeader(string interfaceName, string baseInterface = null, bool isPartial = false, AccessType accessModifier = AccessType.PUBLIC)
     {
-      throw new NotImplementedException();
+      _sb.Append($"{accessModifier:g} ".ToLower());
+      if (isPartial) _sb.Append("partial ");
+      _sb.Append("interface ");
+      _sb.AppendJoin(" : ", (new string[] { interfaceName, baseInterface }).Where(c => c != null).ToArray()).AppendLine();
+      _sb.AppendLine("{");
     }
 
-    public override StringBuilder BuildTraceLogCall(string message, string paramsStr, bool async)
+    protected override void BuildTraceLogCall(string message, string paramsStr, bool async)
     {
       throw new NotImplementedException();
     }

@@ -13,7 +13,7 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorCommonPresentationDto"/> class.
     /// </summary>
-    public ProfileGeneratorCommonPresentationDto() : base(DataTransferObjects.Enums.CodeGenerationModules.COMMON_PRESENTATION)
+    public ProfileGeneratorCommonPresentationDto() : base(DataTransferObjects.Enums.CodeGenerationModules.CommonPresentationGenerator)
     {
     }
 

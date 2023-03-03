@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -10,16 +10,16 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessGenerator
   {
-    void BuildBaseFile(StringBuilder sb, ProfileGeneratorDto profile);
+    void BuildBaseFile(StringBuilder sb, ProfileDto profile);
     
-    void BuildTableDAOHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table);
-    void BuildFunctionDAOHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function);
-    void BuildTableValueFunctionDAOHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction);
-    void BuildViewDAOHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view);
+    void BuildTableDAOHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
+    void BuildFunctionDAOHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
+    void BuildTableValuedFunctionDAOHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction);
+    void BuildViewDAOHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view);
 
-    void BuildTableDAOMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildFunctionDAOMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildTableValueFunctionDAOMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType);
-    void BuildViewDAOMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType);
+    void BuildTableDAOMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildFunctionDAOMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildTableValuedFunctionDAOMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType);
+    void BuildViewDAOMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType);
   }
 }

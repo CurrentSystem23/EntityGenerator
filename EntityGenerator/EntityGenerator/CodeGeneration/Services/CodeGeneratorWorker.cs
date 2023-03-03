@@ -1,5 +1,5 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
-using EntityGenerator.Core.Models;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
 using EntityGenerator.Profile.DataTransferObjects;
@@ -14,7 +14,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EntityGenerator.CodeGeneration.Services
 {
-  public abstract class CodeGeneratorWorker : ICodeGeneratorWorker
+  public class CodeGeneratorWorker : ICodeGeneratorWorker
   {
     ProfileDto _profile;
 
@@ -61,7 +61,8 @@ namespace EntityGenerator.CodeGeneration.Services
 
     private MethodInfo GetGeneratorFunctionHandle(ProfileCodeGenerationBase generator)
     {
-      return typeof(ICodeGenerator).GetMethod(generator.ModuleName.ToString());
+      string modName = generator.ModuleName.ToString();
+      return typeof(ICodeGenerator).GetMethod($"Execute{generator.ModuleName.ToString()}");
     }
 
     public void Generate(Database db)
@@ -70,7 +71,7 @@ namespace EntityGenerator.CodeGeneration.Services
 
       foreach (ProfileCodeGenerationBase generator in activeGenerators)
       {
-        GetGeneratorFunctionHandle(generator).Invoke(_codeGenerator, new object[] { db, _profile.Generator, _writerService });
+        GetGeneratorFunctionHandle(generator).Invoke(_codeGenerator, new object[] { db, _profile, _writerService });
       }
     }
 

@@ -10,6 +10,6 @@ namespace EntityGenerator.CodeGeneration.Interfaces
   {
     int IndentSize { get; set; }
 
-    void ApplyIndentation(StringBuilder stringBuilder);
+    void ApplyIndentation();
   }
 }

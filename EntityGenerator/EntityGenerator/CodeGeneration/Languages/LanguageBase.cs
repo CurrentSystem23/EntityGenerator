@@ -11,7 +11,12 @@ namespace EntityGenerator.CodeGeneration.Languages
   {
     string Name { get; }
 
-    protected StringBuilder _sb = new StringBuilder();
+    protected StringBuilder _sb;
+
+    public LanguageBase(StringBuilder sb)
+    {
+      _sb = sb;
+    }
 
     public abstract string GetDataType(DataTypes type);
   }

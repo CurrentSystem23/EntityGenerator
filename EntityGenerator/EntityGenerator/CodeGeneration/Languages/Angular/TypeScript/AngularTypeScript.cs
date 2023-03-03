@@ -8,5 +8,6 @@ namespace EntityGenerator.CodeGeneration.Languages.Angular.TypeScript
 {
   public abstract partial class AngularTypeScript : AngularLanguageBase
   {
+    public AngularTypeScript(StringBuilder sb) : base(sb) { }
   }
 }

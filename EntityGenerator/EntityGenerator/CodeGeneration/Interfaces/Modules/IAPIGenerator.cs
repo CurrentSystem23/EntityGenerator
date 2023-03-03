@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -10,14 +10,14 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IAPIGenerator
   {
-    void BuildTableControllerHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table);
-    void BuildTableControllerHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function);
-    void BuildTableControllerHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction);
-    void BuildTableControllerHeader(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view);
+    void BuildTableControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
+    void BuildFunctionControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
+    void BuildTableValuedFunctionControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValueFunction);
+    void BuildViewControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view);
 
-    void BuildTableControllerMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildFunctionControllerMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildTableValueFunctionControllerMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType);
-    void BuildViewControllerMethod(StringBuilder sb, ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType);
+    void BuildTableControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildFunctionControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildTableValueFunctionControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValueFunction, MethodType methodType);
+    void BuildViewControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType);
   }
 }

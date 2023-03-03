@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityGenerator.Core.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -7,36 +8,47 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.Profile.DataTransferObjects.Enums
 {
+  [DataContract]
   public enum CodeGenerationModules
   {
-    [EnumMember(Value = "IBusinessLogicGenerator")]
-    BUSINESS_LOGIC,
+    [EnumMember(Value = "BusinessLogic")]
+    [StringValue("IBusinessLogicGenerator")]
+    BusinessLogicGenerator,
 
-    [EnumMember(Value = "ICommonGenerator")]
-    COMMON,
+    [EnumMember(Value = "Common")]
+    [StringValue("ICommonGenerator")]
+    CommonGenerator,
 
-    [EnumMember(Value = "ICommonPresentationGenerator")]
-    COMMON_PRESENTATION,
+    [EnumMember(Value = "CommonPresentation")]
+    [StringValue("ICommonPresentationGenerator")]
+    CommonPresentationGenerator,
 
-    [EnumMember(Value = "IDataAccessGenerator")]
-    DATA_ACCESS,
+    [EnumMember(Value = "DataAccess")]
+    [StringValue("IDataAccessGenerator")]
+    DataAccessGenerator,
 
-    [EnumMember(Value = "IDataAccessFacadeGenerator")]
-    DATA_ACCESS_FACADE,
+    [EnumMember(Value = "DataAccessFacade")]
+    [StringValue("IDataAccessFacadeGenerator")]
+    DataAccessFacadeGenerator,
 
-    [EnumMember(Value = "IFrontendGenerator")]
-    FRONTEND,
+    [EnumMember(Value = "Frontend")]
+    [StringValue("IFrontendGenerator")]
+    FrontendGenerator,
 
-    [EnumMember(Value = "IAPIGenerator")]
-    API,
+    [EnumMember(Value = "API")]
+    [StringValue("IAPIGenerator")]
+    APIGenerator,
     
-    [EnumMember(Value = "ITestGenerator")]
-    TEST,
+    [EnumMember(Value = "Test")]
+    [StringValue("ITestGenerator")]
+    TestGenerator,
 
-    [EnumMember(Value = "IUserRightsGenerator")]
-    USER_RIGHTS,
+    [EnumMember(Value = "UserRights")]
+    [StringValue("IUserRightsGenerator")]
+    UserRightsGenerator,
 
-    [EnumMember(Value = "IDBScriptsGenerator")]
-    DB_SCRIPTS,
+    [EnumMember(Value = "DBScripts")]
+    [StringValue("IDBScriptsGenerator")]
+    DBScriptsGenerator,
   }
 }

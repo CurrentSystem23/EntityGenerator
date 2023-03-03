@@ -5,7 +5,7 @@ namespace EntityGenerator.Profile.DataTransferObject
 {
   public class ProfileGeneratorAPIDto : ProfileCodeGenerationBase
   {
-    public ProfileGeneratorAPIDto() : base(CodeGenerationModules.API)
+    public ProfileGeneratorAPIDto() : base(CodeGenerationModules.APIGenerator)
     {
     }
   }

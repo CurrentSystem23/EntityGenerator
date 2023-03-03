@@ -1,4 +1,4 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -10,5 +10,6 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IUserRightsGenerator
   {
+    void BuildUserRightsConstants(StringBuilder sb, ProfileDto profile, Database db);
   }
 }

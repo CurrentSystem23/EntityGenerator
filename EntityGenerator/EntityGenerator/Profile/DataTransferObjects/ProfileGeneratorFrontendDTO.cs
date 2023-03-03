@@ -1,5 +1,7 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.CodeGeneration.Languages.Angular.TypeScript.Angular15;
 using EntityGenerator.Profile.DataTransferObjects;
+using EntityGenerator.Profile.DataTransferObjects.Enums;
 using System;
 
 namespace EntityGenerator.Profile.DataTransferObject
@@ -13,8 +15,9 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorFrontendDto"/> class.
     /// </summary>
-    public ProfileGeneratorFrontendDto() : base(DataTransferObjects.Enums.CodeGenerationModules.FRONTEND)
+    public ProfileGeneratorFrontendDto() : base(DataTransferObjects.Enums.CodeGenerationModules.FrontendGenerator)
     {
+      Language = Languages.ANGULAR_15_TYPESCRIPT;
     }
 
     /// <summary>

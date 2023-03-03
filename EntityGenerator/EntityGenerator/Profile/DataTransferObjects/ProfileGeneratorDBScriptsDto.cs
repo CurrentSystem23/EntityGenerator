@@ -5,7 +5,7 @@ namespace EntityGenerator.Profile.DataTransferObject
 {
   public class ProfileGeneratorDBScriptsDto : ProfileCodeGenerationBase
   {
-    public ProfileGeneratorDBScriptsDto() : base(CodeGenerationModules.DB_SCRIPTS)
+    public ProfileGeneratorDBScriptsDto() : base(CodeGenerationModules.DBScriptsGenerator)
     {
     }
   }

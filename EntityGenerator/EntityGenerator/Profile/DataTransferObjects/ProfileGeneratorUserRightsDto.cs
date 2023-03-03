@@ -5,7 +5,7 @@ namespace EntityGenerator.Profile.DataTransferObject
 {
   public class ProfileGeneratorUserRightsDto : ProfileCodeGenerationBase
   {
-    public ProfileGeneratorUserRightsDto() : base(CodeGenerationModules.USER_RIGHTS)
+    public ProfileGeneratorUserRightsDto() : base(CodeGenerationModules.UserRightsGenerator)
     {
     }
   }

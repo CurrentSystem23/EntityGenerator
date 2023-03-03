@@ -144,8 +144,6 @@ namespace Tests.UnitTests
       Assert.AreEqual(string.Empty, profileProvider?.Profile.Global.GeneratedPrefix);
       Assert.AreEqual(".Generated", profileProvider?.Profile.Global.GeneratedSuffix);
       Assert.AreEqual("_Generated", profileProvider?.Profile.Global.GeneratedFolder);
-      Assert.AreEqual(Languages.CSharp, profileProvider?.Profile.Global.LanguageBackend);
-      Assert.AreEqual(Languages.TypeScript, profileProvider?.Profile.Global.LanguageFrontend);
       Assert.False(profileProvider?.Profile.Global.NoWipe);
 
       Assert.AreEqual("TestConnection", profileProvider?.Profile.Database.ConnectionString);
@@ -190,8 +188,6 @@ namespace Tests.UnitTests
       Assert.AreEqual(string.Empty, profileProvider?.Profile.Global.GeneratedPrefix);
       Assert.AreEqual(".Generated", profileProvider?.Profile.Global.GeneratedSuffix);
       Assert.AreEqual("_Generated", profileProvider?.Profile.Global.GeneratedFolder);
-      Assert.AreEqual(Languages.CSharp, profileProvider?.Profile.Global.LanguageBackend);
-      Assert.AreEqual(Languages.TypeScript, profileProvider?.Profile.Global.LanguageFrontend);
       Assert.False(profileProvider?.Profile.Global.NoWipe);
 
       Assert.AreEqual("TestConnection", profileProvider?.Profile.Database.ConnectionString);

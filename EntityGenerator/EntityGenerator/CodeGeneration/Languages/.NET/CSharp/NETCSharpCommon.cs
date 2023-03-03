@@ -1,5 +1,5 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces.Modules;
-using EntityGenerator.Core.Models;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -11,42 +11,42 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : ICommonGenerator
   {
-    StringBuilder ICommonGenerator.BuildBaseDTO(ProfileGeneratorDto profile)
+    void ICommonGenerator.BuildBaseDTO(StringBuilder sb, ProfileDto profile)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder ICommonGenerator.BuildConstants(ProfileGeneratorDto profile)
+    void ICommonGenerator.BuildConstants(StringBuilder sb, Database db, ProfileDto profile)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder ICommonGenerator.BuildDatabaseFunctionDTO(ProfileGeneratorDto profile, Schema schema, Function function)
+    void ICommonGenerator.BuildDatabaseFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, Function function)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder ICommonGenerator.BuildDatabaseTableDTO(ProfileGeneratorDto profile, Schema schema, Table table)
+    void ICommonGenerator.BuildDatabaseTableDTO(StringBuilder sb, ProfileDto profile, Schema schema, Table table)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder ICommonGenerator.BuildDatabaseTableValueFunctionDTO(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction)
+    void ICommonGenerator.BuildDatabaseTableValuedFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder ICommonGenerator.BuildDatabaseViewDTO(ProfileGeneratorDto profile, Schema schema, View view)
+    void ICommonGenerator.BuildDatabaseViewDTO(StringBuilder sb, ProfileDto profile, Schema schema, View view)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder ICommonGenerator.BuildSchemaDTO(ProfileGeneratorDto profile)
+    void ICommonGenerator.BuildSchemaDTO(StringBuilder sb, ProfileDto profile)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder ICommonGenerator.BuildTenantBase(ProfileGeneratorDto profile)
+    void ICommonGenerator.BuildTenantBase(StringBuilder sb, ProfileDto profile)
     {
       throw new NotImplementedException();
     }

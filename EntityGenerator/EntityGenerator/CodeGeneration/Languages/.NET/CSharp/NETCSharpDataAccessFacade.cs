@@ -1,6 +1,6 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
-using EntityGenerator.Core.Models;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
@@ -12,92 +12,92 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : IDataAccessFacadeGenerator
   {
-    StringBuilder IDataAccessFacadeGenerator.BuildADOInterface(ProfileGeneratorDto profile, Database db)
+    void IDataAccessFacadeGenerator.BuildADOInterface(StringBuilder sb, ProfileDto profile, Database db)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessFunctionExternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, Function function)
+    void IDataAccessFacadeGenerator.BuildDataAccessFunctionExternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessFunctionExternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessFunctionExternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessFunctionInternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, Function function)
+    void IDataAccessFacadeGenerator.BuildDataAccessFunctionInternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessFunctionInternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, Function function, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessFunctionInternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessTableExternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, Table table)
+    void IDataAccessFacadeGenerator.BuildDataAccessTableExternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessTableExternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessTableExternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessTableInternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, Table table)
+    void IDataAccessFacadeGenerator.BuildDataAccessTableInternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessTableInternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, Table table, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessTableInternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessTableValueFunctionExternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction)
+    void IDataAccessFacadeGenerator.BuildDataAccessTableValuedFunctionExternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessTableValueFunctionExternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessTableValuedFunctionExternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessTableValueFunctionInternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction)
+    void IDataAccessFacadeGenerator.BuildDataAccessTableValuedFunctionInternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessTableValuefunctionInternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, TableValueFunction tableValueFunction, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessTableValuefunctionInternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessViewExternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, View view)
+    void IDataAccessFacadeGenerator.BuildDataAccessViewExternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessViewExternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessViewExternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessViewInternalInterfaceHeader(ProfileGeneratorDto profile, Schema schema, View view)
+    void IDataAccessFacadeGenerator.BuildDataAccessViewInternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildDataAccessViewInternalInterfaceMethod(ProfileGeneratorDto profile, Schema schema, View view, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessViewInternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType)
     {
       throw new NotImplementedException();
     }
 
-    StringBuilder IDataAccessFacadeGenerator.BuildWhereParameterClass(ProfileGeneratorDto profile)
+    void IDataAccessFacadeGenerator.BuildWhereParameterClass(StringBuilder sb, ProfileDto profile)
     {
       throw new NotImplementedException();
     }

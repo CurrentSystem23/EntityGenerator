@@ -1,4 +1,5 @@
-﻿using EntityGenerator.Core.Interfaces;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Core.Interfaces;
 using EntityGenerator.Core.Services;
 using EntityGenerator.DatabaseObjects.DataAccessObjects;
 using EntityGenerator.InformationExtractor.Interfaces;
@@ -15,8 +16,12 @@ namespace EntityGenerator.Initializer
       serviceCollection.AddTransient<MicrosoftSqlServerDao>();
       serviceCollection.AddTransient<IInformationExtractor, EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractor.InformationExtractor>();
       serviceCollection.AddTransient<IInformationExtractorWorker, InformationExtractor.MSSqlServer.Services.InformationExtractor.InformationExtractorWorker>();
-      serviceCollection.AddTransient<ICoreServiceWorker, CoreServiceWorker>();
 
+      serviceCollection.AddTransient<IFileWriterService, EntityGenerator.CodeGeneration.Services.FileWriterService>();
+      serviceCollection.AddTransient<ILanguageProvider, EntityGenerator.CodeGeneration.Languages.LanguageProvider>();
+      serviceCollection.AddTransient<ICodeGenerator, EntityGenerator.CodeGeneration.Services.CodeGenerator>();
+      serviceCollection.AddTransient<ICodeGeneratorWorker, EntityGenerator.CodeGeneration.Services.CodeGeneratorWorker>();
+      serviceCollection.AddTransient<ICoreServiceWorker, CoreServiceWorker>();
     }
   }
 }

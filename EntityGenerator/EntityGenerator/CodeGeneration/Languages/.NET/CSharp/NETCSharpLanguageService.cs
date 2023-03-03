@@ -7,16 +7,17 @@ using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
 using EntityGenerator.CodeGeneration.Languages.NET.CSharp.NET_6;
 using EntityGenerator.CodeGeneration.Services;
-using EntityGenerator.Core.Models;
-using EntityGenerator.DatabaseObjects.DataTransferObjects;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
+using EntityGenerator.Profile.DataTransferObjects.Enums;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public class NETCSharpLanguageService : LanguageService
   {
-    private NETCSharp _language;
-    private NETCSharpFormatterService _formatterService;
+    private readonly NETCSharp _language;
+    private readonly NETCSharpFormatterService _formatterService;
+    private readonly StringBuilder _sb;
 
     public NETCSharpLanguageService(NETCSharp language, NETCSharpFormatterService formatterService)
     {
@@ -26,17 +27,12 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     public NETCSharpLanguageService()
     {
-      _language = new NET6CSharp();
-      _formatterService = new NETCSharpFormatterService();
+      _sb = new();
+      _language = new NET6CSharp(_sb);
+      _formatterService = new NETCSharpFormatterService(_sb);
     }
 
-    public NETCSharpLanguageService(NETCSharp language)
-    {
-      _language = language;
-      _formatterService = new NETCSharpFormatterService();
-    }
-
-    public override void GenerateBusinessLogic(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    public override void GenerateBusinessLogic(Database db, ProfileDto profile, IFileWriterService writerService)
     {
       // TODO Implement
       IBusinessLogicGenerator generator = _language as IBusinessLogicGenerator;
@@ -44,72 +40,71 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       {
         foreach (Table table in schema.Tables)
         {
-          StringBuilder sb = new();
-          generator.BuildTableInterfaceHeader(sb, profile, schema, table);
+          generator.BuildInterfaceHeader(profile, schema);
           foreach (MethodType methodType in Enum.GetValues(typeof(MethodType))) // TODO: limit to types in use!
           {
-            generator.BuildTableInterfaceMethod(sb, profile, schema, table, methodType);
+            generator.BuildTableInterfaceMethod(profile, schema, table, methodType);
 
           }
-          _formatterService.CloseFile(sb);
+          writerService.WriteToFile(profile.Path.BusinessLogicDir, $"{profile.Global.GeneratedPrefix}{table.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
         }
 
         foreach (View view in schema.Views)
         {
           StringBuilder sb = new();
-          generator.BuildViewInterfaceHeader(sb, profile, schema, view);
+          generator.BuildInterfaceHeader(profile, schema);
           foreach (MethodType methodType in Enum.GetValues(typeof(MethodType)))
           {
             generator.BuildViewInterfaceMethod(sb, profile, schema, view, methodType);
           }
-          _formatterService.CloseFile(sb);
+          _formatterService.CloseFile();
         }
 
-        foreach (Function function in schema.Functions.Where(x => x.FunctionType == "InlineFunction")) // TODO: Check string
+        foreach (Function function in schema.FunctionsSqlScalar) // TODO: Check string
         {
           StringBuilder sb = new();
-          generator.BuildFunctionInterfaceHeader(sb, profile, schema, function);
+          generator.BuildInterfaceHeader(profile, schema);
           foreach (MethodType methodType in Enum.GetValues(typeof(MethodType)))
           {
             generator.BuildFunctionInterfaceMethod(sb, profile, schema, function, methodType);
           }
-          _formatterService.CloseFile(sb);
+          _formatterService.CloseFile();
         }
-
-        foreach (TableValueFunction tableValueFunction in schema.Functions.Where(x => x.FunctionType == "TableValueFunction")) // TODO: Check string, Function?
+        /**
+        foreach (TableValuedFunction tableValueFunction in schema.FunctionsSqlTableValued) // TODO: Check string, Function?
         {
           StringBuilder sb = new();
-          generator.BuildTableValueFunctionInterfaceHeader(sb, profile, schema, tableValueFunction);
+          generator.BuildInterfaceHeader(sb, profile, schema, tableValueFunction);
           foreach (MethodType methodType in Enum.GetValues(typeof(MethodType)))
           {
-            generator.BuildTableValueFunctionInterfaceMethod(sb, profile, schema, tableValueFunction, methodType);
+            generator.BuildTableValuedFunctionInterfaceMethod(sb, profile, schema, tableValueFunction, methodType);
           }
           _formatterService.CloseFile(sb);
-        }
+        }*/
       }
     }
 
-    public override void GenerateCommon(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    public override void GenerateCommon(Database db, ProfileDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public override void GenerateCommonPresentation(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    public override void GenerateCommonPresentation(Database db, ProfileDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public override void GenerateDataAccess(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    public override void GenerateDataAccess(Database db, ProfileDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public override void GenerateDataAccessFacade(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    public override void GenerateDataAccessFacade(Database db, ProfileDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }
 
-    public override void GenerateFrontend(Database db, ProfileGeneratorDto profile, IFileWriterService writerService)
+    public override void GenerateFrontend(Database db, ProfileDto profile, IFileWriterService writerService)
     {
       throw new NotImplementedException();
     }

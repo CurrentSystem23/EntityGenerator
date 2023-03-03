@@ -44,19 +44,20 @@ namespace EntityGenerator.Core.Services
     /// For Test only!
     /// </summary>
     /// <param name="profile"></param>
-    public void ExtractData(ProfileDto profile)
+    public Database ExtractData(ProfileDto profile)
     {
       _profile = profile;
       IInformationExtractorWorker informationExtractorWorker = _serviceProvider.GetRequiredService<IInformationExtractorWorker>();
 
       informationExtractorWorker.GetDataCount(profile);
       Database database = informationExtractorWorker.ExtractData(profile);
+      return database;
     }
 
-    public void GenerateCode()
+    public void GenerateCode(Database db)
     {
       _codeGeneratorWorker.LoadProfile(_profile);
-      _codeGeneratorWorker.Generate();
+      _codeGeneratorWorker.Generate(db);
     }
   }
 }
