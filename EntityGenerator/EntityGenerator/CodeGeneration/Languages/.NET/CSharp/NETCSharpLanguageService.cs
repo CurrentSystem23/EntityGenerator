@@ -71,7 +71,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           generator.BuildFunctionInterfaceHeader(sb, profile, schema, function);
           foreach (MethodType methodType in Enum.GetValues(typeof(MethodType)))
           {
-            generator.BuildViewInterfaceMethod(sb, profile, schema, function, methodType);
+            generator.BuildFunctionInterfaceMethod(sb, profile, schema, function, methodType);
           }
           _formatterService.CloseFile(sb);
         }
