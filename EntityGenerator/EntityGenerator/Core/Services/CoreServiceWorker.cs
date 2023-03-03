@@ -1,5 +1,6 @@
-﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.Core.Interfaces;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.InformationExtractor.Interfaces;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
@@ -49,7 +50,7 @@ namespace EntityGenerator.Core.Services
       IInformationExtractorWorker informationExtractorWorker = _serviceProvider.GetRequiredService<IInformationExtractorWorker>();
 
       informationExtractorWorker.GetDataCount(profile);
-      informationExtractorWorker.ExtractData(profile);
+      Database database = informationExtractorWorker.ExtractData(profile);
     }
 
     public void GenerateCode()

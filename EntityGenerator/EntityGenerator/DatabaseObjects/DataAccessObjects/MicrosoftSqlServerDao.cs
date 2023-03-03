@@ -472,7 +472,7 @@ FROM
          CASE o.[xtype]
          WHEN 'U' THEN CAST('Table' AS VARCHAR(100))
          WHEN 'V' THEN CAST('View' AS VARCHAR(100))
-         WHEN 'IF' THEN CAST('In-lined Table Function' AS VARCHAR(100))
+         WHEN 'IF' THEN CAST('In-line Table Function' AS VARCHAR(100))
          END AS [type],
          o.[xtype] as [xtype]
     FROM [{databaseName}].[sys].[sysobjects] o

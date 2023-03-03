@@ -39,7 +39,7 @@ namespace Tests
         new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "ConfigValues", TypeName = "View", XType = "V"},
         new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "DomainType", TypeName = "Table", XType = "U"},
         new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "DomainValue", TypeName = "Table", XType = "U"},
-        new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "GetDomainValue", TypeName = "In-lined Table Function", XType = "IF"},
+        new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "GetDomainValue", TypeName = "In-line Table Function", XType = "IF"},
         new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "NullableTimeStampType", TypeName = "Table", XType = "U"},
         new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "TimeStampType", TypeName = "Table", XType = "U"},
         new TableValueObjectDto { TableId = 1, DatabaseName = "EntityGeneratorTestDatabase", SchemaName = "core",  TableValueObjectName = "User", TypeName = "Table", XType = "U"}

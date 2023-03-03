@@ -45,8 +45,8 @@ namespace EntityGeneratorCLI
 
       serviceCollection.AddSingleton(new EntityGeneratorInitializer(serviceCollection));
       serviceCollection.AddTransient<IDataAccessObject, DataAccessObject>();
-      serviceCollection.AddTransient<IInformationExtractor, EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractor>();
-      serviceCollection.AddTransient<IInformationExtractorWorker, EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractorWorker>();
+      serviceCollection.AddTransient<IInformationExtractor, EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractor.InformationExtractor>();
+      serviceCollection.AddTransient<IInformationExtractorWorker, EntityGenerator.InformationExtractor.MSSqlServer.Services.InformationExtractor.InformationExtractorWorker>();
       serviceCollection.AddTransient<ICoreServiceWorker, CoreServiceWorker>();
 
       return serviceCollection.BuildServiceProvider();
