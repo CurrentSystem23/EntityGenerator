@@ -1,8 +1,9 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EntityGenerator.Core.Models.Enums;
 
 namespace EntityGenerator.InformationExtractor.MSSqlServer.Services.Mapper;
 
@@ -95,12 +96,13 @@ public static partial class CoreMapper
                  w.FunctionName.Equals(functionDto.ObjectName, StringComparison.InvariantCultureIgnoreCase)))
       {
         function.ReturnTable.Add(MapColumn(tableValueFunctionsReturnValueDto));
+        function.ReturnType = DataTypes.TableValue;
       }
     }
   }
 
   /// <summary>
-  /// Maps a <see cref="Column"/> and all subnodes into a <see cref="TableValueFunction"/>.
+  /// Maps a <see cref="Column"/> and all subnodes into a <see cref="TableValuedFunction"/>.
   /// </summary>
   /// <param name="tableValueFunctionsReturnValueDto">The given <see cref="TableValueFunctionsReturnValueDto"/></param>
   /// <returns>A <see cref="Column"/> with the mapped to core column structure.</returns>
@@ -110,7 +112,6 @@ public static partial class CoreMapper
     {
       Name = tableValueFunctionsReturnValueDto.ObjectName,
       Id = tableValueFunctionsReturnValueDto.ObjectId,
-      //ColumnTypeDataType = MapToCoreDataType(MapDatabaseColumnType(InformationExtractor.NormalizeTypeName(tableValueFunctionsReturnValueDto.ColumnTypeDataType)));
       ColumnTypeDataType = MapToCoreDataType(tableValueFunctionsReturnValueDto.ColumnTypeDataType),
       ColumnIsIdentity = tableValueFunctionsReturnValueDto.ColumnIsIdentity,
       ColumnIsNullable = tableValueFunctionsReturnValueDto.ColumnIsNullable,

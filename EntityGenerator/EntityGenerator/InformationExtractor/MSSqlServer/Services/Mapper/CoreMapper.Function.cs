@@ -1,8 +1,9 @@
-﻿using EntityGenerator.Core.Models;
+﻿using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.InformationExtractor.MSSqlServer.Models.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EntityGenerator.Core.Models.Enums;
 
 namespace EntityGenerator.InformationExtractor.MSSqlServer.Services.Mapper;
 
@@ -58,7 +59,7 @@ public static partial class CoreMapper
             break;
           case Models.Enums.DatabaseObjects.P:
             // Stored Procedure
-            schema.FunctionsStoredProcedure.Add(MapFunction(functionDto, tableValueFunctionsReturnValueDtos, extendedColumnPropertyDtos));
+            schema.FunctionsClrTableValued.Add(MapFunction(functionDto, tableValueFunctionsReturnValueDtos, extendedColumnPropertyDtos));
             break;
         }
       }
