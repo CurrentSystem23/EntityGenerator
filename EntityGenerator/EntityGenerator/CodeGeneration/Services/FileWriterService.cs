@@ -27,14 +27,22 @@ namespace EntityGenerator.CodeGeneration.Services
 
       filePath += fileName;
 
-      if (!Directory.Exists(path))
-        Directory.CreateDirectory(path);
+      try
+      {
+        if (!Directory.Exists(path))
+          Directory.CreateDirectory(path);
 
-      if (File.Exists(filePath))
-        File.Delete(filePath);
+        if (File.Exists(filePath))
+          File.Delete(filePath);
 
-      using StreamWriter sw = new StreamWriter(filePath);
-      sw.WriteLine(data);
+        using StreamWriter sw = new StreamWriter(filePath);
+        sw.Write(data);
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine("Error: " + ex.Message);
+        throw;
+      }
     }
   }
 }
