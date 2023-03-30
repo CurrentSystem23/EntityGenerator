@@ -1,9 +1,11 @@
-﻿using EntityGenerator.Profile.DataTransferObject;
+﻿using EntityGenerator.Core.Models.ModelObjects;
+using EntityGenerator.Profile.DataTransferObject;
 
 namespace EntityGenerator.Core.Interfaces
 {
   public interface ICoreServiceWorker
   {
-    void ExtractData(ProfileDto profile);
+    Database ExtractData(ProfileDto profile);
+    void GenerateCode(Database db);
   }
 }

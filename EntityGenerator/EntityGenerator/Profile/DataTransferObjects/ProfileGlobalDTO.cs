@@ -1,4 +1,5 @@
-﻿using EntityGenerator.Profile.SerializingHelper;
+﻿using EntityGenerator.Profile.DataTransferObjects.Enums;
+using EntityGenerator.Profile.SerializingHelper;
 using System;
 using System.Text.Json.Serialization;
 
@@ -36,18 +37,6 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// The folder name for generated files.
     /// </summary>
     public string GeneratedFolder { get; set; } = "_Generated";
-
-    /// <summary>
-    /// The language of the backend.
-    /// </summary>
-    [JsonConverter(typeof(StringNullableEnumConverter<Enums.Languages>))]
-    public Enums.Languages LanguageBackend { get; set; } = Enums.Languages.CSharp;
-
-    /// <summary>
-    /// The language of the frontend.
-    /// </summary>
-    [JsonConverter(typeof(StringNullableEnumConverter<Enums.Languages>))]
-    public Enums.Languages LanguageFrontend { get; set; } = Enums.Languages.TypeScript;
 
     /// <summary>
     /// Flag for clear start.

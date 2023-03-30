@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityGenerator.Profile.DataTransferObjects;
+using System;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -6,12 +7,12 @@ namespace EntityGenerator.Profile.DataTransferObject
   /// Class <see cref="ProfileGeneratorCommonDto"/> models generator settings for the common project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorCommonDto
+  public class ProfileGeneratorCommonDto : ProfileCodeGenerationBase
   {
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorCommonDto"/> class.
     /// </summary>
-    public ProfileGeneratorCommonDto()
+    public ProfileGeneratorCommonDto() : base(Profile.DataTransferObjects.Enums.CodeGenerationModules.CommonGenerator)
     {
     }
 

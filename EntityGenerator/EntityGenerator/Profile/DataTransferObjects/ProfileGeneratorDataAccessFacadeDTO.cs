@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Profile.DataTransferObjects;
+using System;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -6,12 +8,12 @@ namespace EntityGenerator.Profile.DataTransferObject
   /// Class <see cref="ProfileGeneratorDataAccessFacadeDto"/> models generator settings for the data access facade project.
   /// </summary>
   [Serializable]
-  public class ProfileGeneratorDataAccessFacadeDto
+  public class ProfileGeneratorDataAccessFacadeDto : ProfileCodeGenerationBase
   {
     /// <summary>
     /// Constructor for <see cref="ProfileGeneratorDataAccessFacadeDto"/> class.
     /// </summary>
-    public ProfileGeneratorDataAccessFacadeDto()
+    public ProfileGeneratorDataAccessFacadeDto() : base(DataTransferObjects.Enums.CodeGenerationModules.DataAccessFacadeGenerator)
     {
     }
 

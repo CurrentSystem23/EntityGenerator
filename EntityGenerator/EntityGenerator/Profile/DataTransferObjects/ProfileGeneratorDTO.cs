@@ -38,5 +38,20 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// The generator settings for the business logic project.
     /// </summary>
     public ProfileGeneratorDatabaseDto GeneratorDatabase { get; set; }
+
+    /// <summary>
+    /// The generator settings for the data access project.
+    /// </summary>
+    public ProfileGeneratorDataAccessDto GeneratorDataAccess { get; set; }
+
+    /// <summary>
+    /// The generator settings for the data access facade project.
+    /// </summary>
+    public ProfileGeneratorDataAccessFacadeDto GeneratorDataAccessFacade { get; set; }
+    
+    public ProfileGeneratorTestDto GeneratorTest { get; set; }
+    public ProfileGeneratorAPIDto GeneratorAPI { get; set; }
+    public ProfileGeneratorUserRightsDto GeneratorUserRights { get; set; }
+    public ProfileGeneratorDBScriptsDto GeneratorDBScripts { get; set; }
   }
 }

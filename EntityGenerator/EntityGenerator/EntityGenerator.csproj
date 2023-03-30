@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -12,6 +12,24 @@
 
   <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\mib\source\GitHub\EntityGenerator\EntityGenerator\EntityGenerator\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\.NET6\NET6CSharp.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\.NET6\NET6CSharpBusinessLogic.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\.NET6\NET6CSharpCommon.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\Helper\NETCSharpParameterHelper.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharp.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpBusinessLogic.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpCommon.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpCommonPresentation.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpDataAccess.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpDataAccessFacade.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpDataAccessSQL.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpFrontend.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpLanguageService.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpFormatterService.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\NETLanguageBase.cs" />
   </ItemGroup>
 
   <ItemGroup>
