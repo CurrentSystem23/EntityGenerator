@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp.Helper
 {
-  public abstract class NETCSharpParameterHelper : ParameterHelper
+  public abstract class NETCSharpMethodHelper : MethodHelper
   {
   }
 }
