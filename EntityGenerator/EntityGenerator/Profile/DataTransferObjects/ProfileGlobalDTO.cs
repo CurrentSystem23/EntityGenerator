@@ -42,5 +42,10 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// Flag for clear start.
     /// </summary>
     public bool NoWipe { get; set; }
+
+    /// <summary>
+    /// Use GUIDs as indexing method instead of numbers
+    /// </summary>
+    public bool GuidIndexing { get; set; }
   }
 }

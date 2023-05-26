@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
+using EntityGenerator.CodeGeneration.Languages.Helper;
 using EntityGenerator.CodeGeneration.Languages.NET.CSharp.NET_6;
 using EntityGenerator.CodeGeneration.Services;
 using EntityGenerator.Core.Models.ModelObjects;
@@ -40,13 +42,21 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       {
         foreach (Table table in schema.Tables)
         {
+          // Interfaces
           generator.BuildInterfaceHeader(profile, schema);
-          foreach (MethodType methodType in Enum.GetValues(typeof(MethodType))) // TODO: limit to types in use!
+          foreach (MethodType methodType in MethodHelper.GetMethodTypes()) // TODO: limit to types in use!
           {
             generator.BuildTableInterfaceMethod(profile, schema, table, methodType);
-
           }
           writerService.WriteToFile(profile.Path.BusinessLogicDir, $"{profile.Global.GeneratedPrefix}{table.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+
+          // Logic Classes
+          generator.BuildTableClassHeader(profile, schema, table);
+          foreach (MethodType methodType in MethodHelper.GetMethodTypes())
+          {
+            generator.BuildTableClassMethod(profile, schema, table, methodType);
+          }
+          writerService.WriteToFile(profile.Path.BusinessLogicDir, $"{profile.Global.GeneratedPrefix}{table.Name}{profile.Global.GeneratedSuffix}.cs")
         }
 
         foreach (View view in schema.Views)

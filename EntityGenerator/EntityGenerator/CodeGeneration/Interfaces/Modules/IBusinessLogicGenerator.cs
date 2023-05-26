@@ -13,10 +13,7 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
     void BuildTableValuedFunctionInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType);
     void BuildViewInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType);
 
-    void BuildTableClassHeader(ProfileDto profile, Schema schema, Table table);
-    void BuildFunctionClassHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
-    void BuildTableValuedFunctionClassHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction);
-    void BuildViewClassHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view);
+    void BuildClassHeader(ProfileDto profile, Schema schema);
  
     void BuildTableClassMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
     void BuildFunctionClassMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType);
