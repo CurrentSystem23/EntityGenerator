@@ -18,6 +18,7 @@ namespace EntityGenerator.CodeGeneration.Languages
       _sb = sb;
     }
 
+    public string ParameterFormat;
     public abstract string GetDataType(DataTypes type);
   }
 }

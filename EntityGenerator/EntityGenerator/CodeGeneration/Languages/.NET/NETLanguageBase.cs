@@ -9,10 +9,16 @@ namespace EntityGenerator.CodeGeneration.Languages.NET
 {
   public abstract class NETLanguageBase : LanguageBase
   {
-    public NETLanguageBase(StringBuilder sb) : base(sb) { }
+    public NETLanguageBase(StringBuilder sb) : base(sb)
+    {
+      ParameterFormat = "{0} {1}";
+    }
 
-    protected abstract void BuildClassHeader(string className, string baseClass, bool isStatic, bool isPartial, bool isAbstract, AccessType accessModifier);
-    protected abstract void BuildInterfaceHeader(string interfaceName, string baseInterface, bool isPartial, AccessType accessModifier);
+    protected abstract void OpenClass(string className, string baseClass, bool isStatic, bool isPartial, bool isAbstract, AccessType accessModifier);
+    protected abstract void OpenInterface(string interfaceName, string baseInterface, bool isPartial, AccessType accessModifier);
     protected abstract void BuildTraceLogCall(string message, string paramsStr, bool async);
+    protected abstract void OpenMethod(string methodName, string returnType, AccessType accessModifier, bool isStatic);
+    protected abstract void OpenMethod(string fullMethodSignature);
+    protected abstract void CloseMethod();
   }
 }
