@@ -32,12 +32,12 @@ namespace EntityGenerator.CodeGeneration.Languages.Angular.TypeScript
       throw new NotImplementedException();
     }
 
-    void IFrontendGenerator.BuildTableValuedFunctionServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction)
+    void IFrontendGenerator.BuildTableValuedFunctionServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValuedFunction)
     {
       throw new NotImplementedException();
     }
 
-    void IFrontendGenerator.BuildTableValuedFunctionServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType)
+    void IFrontendGenerator.BuildTableValuedFunctionServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType)
     {
       throw new NotImplementedException();
     }

@@ -18,7 +18,7 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 
     void BuildDatabaseTableDTO(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
     void BuildDatabaseFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
-    void BuildDatabaseTableValuedFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction);
+    void BuildDatabaseTableValuedFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValuedFunction);
     void BuildDatabaseViewDTO(StringBuilder sb, ProfileDto profile, Schema schema, View view);
 
   }

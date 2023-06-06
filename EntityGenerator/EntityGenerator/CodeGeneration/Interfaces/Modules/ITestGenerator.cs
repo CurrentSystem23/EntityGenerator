@@ -12,7 +12,7 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
   {
     void BuildTableMock(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
     void BuildFunctionMock(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
-    void BuildTableValuedFunctionMock(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction);
+    void BuildTableValuedFunctionMock(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValuedFunction);
     void BuildViewMock(StringBuilder sb, ProfileDto profile, Schema schema, View view);
   }
 }

@@ -12,12 +12,12 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
   {
     void BuildTableControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
     void BuildFunctionControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
-    void BuildTableValuedFunctionControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValueFunction);
+    void BuildTableValuedFunctionControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValueFunction);
     void BuildViewControllerHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view);
 
     void BuildTableControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType);
     void BuildFunctionControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildTableValueFunctionControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValueFunction, MethodType methodType);
+    void BuildTableValueFunctionControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValueFunction, MethodType methodType);
     void BuildViewControllerMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType);
   }
 }

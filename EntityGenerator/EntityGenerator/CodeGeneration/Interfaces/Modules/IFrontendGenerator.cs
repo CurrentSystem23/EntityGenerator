@@ -12,12 +12,12 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
   {
     void BuildTableServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
     void BuildFunctionServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
-    void BuildTableValuedFunctionServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction);
+    void BuildTableValuedFunctionServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValuedFunction);
     void BuildViewServiceHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view);
 
     void BuildTableServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType);
     void BuildFunctionServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildTableValuedFunctionServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType);
+    void BuildTableValuedFunctionServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
     void BuildViewServiceMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType);
 
   }
