@@ -21,6 +21,12 @@ namespace EntityGenerator.CodeGeneration.Languages.Helper
       return isTable ? daoName : $"{daoName}V";
     }
 
+    public static string GetInternalDaoType(string name, bool isTable)
+    {
+      string daoName = $"{name}InternalDao";
+      return isTable ? daoName : $"{daoName}V";
+    }
+
     public static string GetDtoType(string name, bool isTable, bool isHistDto)
     {
       if (!isTable && isHistDto)

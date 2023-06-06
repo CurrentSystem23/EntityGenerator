@@ -10,28 +10,28 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessFacadeGenerator
   {
-    void BuildWhereParameterClass(StringBuilder sb, ProfileDto profile);
+    void BuildWhereParameterClass(ProfileDto profile);
 
-    void BuildADOInterface(StringBuilder sb, ProfileDto profile, Database db);
+    void BuildADOInterface(ProfileDto profile, Database db);
 
-    void BuildDataAccessTableExternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
-    void BuildDataAccessFunctionExternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
-    void BuildDataAccessTableValuedFunctionExternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction);
-    void BuildDataAccessViewExternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view);
+    void BuildDataAccessTableExternalInterfaceHeader(ProfileDto profile, Schema schema, Table table);
+    void BuildDataAccessFunctionExternalInterfaceHeader(ProfileDto profile, Schema schema, Function function);
+    void BuildDataAccessTableValuedFunctionExternalInterfaceHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
+    void BuildDataAccessViewExternalInterfaceHeader(ProfileDto profile, Schema schema, View view);
 
-    void BuildDataAccessTableExternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildDataAccessFunctionExternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildDataAccessTableValuedFunctionExternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType);
-    void BuildDataAccessViewExternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessTableExternalInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildDataAccessFunctionExternalInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildDataAccessTableValuedFunctionExternalInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
+    void BuildDataAccessViewExternalInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    
+    void BuildDataAccessTableInternalInterfaceHeader(ProfileDto profile, Schema schema, Table table);
+    void BuildDataAccessFunctionInternalInterfaceHeader(ProfileDto profile, Schema schema, Function function);
+    void BuildDataAccessTableValuedFunctionInternalInterfaceHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
+    void BuildDataAccessViewInternalInterfaceHeader(ProfileDto profile, Schema schema, View view);
 
-    void BuildDataAccessTableInternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
-    void BuildDataAccessFunctionInternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
-    void BuildDataAccessTableValuedFunctionInternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction);
-    void BuildDataAccessViewInternalInterfaceHeader(StringBuilder sb, ProfileDto profile, Schema schema, View view);
-
-    void BuildDataAccessTableInternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildDataAccessFunctionInternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildDataAccessTableValuefunctionInternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction, MethodType methodType);
-    void BuildDataAccessViewInternalInterfaceMethod(StringBuilder sb, ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessTableInternalInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildDataAccessFunctionInternalInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildDataAccessTableValuedFunctionInternalInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
+    void BuildDataAccessViewInternalInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
   }
 }
