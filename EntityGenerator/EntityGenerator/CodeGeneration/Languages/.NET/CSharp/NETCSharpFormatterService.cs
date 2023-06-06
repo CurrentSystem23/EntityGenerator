@@ -13,10 +13,12 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
   {
     public int IndentSize { get; set; }
     private readonly StringBuilder _sb;
+    private readonly NETCSharp _language;
 
-    public NETCSharpFormatterService(StringBuilder sb, int indentSize = 2)
+    public NETCSharpFormatterService(StringBuilder sb, NETCSharp language, int indentSize = 2)
     {
       _sb = sb;
+      _language = language;
       IndentSize = indentSize;
     }
 
@@ -36,6 +38,11 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       return outStr;
     }
 
+    public void CloseScope()
+    {
+      _sb.AppendLine("}");
+    }
+
     public void CloseAllScopes()
     {
       int openBrackets = _sb.ToString().Count(x => x == '{');
@@ -43,6 +50,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       {
         _sb.AppendLine("}");
       }
+      _language.ResetScopes();
     }
 
     public void ApplyIndentation()

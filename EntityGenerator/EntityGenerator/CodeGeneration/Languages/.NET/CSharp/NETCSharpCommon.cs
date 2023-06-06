@@ -31,7 +31,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       throw new NotImplementedException();
     }
 
-    void ICommonGenerator.BuildDatabaseTableValuedFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, TableValuedFunction tableValuedFunction)
+    void ICommonGenerator.BuildDatabaseTableValuedFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValuedFunction)
     {
       throw new NotImplementedException();
     }
