@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EntityGenerator.Core.Models.ModelObjects;
 
@@ -48,6 +49,23 @@ public class Schema : BaseModel
   /// Get or set the CLR table valued functions as a <see cref="List&lt;Function&gt;"/>.
   /// </summary>
   public List<Function> FunctionsClrTableValued { get; } = new();
+
+  public List<Function> FunctionsScalar
+  {
+    get => FunctionsClrScalar
+      .Concat(FunctionsClrScalar)
+      .Concat(FunctionsSqlScalar)
+      .ToList();
+  }
+
+  public List<Function> FunctionsTableValued
+  {
+    get => FunctionsClrTableValued
+      .Concat(FunctionsSqlInlineTableValued)
+      .Concat(FunctionsSqlTableValued)
+      .ToList();
+  }
+
 
   /// <summary>
   /// Get or set the user defined table type columns as a <see cref="List&lt;UserDefinedTableTypeColumn&gt;"/>.

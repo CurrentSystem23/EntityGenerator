@@ -22,5 +22,9 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// </summary>
     public bool DataAccessFacade { get; set; }
 
+    /// <summary>
+    /// Flag for generating internal- and external inside the same file.
+    /// </summary>
+    public bool CombinedInterfaces { get; set; }
   }
 }
