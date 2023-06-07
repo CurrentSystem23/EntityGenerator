@@ -14,24 +14,35 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 
     void BuildADOInterface(ProfileDto profile, Database db);
 
-    void BuildDataAccessTableExternalInterfaceHeader(ProfileDto profile, Schema schema, Table table);
-    void BuildDataAccessFunctionExternalInterfaceHeader(ProfileDto profile, Schema schema, Function function);
-    void BuildDataAccessTableValuedFunctionExternalInterfaceHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
-    void BuildDataAccessViewExternalInterfaceHeader(ProfileDto profile, Schema schema, View view);
+    void BuildDataAccessFacadeTableExternalInterfaceHeader(ProfileDto profile, Schema schema, Table table);
+    void BuildDataAccessFacadeFunctionExternalInterfaceHeader(ProfileDto profile, Schema schema, Function function);
+    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
+    void BuildDataAccessFacadeViewExternalInterfaceHeader(ProfileDto profile, Schema schema, View view);
 
-    void BuildDataAccessTableExternalInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildDataAccessFunctionExternalInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildDataAccessTableValuedFunctionExternalInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildDataAccessViewExternalInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessFacadeTableExternalInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildDataAccessFacadeFunctionExternalInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
+    void BuildDataAccessFacadeViewExternalInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
     
-    void BuildDataAccessTableInternalInterfaceHeader(ProfileDto profile, Schema schema, Table table);
-    void BuildDataAccessFunctionInternalInterfaceHeader(ProfileDto profile, Schema schema, Function function);
-    void BuildDataAccessTableValuedFunctionInternalInterfaceHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
-    void BuildDataAccessViewInternalInterfaceHeader(ProfileDto profile, Schema schema, View view);
+    void BuildDataAccessFacadeTableInternalInterfaceHeader(ProfileDto profile, Schema schema, Table table);
+    void BuildDataAccessFacadeFunctionInternalInterfaceHeader(ProfileDto profile, Schema schema, Function function);
+    void BuildDataAccessFacadeTableValuedFunctionInternalInterfaceHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
+    void BuildDataAccessFacadeViewInternalInterfaceHeader(ProfileDto profile, Schema schema, View view);
 
-    void BuildDataAccessTableInternalInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildDataAccessFunctionInternalInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildDataAccessTableValuedFunctionInternalInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildDataAccessViewInternalInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessFacadeTableInternalInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildDataAccessFacadeFunctionInternalInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
+    void BuildDataAccessFacadeViewInternalInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+
+    void BuildDataAccessFacadeTableClassHeader(ProfileDto profile, Schema schema, Table table);
+    void BuildDataAccessFacadeFunctionClassHeader(ProfileDto profile, Schema schema, Function function);
+    void BuildDataAccessFacadeTableValuedFunctionClassHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
+    void BuildDataAccessFacadeViewClassHeader(ProfileDto profile, Schema schema, View view);
+
+    void BuildDataAccessFacadeTableClassMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
+    void BuildDataAccessFacadeFunctionClassMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
+    void BuildDataAccessFacadeTableValuedFunctionClassMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
+    void BuildDataAccessFacadeViewClassMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+
   }
 }
