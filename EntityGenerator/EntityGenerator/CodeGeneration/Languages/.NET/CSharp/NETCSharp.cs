@@ -210,113 +210,120 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       return string.Empty;
     }
 
-    protected override void BuildMethodSignature(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null)
+    protected override List<string> GetMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null)
     {
       string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
+      List<string> signatures = new();
 
       switch (methodType)
       {
         case MethodType.GET:
-          _sb.AppendLine($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{name}[] orderBy);");
-          _sb.AppendLine($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{name}[] orderBy);");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {prefix}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{name}[] orderBy);");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {prefix}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{name}[] orderBy);");
           if (isTable)
           {
-            _sb.AppendLine($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}Get{(async ? "Async" : "")}({(profile.Global.GuidIndexing ? "Guid" : "long")} id);");
-            _sb.AppendLine($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}Get{(async ? "Async" : "")}(Guid globalId);");
+            signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}Get{(async ? "Async" : "")}({(profile.Global.GuidIndexing ? "Guid" : "long")} id);");
+            signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}Get{(async ? "Async" : "")}(Guid globalId);");
           }
           break;
         case MethodType.SAVE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}Save{(async ? "Async" : "")}({dtoName} dto);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Save{(async ? "Async" : "")}({dtoName} dto);");
           break;
         case MethodType.DELETE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}Delete{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
           break;
         case MethodType.MERGE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}Merge{(async ? "Async" : "")}({dtoName} dto);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Merge{(async ? "Async" : "")}({dtoName} dto);");
           break;
         case MethodType.COUNT:
-          _sb.AppendLine($"{(async ? $"Task<long>" : $"long")} {GetFullFunctionPrefix(schema, name)}GetCount{(async ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")});");
+          signatures.Add($"{(async ? $"Task<long>" : $"long")} {prefix}GetCount{(async ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")});");
           break;
         case MethodType.HAS_CHANGED:
-          _sb.AppendLine($"{(async ? "Task<bool>" : "bool")} {GetFullFunctionPrefix(schema, name)}HasChanged{(async ? "Async" : "")}({dtoName} dto);");
+          signatures.Add($"{(async ? "Task<bool>" : "bool")} {prefix}HasChanged{(async ? "Async" : "")}({dtoName} dto);");
           break;
         case MethodType.BUlK_INSERT:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
           break;
         case MethodType.BULK_MERGE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
           break;
         case MethodType.BULK_UPDATE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkUpdate{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkUpdate{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
           break;
         case MethodType.HIST_GET:
-          _sb.AppendLine($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}HistGets{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
-          _sb.AppendLine($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}HistEntryGet{(async ? "Async" : "")}(long histId);");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {prefix}HistGets{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}HistEntryGet{(async ? "Async" : "")}(long histId);");
           break;
         default:
           break;
       }
+
+      return signatures;
     }
 
-    protected override void BuildInternalMethodSignature(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null)
+    protected override List<string> GetInternalMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null, bool useNamespace = false)
     {
       string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
+      string prefix = $"{(useNamespace ? $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}." : "")}{name}";
+      List<string> signatures = new();
 
       switch (methodType)
       {
         case MethodType.GET:
-          _sb.AppendLine($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{name}>")} {name}Gets{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd{(parametersWithTypeStr != "" ? $", {parametersWithTypeStr}" : "")});");
-          _sb.AppendLine($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{name}>")} {name}Gets{(async ? "Async" : "")}(WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{name}[] orderBy);");
-          _sb.AppendLine($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{name}>")} {name}Gets{(async ? "Async" : "")}(WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{name}[] orderBy);");
-          _sb.AppendLine($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{name}>")} {name}Gets{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{name}[] orderBy);");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{name}>")} {prefix}Gets{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd{(parametersWithTypeStr != "" ? $", {parametersWithTypeStr}" : "")});");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{name}>")} {prefix}Gets{(async ? "Async" : "")}(WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{name}[] orderBy);");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{name}>")} {prefix}Gets{(async ? "Async" : "")}(WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{name}[] orderBy);");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{name}>")} {prefix}Gets{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{name}[] orderBy);");
 
           if (isTable)
           {
-            _sb.AppendLine($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {name}Get{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {(profile.Global.GuidIndexing ? "Guid" : "long")} id);");
-            _sb.AppendLine($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {name}Get{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, Guid globalId);");
+            signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}Get{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {(profile.Global.GuidIndexing ? "Guid" : "long")} id);");
+            signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}Get{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, Guid globalId);");
           }
           break;
         case MethodType.SAVE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {name}Save{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {name}Dto dto);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Save{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {name}Dto dto);");
           break;
         case MethodType.DELETE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {name}Delete{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {(profile.Global.GuidIndexing ? "Guid" : "long")} id);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {name}Delete{(async ? "Async" : "")}(WhereClause whereClause);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {name}Delete{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, WhereClause whereClause);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {(profile.Global.GuidIndexing ? "Guid" : "long")} id);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(WhereClause whereClause);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, WhereClause whereClause);");
           break;
         case MethodType.MERGE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {name}Merge{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {name}Dto dto);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Merge{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {name}Dto dto);");
           break;
         case MethodType.COUNT:
-          _sb.AppendLine($"{(async ? $"Task<long>" : $"long")} {name}GetCount{(async ? "Async" : string.Empty)}(WhereClause whereClause{(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")});");
+          signatures.Add($"{(async ? $"Task<long>" : $"long")} {prefix}GetCount{(async ? "Async" : string.Empty)}(WhereClause whereClause{(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")});");
           break;
         case MethodType.HAS_CHANGED:
-          _sb.AppendLine($"{(async ? "Task<bool>" : "bool")} {name}HasChanged{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {name}Dto dto);");
+          signatures.Add($"{(async ? "Task<bool>" : "bool")} {prefix}HasChanged{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {name}Dto dto);");
           break;
         case MethodType.BUlK_INSERT:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
           break;
         case MethodType.BULK_MERGE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
           break;
         case MethodType.BULK_UPDATE:
-          _sb.AppendLine($"{(async ? "Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkUpdate{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkUpdate{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
           break;
         case MethodType.HIST_GET:
-          _sb.AppendLine($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}HistGets{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
-          _sb.AppendLine($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}HistEntryGet{(async ? "Async" : "")}(long histId);");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {prefix}HistGets{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}HistEntryGet{(async ? "Async" : "")}(long histId);");
           break;
         default:
           break;
       }
+
+      return signatures;
     }
   }
 }

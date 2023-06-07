@@ -198,7 +198,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void IBusinessLogicGenerator.BuildScalarFunctionInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType)
     {
-      BuildMethodSignature(profile, schema, methodType, function.Name, false, true, ParameterHelper.GetParametersString(function.Parameters), ParameterHelper.GetParametersStringWithType(function.Parameters, this));
+      BuildMethodSignature(profile, schema, methodType, function.Name, false, true, GetFullFunctionPrefix(schema, function.Name), ParameterHelper.GetParametersString(function.Parameters), ParameterHelper.GetParametersStringWithType(function.Parameters, this));
     }
 
     void IBusinessLogicGenerator.BuildTableClassMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType)
@@ -208,7 +208,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void IBusinessLogicGenerator.BuildTableInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType)
     {
-      BuildMethodSignature(profile, schema, methodType, table.Name, true, true);
+      BuildMethodSignature(profile, schema, methodType, table.Name, true, true, GetFullFunctionPrefix(schema, table.Name));
     }
 
     void IBusinessLogicGenerator.BuildTableValuedFunctionClassMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType)
@@ -218,7 +218,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void IBusinessLogicGenerator.BuildTableValuedFunctionInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType)
     {
-      BuildMethodSignature(profile, schema, methodType, tableValuedFunction.Name, false, true, ParameterHelper.GetParametersString(tableValuedFunction.Parameters), ParameterHelper.GetParametersStringWithType(tableValuedFunction.Parameters, this));
+      BuildMethodSignature(profile, schema, methodType, tableValuedFunction.Name, false, true, GetFullFunctionPrefix(schema, tableValuedFunction.Name), ParameterHelper.GetParametersString(tableValuedFunction.Parameters), ParameterHelper.GetParametersStringWithType(tableValuedFunction.Parameters, this));
     }
 
     void IBusinessLogicGenerator.BuildViewClassMethod(ProfileDto profile, Schema schema, View view, MethodType methodType)
@@ -228,7 +228,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void IBusinessLogicGenerator.BuildViewInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType)
     {
-      BuildMethodSignature(profile, schema, methodType, view.Name, false, true);
+      BuildMethodSignature(profile, schema, methodType, view.Name, false, true, GetFullFunctionPrefix(schema, view.Name));
     }
   }
 }

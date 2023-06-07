@@ -26,8 +26,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET
     protected abstract void CloseNameSpace();
     protected abstract void CloseStructure();
     protected abstract void CloseMethod();
-    protected abstract void BuildMethodSignature(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null);
-    protected abstract void BuildInternalMethodSignature(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null);
-
+    protected abstract List<string> GetMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null);
+    protected abstract List<string> GetInternalMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null, bool useNamespace = false);
   }
 }
