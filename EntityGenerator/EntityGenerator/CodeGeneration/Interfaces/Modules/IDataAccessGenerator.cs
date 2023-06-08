@@ -10,7 +10,7 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessGenerator
   {
-    void BuildDependencyInjections(ProfileDto profile);
+    void BuildDependencyInjections(ProfileDto profile, Database db);
     void BuildBaseFile(ProfileDto profile);
     
     void BuildTableDAOHeader(ProfileDto profile, Schema schema, Table table);

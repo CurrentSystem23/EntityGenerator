@@ -1,4 +1,5 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Core.Interfaces;
 using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile;
 using EntityGenerator.Profile.DataTransferObject;
@@ -17,6 +18,11 @@ namespace EntityGenerator.CodeGeneration.Services
   public class CodeGeneratorWorker : ICodeGeneratorWorker
   {
     ProfileDto _profile;
+
+    /// <summary>
+    /// Get or set the output provider.
+    /// </summary>
+    public IOutputProvider OutputProvider { get; set; }
 
     /// <summary>
     /// The writer service.
@@ -46,27 +52,9 @@ namespace EntityGenerator.CodeGeneration.Services
       _codeGenerator = codeGenerator;
     }
 
-    private List<ProfileCodeGenerationBase> GetActiveModulesList(ProfileGeneratorDto generatorProfile)
-    {
-      // Iterate over all generator profile property objects and filter by null value.
-      return generatorProfile.GetType().GetProperties()
-        .Where((prop) => (prop.PropertyType.BaseType == typeof(ProfileCodeGenerationBase)) && prop.GetValue(generatorProfile) != null)
-        .ToList().ConvertAll(prop => (ProfileCodeGenerationBase)prop.GetValue(generatorProfile));
-    }
-
-    private dynamic ConvertToGeneratorProfile(ProfileCodeGenerationBase generator)
-    {
-      return Convert.ChangeType(generator, Type.GetType(generator.GetType().Name));
-    }
-
-    private MethodInfo GetGeneratorFunctionHandle(ProfileCodeGenerationBase generator)
-    {
-      string modName = generator.ModuleName.ToString();
-      return typeof(ICodeGenerator).GetMethod($"Execute{generator.ModuleName.ToString()}");
-    }
-
     public void Generate(Database db)
     {
+      InitializeOutputProvider(db);
       List<ProfileCodeGenerationBase> activeGenerators = GetActiveModulesList(_profile.Generator);
 
       foreach (ProfileCodeGenerationBase generator in activeGenerators)
@@ -88,6 +76,48 @@ namespace EntityGenerator.CodeGeneration.Services
       }
 
       _profile = profile;
+    }
+
+    private List<ProfileCodeGenerationBase> GetActiveModulesList(ProfileGeneratorDto generatorProfile)
+    {
+      // Iterate over all generator profile property objects and filter by null value.
+      return generatorProfile.GetType().GetProperties()
+        .Where((prop) => (prop.PropertyType.BaseType == typeof(ProfileCodeGenerationBase)) && prop.GetValue(generatorProfile) != null)
+        .ToList().ConvertAll(prop => (ProfileCodeGenerationBase)prop.GetValue(generatorProfile));
+    }
+
+    private dynamic ConvertToGeneratorProfile(ProfileCodeGenerationBase generator)
+    {
+      return Convert.ChangeType(generator, Type.GetType(generator.GetType().Name));
+    }
+
+    private MethodInfo GetGeneratorFunctionHandle(ProfileCodeGenerationBase generator)
+    {
+      string modName = generator.ModuleName.ToString();
+      return typeof(ICodeGenerator).GetMethod($"Execute{generator.ModuleName.ToString()}");
+    }
+
+    /// <summary>
+    /// Initialize the output provider.
+    /// </summary>
+    private void InitializeOutputProvider(Database db)
+    {
+      if (OutputProvider != null)
+      {
+        OutputProvider.Reset();
+        OutputProvider.OutputTitle = "Generating Code: ";
+        OutputProvider.MaxCount = CountDbItems(db);
+      }
+    }
+
+    private long CountDbItems(Database db)
+    {
+      long count = 0;
+      foreach (Schema schema in db.Schemas)
+      {
+        count += schema.Views.Count + schema.Tables.Count + schema.FunctionsTableValued.Count + schema.FunctionsScalar.Count + schema.FunctionsAggregate.Count;
+      }
+      return count;
     }
   }
 }
