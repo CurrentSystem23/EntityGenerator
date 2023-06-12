@@ -37,5 +37,16 @@ namespace EntityGenerator.CodeGeneration.Languages.Helper
 
       return outStr;
     }
+
+    public static string GetParametersSqlString(List<Column> parameters)
+    {
+      StringBuilder outStr = new();
+      foreach (Column param in parameters)
+      {
+        outStr.AppendJoin(", ", parameters.Select(param => { return $@"@{param.Name}"; }));
+      }
+
+      return outStr.ToString();
+    }
   }
 }

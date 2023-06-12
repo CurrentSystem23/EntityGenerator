@@ -21,6 +21,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET
     protected abstract void OpenInterface(string interfaceName, string baseInterface, bool isPartial, AccessType accessModifier);
     //protected abstract void OpenInterface(string interfaceName, StructureOptions options);
     protected abstract void BuildTraceLogCall(string message, string paramsStr, bool async);
+    protected abstract void BuildErrorLogCall(string message, string paramsStr, bool async);
     protected abstract void OpenMethod(string methodName, string returnType, AccessType accessModifier, bool isStatic);
     protected abstract void OpenMethod(string fullMethodSignature);
     protected abstract void CloseNameSpace();

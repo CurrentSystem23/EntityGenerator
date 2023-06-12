@@ -142,6 +142,11 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       throw new NotImplementedException();
     }
 
+    protected override void BuildErrorLogCall(string message, string paramsStr, bool async)
+    {
+      throw new NotImplementedException();
+    }
+
     public override string GetDataType(DataTypes type)
     {
       switch (type)
