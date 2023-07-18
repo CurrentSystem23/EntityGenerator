@@ -128,11 +128,12 @@ public static partial class CoreMapper
     string[] parameters = parameter.Trim().Split(" ");
     parameters[0] = parameters[0].Substring(1).Trim();
     parameters[1] = parameters[1].Trim();
+    Models.Enums.DataTypes sqlType = MapDatabaseColumnType(InformationExtractor.InformationExtractor.NormalizeTypeName(parameters[1]));
+
     Column column = new()
     {
       Name = parameters[0],
       Id = -1,
-      ColumnTypeDataType = MapToCoreDataType(MapDatabaseColumnType(InformationExtractor.InformationExtractor.NormalizeTypeName(parameters[1]))),
       ColumnIsIdentity = false,
       ColumnIsNullable = true,
       ColumnDefaultDefinition = null,
@@ -144,6 +145,8 @@ public static partial class CoreMapper
       ColumnNumericScale = null,
       ColumnDatetimePrecision = null,
     };
+
+    column.SetColumnTypeData(MapToCoreDataType(sqlType), sqlType);
 
     return column;
   }

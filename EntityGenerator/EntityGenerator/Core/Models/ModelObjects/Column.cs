@@ -1,6 +1,9 @@
-﻿using EntityGenerator.Core.Models.Enums;
+﻿using EntityGenerator.Core.Attributes;
+using EntityGenerator.Core.Models.Enums;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace EntityGenerator.Core.Models.ModelObjects;
 
@@ -13,7 +16,8 @@ public class Column : BaseModel
   /// <summary>
   /// Get or set the data type.
   /// </summary>
-  public DataTypes ColumnTypeDataType { get; set; }
+  [DbType]
+  public DataTypes ColumnTypeDataType { get; private set; }
   
   /// <summary>
   /// Get or set the identity flag.
@@ -94,5 +98,30 @@ public class Column : BaseModel
   /// Get or set the default constraints.
   /// </summary>
   public List<Constraint> ConstraintsDefault { get; } = new();
+
+  /// <summary>
+  /// Sets the column type data and its attribute to corresponding original SQL type.
+  /// </summary>
+  /// <param name="dataType"></param>
+  /// <param name="sqlType"></param>
+  public void SetColumnTypeData(DataTypes dataType, InformationExtractor.MSSqlServer.Models.Enums.DataTypes sqlType)
+  {
+    this.ColumnTypeDataType = dataType;
+
+    PropertyInfo propertyInfo = typeof(Column).GetProperty(nameof(ColumnTypeDataType));
+    DbType dbTypeAttribute = (DbType)propertyInfo.GetCustomAttribute(typeof(DbType));
+    if (dbTypeAttribute != null)
+    {
+      dbTypeAttribute.Type = sqlType;
+    }
+  }
+
+  public InformationExtractor.MSSqlServer.Models.Enums.DataTypes GetColumnSqlType()
+  {
+    PropertyInfo propertyInfo = typeof(DbType).GetProperty(nameof(ColumnTypeDataType));
+    DbType attribute = (DbType)propertyInfo.GetCustomAttribute(typeof(DbType));
+
+    return attribute.Type;
+  }
 }
 

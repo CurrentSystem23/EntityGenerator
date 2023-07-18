@@ -56,7 +56,6 @@ public static partial class CoreMapper
     {
       Name = columnDto.ObjectName,
       Id = columnDto.ObjectId,
-      ColumnTypeDataType = MapToCoreDataType(columnDto.ColumnTypeDataType),
       ColumnIsIdentity = columnDto.ColumnIsIdentity,
       ColumnIsNullable = columnDto.ColumnIsNullable,
       ColumnDefaultDefinition = columnDto.ColumnDefaultDefinition,
@@ -68,6 +67,8 @@ public static partial class CoreMapper
       ColumnNumericScale = columnDto.ColumnNumericScale,
       ColumnDatetimePrecision = columnDto.ColumnDatetimePrecision,
     };
+
+    column.SetColumnTypeData(MapToCoreDataType(columnDto.ColumnTypeDataType), columnDto.ColumnTypeDataType);
 
     MapExtendedProperty(column, databaseObjectDto, extendedColumnPropertyDtos);
     MapConstraint(column, databaseObjectDto, constraintDtos);
