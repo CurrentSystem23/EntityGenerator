@@ -19,6 +19,5 @@ namespace EntityGenerator.CodeGeneration.Languages
     }
 
     public string ParameterFormat;
-    public abstract string GetDataType(DataTypes type);
   }
 }

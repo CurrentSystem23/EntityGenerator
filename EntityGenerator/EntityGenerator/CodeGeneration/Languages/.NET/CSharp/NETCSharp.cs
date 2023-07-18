@@ -25,7 +25,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     private bool openStructure = false;
     private bool openNameSpace = false;
 
-    public NETCSharp(StringBuilder sb) : base(sb)
+    public NETCSharp(StringBuilder sb, DatabaseLanguageBase databaseLanguage) : base(sb, databaseLanguage)
     {
       CloseExistingScope = true;
     }
@@ -72,17 +72,17 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     }
 
 
-    protected override void OpenClass(string className, string baseClass = null, bool isStatic = false, bool isPartial = false, bool isAbstract = false, AccessType accessModifier = AccessType.PUBLIC)
+    public override void OpenClass(string className, string baseClass = null, bool isStatic = false, bool isPartial = false, bool isAbstract = false, AccessType accessModifier = AccessType.PUBLIC)
     {
       OpenStructure(true, className, baseClass, isStatic: isStatic, isPartial: isPartial, accessModifier: accessModifier);
     }
 
-    protected override void OpenInterface(string interfaceName, string baseInterface = null, bool isPartial = false, AccessType accessModifier = AccessType.PUBLIC)
+    public override void OpenInterface(string interfaceName, string baseInterface = null, bool isPartial = false, AccessType accessModifier = AccessType.PUBLIC)
     {
       OpenStructure(true, interfaceName, baseInterface, isPartial: isPartial, accessModifier: accessModifier);
     }
 
-    protected override void OpenMethod(string methodName, string returnType = "void", AccessType accessModifier = AccessType.PUBLIC, bool isStatic = false)
+    public override void OpenMethod(string methodName, string returnType = "void", AccessType accessModifier = AccessType.PUBLIC, bool isStatic = false)
     {
       if (!CloseExistingScope && openMethod)
       {
@@ -99,7 +99,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       openMethod = true;
     }
 
-    protected override void OpenMethod(string fullMethodSignature)
+    public override void OpenMethod(string fullMethodSignature)
     {
       _sb.AppendLine(fullMethodSignature);
       _sb.AppendLine("{");
@@ -116,7 +116,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       openNameSpace = false;
     }
 
-    protected override void CloseStructure()
+    public override void CloseStructure()
     {
       if (!openStructure)
       {
@@ -127,7 +127,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       openStructure = false;
     }
 
-    protected override void CloseMethod()
+    public override void CloseMethod()
     {
       if (!openMethod)
       {
@@ -137,12 +137,12 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       openMethod = false;
     }
 
-    protected override void BuildTraceLogCall(string message, string paramsStr, bool async)
+    public override void BuildTraceLogCall(string message, string paramsStr, bool async)
     {
       throw new NotImplementedException();
     }
 
-    protected override void BuildErrorLogCall(string message, string paramsStr, bool async)
+    public override void BuildErrorLogCall(string message, string paramsStr, bool async)
     {
       throw new NotImplementedException();
     }
@@ -215,7 +215,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       return string.Empty;
     }
 
-    protected override List<string> GetMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null)
+    public override List<string> GetMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null)
     {
       string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
       List<string> signatures = new();
@@ -270,7 +270,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       return signatures;
     }
 
-    protected override List<string> GetInternalMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null, bool useNamespace = false)
+    public override List<string> GetInternalMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null, bool useNamespace = false)
     {
       string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
       string prefix = $"{(useNamespace ? $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}." : "")}{name}";

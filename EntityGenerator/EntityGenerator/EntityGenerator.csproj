@@ -36,4 +36,8 @@
     <None Include="C:\Users\mib\source\GitHub\EntityGenerator\EntityGenerator\EntityGenerator\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CodeGeneration\Languages\SQL\OracleDB\" />
+  </ItemGroup>
+
 </Project>

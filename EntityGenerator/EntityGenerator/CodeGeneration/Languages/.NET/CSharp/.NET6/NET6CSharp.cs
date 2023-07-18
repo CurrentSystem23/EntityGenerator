@@ -9,6 +9,6 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp.NET_6
 {
   public partial class NET6CSharp : NETCSharp
   {
-    public NET6CSharp(StringBuilder sb) : base(sb) { }
+    public NET6CSharp(StringBuilder sb, DatabaseLanguageBase databaseLanguage) : base(sb, databaseLanguage) { }
   }
 }
