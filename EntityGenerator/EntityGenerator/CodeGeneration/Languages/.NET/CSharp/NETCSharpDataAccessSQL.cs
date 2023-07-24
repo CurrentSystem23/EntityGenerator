@@ -1,10 +1,12 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
 using EntityGenerator.CodeGeneration.Languages.Helper;
+using EntityGenerator.CodeGeneration.Languages.SQL;
 using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using EntityGenerator.Profile.DataTransferObject.Enums;
+using EntityGenerator.Profile.DataTransferObjects.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -211,8 +213,12 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       _sb.AppendLine("_provider = provider;");
     }
 
-    protected void BuildDataAccessSQLClassMethodBody(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, List<string> externalMethodSignatures, List<string> internalMethodSignatures, List<Column> parameters)
+    protected void BuildDataAccessSQLClassMethodBody(ProfileDto profile, Schema schema, MethodType methodType, string name, 
+      bool isTable, bool async, List<string> externalMethodSignatures, List<string> internalMethodSignatures, 
+      List<Column> parameters, List<Column> columns)
     {
+      SQLLanguageBase _databaseLanguage = this._databaseLanguage as SQLLanguageBase;
+
       string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}";
       string parametersStr = ParameterHelper.GetParametersString(parameters);
@@ -222,141 +228,14 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       switch (methodType)
       {
         case MethodType.GET:
-          // From View
-          // GetPrepareCommand
-          OpenMethod(@$"GetPrepareCommand({(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}SqlCommand cmd, string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
-          _sb.AppendLine("      cmd.Parameters.Clear();");
-          _sb.AppendLine("      cmd.CommandType = CommandType.Text;");
-          if (ti.TableType == TableType.FUNCTIONVIEW)
-          {
-            foreach (Column param in parameters)
-            {
-              if (param.ColumnTypeDataType == DataTypes.TableValue)
-              {
-                _sb.AppendLine($@"cmd.Parameters.Add(GetCustomTypeSqlParameter(""@{param.Name}"", ""core.{param.DataTypeTSql}"", {param.Name}.Cast<object>().ToArray(), typeof({param.DataType.Remove(param.DataType.Length - 2)})));");
-              }
-              else
-              {
-                _sb.AppendLine($@"cmd.Parameters.Add(""@{param.Name}"", SqlDbType.{param.DataTypeTSqlCamelCase}).Value = {param.Name} != null ? {param.Name} : DBNull.Value;");
-              }
-            }
-          }
-          methodBuilder.AppendLine("if (pageNum != null && pageSize != null && orderBy?.Length > 0)");
-            .AppendLine("{");
-            .AppendLine(@"cmd.Parameters.Add(""@pageNum"", SqlDbType.Int).Value = pageNum;");
-            .AppendLine(@"cmd.Parameters.Add(""@pageSize"", SqlDbType.Int).Value = pageSize;");
-            .AppendLine("}");
-            .AppendLine($"cmd.CommandText = GetSqlStatement({(parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty)}where, distinct, pageNum, pageSize, orderBy);");
-
-          methodBuilder = classBuilder.BuildMethod(@$"GetPrepareCommand({(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}SqlCommand cmd, WhereClause whereClause, bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{ti.TableName}[] orderBy)", "void", "private");
-            .AppendLine("      cmd.Parameters.Clear();");
-            .AppendLine("      cmd.CommandType = CommandType.Text;");
-            .AppendLine("      foreach (IWhereParameter whereParameter in whereClause.Parameters)");
-            .AppendLine("      {");
-            .AppendLine("        cmd.Parameters.Add(whereParameter.ParameterName, whereParameter.ParameterType).Value = whereParameter.ParameterValue;");
-            .AppendLine("      }");
-          if (ti.TableType == TableType.FUNCTIONVIEW)
-          {
-            foreach (var param in ((FunctionViewInformation)ti).Parameters)
-            {
-              if (param.IsCustomType)
-              {
-                methodBuilder.AppendLine($@"cmd.Parameters.Add(GetCustomTypeSqlParameter(""@{param.Name}"", ""core.{param.DataTypeTSql}"", {param.Name}.Cast<object>().ToArray(), typeof({param.DataType.Remove(param.DataType.Length - 2)})));");
-              }
-              else
-              {
-                methodBuilder.AppendLine($@"cmd.Parameters.Add(""@{param.Name}"", SqlDbType.{param.DataTypeTSqlCamelCase}).Value = {param.Name} != null ? {param.Name} : DBNull.Value;");
-              }
-            }
-          }
-          methodBuilder.AppendLine("if (pageNum != null && pageSize != null && orderBy?.Length > 0)");
-            .AppendLine("{");
-            .AppendLine(@"cmd.Parameters.Add(""@pageNum"", SqlDbType.Int).Value = pageNum;");
-            .AppendLine(@"cmd.Parameters.Add(""@pageSize"", SqlDbType.Int).Value = pageSize;");
-            .AppendLine("}");
-            .AppendLine($"cmd.CommandText = GetSqlStatement({(parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty)}whereClause.Where, distinct, pageNum, pageSize, orderBy);");
-
-          // GetSqlStatement
-          methodBuilder = classBuilder.BuildMethod(@$"GetSqlStatement({(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{ti.TableName}[] orderBy)", "string", "private");
-            .AppendLine(@"      string sql =  $@""");
-            .AppendLine(@"SELECT {(distinct ? ""DISTINCT "": """")}");
-
-          var isFirst = true;
-          foreach (var ci in ti.Columns)
-          {
-            methodBuilder.AppendLine($"      {(isFirst ? " " : ",")}pv.[{ci.ColumnName}]");
-            isFirst = false;
-          }
-
-          methodBuilder.AppendLine($"  FROM [{ti.TableSchema}].[{ti.TableName}]{(ti.TableType == TableType.FUNCTIONVIEW ? $"({parametersAsSqlStr})" : " AS")} pv");
-          methodBuilder.AppendLine(@""";");
-          methodBuilder.AppendLine(@"      sql += where;");
-          methodBuilder.AppendLine("sql += GetOrderBy(orderBy);");
-          methodBuilder.AppendLine("sql += GetPagination(pageNum, pageSize, orderBy);");
-          methodBuilder.AppendLine("      return sql;");
-
-          classBuilder.BuildMethod($@"GetCustomTypeSqlParameter(string parameterName, string typeName, object[] value, Type type)", "SqlParameter", "private");
-            .AppendLine("SqlParameter param = new SqlParameter();");
-            .AppendLine("param.ParameterName = parameterName;");
-            .AppendLine("param.SqlDbType = SqlDbType.Structured;");
-            .AppendLine(@"param.TypeName = typeName;");
-            .AppendLine();
-            .AppendLine("DataTable dataTable = new DataTable();");
-            .AppendLine(@"dataTable.Columns.Add(""val"", type);");
-            .AppendLine("if (value != null && value.Length > 0)");
-            .AppendLine("{");
-            .AppendLine("foreach (var item in value)");
-            .AppendLine("{");
-            .AppendLine("dataTable.Rows.Add(item);");
-            .AppendLine("}");
-            .AppendLine("}");
-            .AppendLine("param.Value = dataTable;");
-            .AppendLine("return param;");
+          _databaseLanguage.BuildPrepareCommand(profile, schema, name, isTable, async, parameters);
+          _databaseLanguage.BuildGetSqlStatement(profile, schema, name, isTable, parameters, columns);
 
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"return{(async ? " await" : "")} {name}Gets{(async ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
 
           OpenMethod(externalMethodSignatures.ElementAt(1));
           _sb.AppendLine($"return{(async ? " await" : "")} {name}Gets{(async ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
-
-          OpenMethod(internalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"return{(async ? " await" : "")} {name}Gets{(async ? "Async" : "")}(whereClause, distinct, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
-
-          OpenMethod(internalMethodSignatures.ElementAt(1));
-          _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
-          _sb.AppendLine("{");
-          _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
-          _sb.AppendLine("{");
-          _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-          _sb.AppendLine($"var ret = {(async ? "await " : "")}{name}Gets{(async ? "Async" : "")}(con, cmd, whereClause, distinct, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
-          _sb.AppendLine("con.Close();");
-          _sb.AppendLine("return ret;");
-          _sb.AppendLine("}");
-          _sb.AppendLine("}");
-
-          OpenMethod(internalMethodSignatures.ElementAt(2));
-          _sb.AppendLine($"return {(async ? "await " : "")}{name}Gets{(async ? "Async" : "")}(con, cmd, new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null){(async ? ".ConfigureAwait(false)" : "")};");
-
-          OpenMethod(internalMethodSignatures.ElementAt(3));
-          _sb.AppendLine($"ICollection<{dtoName}> dtos = new List<{dtoName}>();");
-          _sb.AppendLine("try");
-          _sb.AppendLine("{");
-          _sb.AppendLine($"GetPrepareCommand({(parametersStr != "" ? $"{parametersStr}, " : "")}cmd, whereClause, {(isTable ? " null," : "")} distinct, pageNum, pageSize, orderBy);");
-          _sb.AppendLine($"using (SqlDataReader reader = {(async ? "await " : "")}cmd.ExecuteReader{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")})");
-          _sb.AppendLine("{");
-          _sb.AppendLine($"while ({(async ? "await " : "")}reader.Read{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")})");
-          _sb.AppendLine("{");
-          _sb.AppendLine("dtos.Add(GetRead(reader));");
-          _sb.AppendLine("}");
-          _sb.AppendLine("reader.Close();");
-          _sb.AppendLine("}");
-          _sb.AppendLine("}");
-          _sb.AppendLine("catch (Exception ex)");
-          _sb.AppendLine("{");
-          BuildErrorLogCall($"{{nameof({name}{(isTable ? "Dao" : "DaoV")})}}.{{nameof({name}Gets{(async ? "Async" : "")})}}", null, async);
-          _sb.AppendLine("throw;");
-          _sb.AppendLine("}");
-          _sb.AppendLine("return dtos;");
 
           if (isTable)
           {
@@ -373,28 +252,6 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
             _sb.AppendLine("}");
             _sb.AppendLine("}");
 
-            OpenMethod(internalMethodSignatures.ElementAt(4));
-            _sb.AppendLine($"{name}Dto dto = null;");
-            _sb.AppendLine("try");
-            _sb.AppendLine("{");
-            _sb.AppendLine("GetPrepareCommand(cmd, id);");
-            _sb.AppendLine($"using (SqlDataReader reader = {(async ? "await " : "")}cmd.ExecuteReader{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")})");
-            _sb.AppendLine("{");
-            _sb.AppendLine($"while ({(async ? "await " : "")}reader.Read{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")})");
-            _sb.AppendLine("{");
-            _sb.AppendLine("dto = GetRead(reader);");
-            _sb.AppendLine("break;");
-            _sb.AppendLine("}");
-            _sb.AppendLine("reader.Close();");
-            _sb.AppendLine("}");
-            _sb.AppendLine("}");
-            _sb.AppendLine("catch (Exception ex)");
-            _sb.AppendLine("{");
-            BuildErrorLogCall($"{{nameof({name}Dao)}}.{{nameof({name}Get{(async ? "Async" : "")})}}", null, async);
-            _sb.AppendLine("throw;");
-            _sb.AppendLine("}");
-            _sb.AppendLine("return dto;");
-
             // Get By GUID
             OpenMethod(externalMethodSignatures.ElementAt(3));
             _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
@@ -407,112 +264,46 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
             _sb.AppendLine("return ret;");
             _sb.AppendLine("}");
             _sb.AppendLine("}");
-
-            OpenMethod(internalMethodSignatures.ElementAt(5));
-            _sb.AppendLine($"{name}Dto dto = null;");
-            _sb.AppendLine("try");
-            _sb.AppendLine("{");
-            _sb.AppendLine("GetPrepareCommand(cmd, globalId);");
-            _sb.AppendLine($"using (SqlDataReader reader = {(async ? "await " : "")}cmd.ExecuteReader{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")})");
-            _sb.AppendLine("{");
-            _sb.AppendLine($"while ({(async ? "await " : "")}reader.Read{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")})");
-            _sb.AppendLine("{");
-            _sb.AppendLine("dto = GetRead(reader);");
-            _sb.AppendLine("break;");
-            _sb.AppendLine("}");
-            _sb.AppendLine("reader.Close();");
-            _sb.AppendLine("}");
-            _sb.AppendLine("}");
-            _sb.AppendLine("catch (Exception ex)");
-            _sb.AppendLine("{");
-            BuildErrorLogCall($"{{nameof({name}Dao)}}.{{nameof({name}Get{(async ? "Async" : "")})}}", null, async);
-            _sb.AppendLine("throw;");
-            _sb.AppendLine("}");
-            _sb.AppendLine("return dto;");
           }
+
+          // Build internal methods
+          _databaseLanguage.BuildInternalGetMethods(profile, schema, methodType, name, isTable, async, internalMethodSignatures, parameters);
+
           break;
 
         case MethodType.SAVE:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Save{(async ? "Async" : "")}(dto){(async ? ".ConfigureAwait(false)" : "")};");
 
-          OpenMethod(internalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Save{(async ? "Async" : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
+          _databaseLanguage.BuildInternalSaveMethod(profile, schema, name, isTable, async, internalMethodSignatures);
           break;
 
         case MethodType.DELETE:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Delete{(async ? "Async" : "")}(id){(async ? ".ConfigureAwait(false)" : "")};");
 
-          OpenMethod(internalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}().{name}Delete{(async ? "Async" : "")}(con, cmd, id){(async ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(internalMethodSignatures.ElementAt(1));
-          _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Delete{(async ? "Async" : "")}(whereClause){(async ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(internalMethodSignatures.ElementAt(2));
-          _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Delete{(async ? "Async" : "")}(con, cmd, whereClause){(async ? ".ConfigureAwait(false)" : "")};");
-
+          _databaseLanguage.BuildInternalDeleteMethod(profile, schema, name, isTable, async, internalMethodSignatures);
           break;
 
         case MethodType.MERGE:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Merge{(async ? "Async" : "")}(dto){(async ? ".ConfigureAwait(false)" : "")};");
 
-          OpenMethod(internalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Merge{(async ? "Async" : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
+          _databaseLanguage.BuildInternalMergeMethod(profile, schema, name, isTable, async, internalMethodSignatures);
           break;
 
         case MethodType.COUNT:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"return{(async ? " await" : "")} {name}GetCount{(async ? "Async" : "")}(new WhereClause(){(parametersStr != "" ? $", {parametersStr}" : "")}){(async ? ".ConfigureAwait(false)" : "")};");
 
-          OpenMethod(internalMethodSignatures.ElementAt(0));
-          _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
-          _sb.AppendLine("{");
-          _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
-          _sb.AppendLine("{");
-          _sb.AppendLine("cmd.Parameters.Clear();");
-          _sb.AppendLine("foreach (IWhereParameter whereParameter in whereClause.Parameters)");
-          _sb.AppendLine("{");
-          _sb.AppendLine("cmd.Parameters.Add(whereParameter.ParameterName, whereParameter.ParameterType).Value = whereParameter.ParameterValue;");
-          _sb.AppendLine("}");
-
-          // Add function parameters
-          foreach (Column param in (parameters))
-          {
-            if (param.ColumnTypeDataType == DataTypes.TableValue)
-            {
-              throw new ApplicationException("Table-valued function parameters are not supported.");
-              //_sb.AppendLine($@"cmd.Parameters.Add(GetCustomTypeSqlParameter(""@{param.Name}"", ""core.{param.DataTypeTSql}"", {param.Name}.Cast<object>().ToArray(), typeof({param.DataType.Remove(param.DataType.Length - 2)})));");
-            }
-            else
-            {
-              _sb.AppendLine($@"cmd.Parameters.Add(""@{param.Name}"", SqlDbType.{param.ColumnTypeDataType}).Value = {param.Name} != null ? {param.Name} : DBNull.Value;");
-            }
-          }
-
-          _sb.AppendLine("cmd.CommandType = CommandType.Text;");
-          _sb.AppendLine(@"string sql = $@""");
-          _sb.AppendLine("SELECT COUNT_BIG(*)");
-          _sb.AppendLine($"FROM [{schema.Name}].[{name}]{(parametersSqlStr.Length > 0 ? $"({parametersSqlStr})" : "")} pv");
-          _sb.AppendLine(@""";");
-          _sb.AppendLine("sql += whereClause.Where;");
-          _sb.AppendLine(@$"cmd.CommandText = sql;");
-          _sb.AppendLine();
-          _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-          _sb.AppendLine($"var ret = (long)({(async ? "await " : "")}cmd.ExecuteScalar{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")});");
-          _sb.AppendLine("con.Close();");
-          _sb.AppendLine("return ret;");
-          _sb.AppendLine("}");
-          _sb.AppendLine("}");
-
+          _databaseLanguage.BuildInternalCountMethod(profile, schema, name, isTable, async, internalMethodSignatures, parameters);
           break;
 
         case MethodType.HAS_CHANGED:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"return {(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}HasChanged{(async ? "Async" : "")}(dto){(async ? ".ConfigureAwait(false)" : "")};");
 
-          OpenMethod(internalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"return {(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}HasChanged{(async ? "Async" : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
+          _databaseLanguage.BuildInternalHasChangedMethod(profile, schema, name, isTable, async, internalMethodSignatures);
           break;
 
         case MethodType.BUlK_INSERT:
@@ -542,14 +333,12 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           // HistGet
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"return {(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}HistGets{(async ? "Async" : "")}(id){(async ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(internalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"return {(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}HistGets{(async ? "Async" : "")}(con, cmd, id){(async ? ".ConfigureAwait(false)" : "")};");
 
           // HistEntryGet
           OpenMethod(externalMethodSignatures.ElementAt(1));
           _sb.AppendLine($"return {(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}HistEntryGet{(async ? "Async" : "")}(histId){(async ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(internalMethodSignatures.ElementAt(1));
-          _sb.AppendLine($"return {(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}HistEntryGet{(async ? "Async" : "")}(con, cmd, histId){(async ? ".ConfigureAwait(false)" : "")};");
+
+          _databaseLanguage.BuildInternalHistMethod(profile, schema, name, isTable, async, internalMethodSignatures);
           break;
 
         default:
