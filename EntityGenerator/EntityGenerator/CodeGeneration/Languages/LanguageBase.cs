@@ -1,4 +1,5 @@
 ﻿using EntityGenerator.Core.Models.Enums;
+using EntityGenerator.Core.Models.ModelObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,5 +20,12 @@ namespace EntityGenerator.CodeGeneration.Languages
     }
 
     public string ParameterFormat;
+
+    /// <summary>
+    /// Extract and map source data type from column attribute value.
+    /// </summary>
+    /// <param name="column"></param>
+    /// <returns></returns>
+    public abstract string GetColumnDataType(Column column);
   }
 }

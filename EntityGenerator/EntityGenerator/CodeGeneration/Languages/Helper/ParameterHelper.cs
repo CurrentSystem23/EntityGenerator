@@ -25,11 +25,11 @@ namespace EntityGenerator.CodeGeneration.Languages.Helper
     }
 
     public static string GetParametersStringWithType(List<Column> parameters, LanguageBase language)
-    {
+    {      
       string outStr = string.Empty;
       foreach (Column param in parameters)
       {
-        outStr += String.Format(language.ParameterFormat, language.GetDataType(param.ColumnTypeDataType), param.Name);
+        outStr += String.Format(language.ParameterFormat, language.GetColumnDataType(param), param.Name);
       }
 
       // Remove trailing comma and white-space

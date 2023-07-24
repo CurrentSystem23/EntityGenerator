@@ -1,5 +1,4 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
-using EntityGenerator.CodeGeneration.Languages.Database;
 using EntityGenerator.CodeGeneration.Languages.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;

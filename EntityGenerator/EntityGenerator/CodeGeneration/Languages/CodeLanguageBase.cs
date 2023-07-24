@@ -1,5 +1,6 @@
 ﻿using EntityGenerator.CodeGeneration.Languages.Enums;
 using EntityGenerator.Core.Models.Enums;
+using EntityGenerator.Core.Models.ModelObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,5 @@ namespace EntityGenerator.CodeGeneration.Languages
     protected CodeLanguageBase(StringBuilder sb) : base(sb)
     {
     }
-
-    public abstract string GetDataType(DataTypes type);
   }
 }
