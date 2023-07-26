@@ -10,17 +10,17 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessGenerator
   {
-    void BuildDependencyInjections(ProfileDto profile, Database db);
-    void BuildBaseFile(ProfileDto profile);
+    void BuildDependencyInjections(Database db);
+    void BuildBaseFile(int databaseId);
     
-    void BuildTableDAOHeader(ProfileDto profile, Schema schema, Table table);
-    void BuildFunctionDAOHeader(ProfileDto profile, Schema schema, Function function);
-    void BuildTableValuedFunctionDAOHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
-    void BuildViewDAOHeader(ProfileDto profile, Schema schema, View view);
+    void BuildTableDAOHeader(Schema schema, Table table);
+    void BuildFunctionDAOHeader(Schema schema, Function function);
+    void BuildTableValuedFunctionDAOHeader(Schema schema, Function tableValuedFunction);
+    void BuildViewDAOHeader(Schema schema, View view);
 
-    void BuildTableDAOMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildFunctionDAOMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildTableValuedFunctionDAOMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildViewDAOMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildTableDAOMethod(Schema schema, Table table, MethodType methodType);
+    void BuildFunctionDAOMethod(Schema schema, Function function, MethodType methodType);
+    void BuildTableValuedFunctionDAOMethod(Schema schema, Function tableValuedFunction, MethodType methodType);
+    void BuildViewDAOMethod(Schema schema, View view, MethodType methodType);
   }
 }
