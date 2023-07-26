@@ -16,8 +16,6 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL
       ParameterFormat = "{1} AS {0}";
     }
 
-    public abstract List<string> GetInternalMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, 
-      bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null, bool useNamespace = false);
     public abstract void BuildGetSqlStatement(ProfileDto profile, Schema schema, string name, bool isTable, List<Column> parameters, List<Column> columns);
   }
 }

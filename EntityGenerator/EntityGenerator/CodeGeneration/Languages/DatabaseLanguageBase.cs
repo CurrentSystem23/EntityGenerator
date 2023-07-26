@@ -12,27 +12,37 @@ namespace EntityGenerator.CodeGeneration.Languages
   public abstract class DatabaseLanguageBase : LanguageBase
   {
     protected CodeLanguageBase _backendLanguage;
-    protected DatabaseLanguageBase(StringBuilder sb, CodeLanguageBase backendLanguage) : base(sb)
+    protected DatabaseLanguageBase(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile) : base(sb, profile)
     {
       _backendLanguage = backendLanguage;
     }
+    public abstract List<string> GetInternalMethodSignatures(Schema schema, MethodType methodType, string name,
+      bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null, bool useNamespace = false);
 
-    public abstract void BuildPrepareCommand(ProfileDto profile, Schema schema, string name, bool isTable, bool async, 
+    public abstract void BuildBeforeSaveMethod();
+    public abstract void BuildAfterSaveMethod();
+
+    public abstract void BuildPrepareCommand(Schema schema, string name, bool isTable, bool async, 
       List<Column> parameters);
 
-    public abstract void BuildInternalGetMethods(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable,
+    public abstract void BuildInternalGetFacadeMethod(Schema schema, MethodType methodType, string name, bool isTable,
       bool async, List<string> internalMethodSignatures, List<Column> parameters);
-    public abstract void BuildInternalSaveMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public abstract void BuildInternalSaveFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures);
-    public abstract void BuildInternalDeleteMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public abstract void BuildInternalDeleteFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures);
-    public abstract void BuildInternalMergeMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public abstract void BuildInternalMergeFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures);
-    public abstract void BuildInternalCountMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public abstract void BuildInternalCountFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures, List<Column> parameters);
-    public abstract void BuildInternalHasChangedMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public abstract void BuildInternalHasChangedFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures);
-    public abstract void BuildInternalHistMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public abstract void BuildInternalHistFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures);
+
+    public abstract void BuildGetMethod(Schema schema, MethodType methodType, string name, bool isTable,
+  bool async, List<string> externalMethodSignatures, List<string> internalMethodSignatures, List<Column> parameters);
+    public abstract void BuildInternalCountMethod(Schema schema, string name, bool isTable, bool async,
+      List<string> internalMethodSignatures, List<Column> parameters);
   }
 }

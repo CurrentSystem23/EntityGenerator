@@ -11,6 +11,8 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL
 {
   public abstract partial class MSSQL : SQLLanguageBase
   {
+    public override string Name { get => "MSSQL"; }
+
     public MSSQL(StringBuilder sb, CodeLanguageBase backendLanguage) : base(sb, backendLanguage) { }
 
     public override string GetColumnDataType(Column column)
