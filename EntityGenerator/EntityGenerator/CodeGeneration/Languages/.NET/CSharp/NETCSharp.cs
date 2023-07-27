@@ -18,13 +18,13 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : NETLanguageBase
   {
-    private bool CloseExistingScope { get; set; }
+    public bool CloseExistingScope { get; set; }
 
     private bool openMethod = false;
     private bool openStructure = false;
     private bool openNameSpace = false;
 
-    public NETCSharp(StringBuilder sb, DatabaseLanguageBase databaseLanguage) : base(sb, databaseLanguage)
+    public NETCSharp(StringBuilder sb, List<DatabaseLanguageBase> databaseLanguages) : base(sb, databaseLanguages)
     {
       CloseExistingScope = true;
     }
@@ -55,7 +55,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       openNameSpace = true;
     }
 
-    private void OpenStructure(bool isInterface, string structureName, string structureBase = null, bool isStatic = false, bool isPartial = false, bool isAbstract = false, AccessType accessModifier = AccessType.PUBLIC)
+    private void OpenStructure(StructureType structureType, string structureName, string structureBase = null, bool isStatic = false, bool isPartial = false, bool isAbstract = false, AccessType accessModifier = AccessType.PUBLIC)
     {
       if (!CloseExistingScope && openStructure)
       {
@@ -65,7 +65,21 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       CloseStructure();
       _sb.Append($"{accessModifier:g} ".ToLower());
       if (isPartial) _sb.Append("partial ");
-      _sb.Append($"{(isInterface ? "interface" : "class")} ");
+      switch (structureType)
+      {
+        case StructureType.CLASS:
+          _sb.Append("class");
+          break;
+        case StructureType.INTERFACE:
+          _sb.Append("interface");
+          break;
+        case StructureType.ENUM:
+          _sb.Append("enum");
+          break;
+        default:
+          break;
+      }
+      _sb.Append(' ');
       _sb.AppendJoin(" : ", (new string[] { structureName, structureBase }).Where(c => c != null).ToArray()).AppendLine();
       _sb.AppendLine("{");
     }
@@ -73,12 +87,17 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     public override void OpenClass(string className, string baseClass = null, bool isStatic = false, bool isPartial = false, bool isAbstract = false, AccessType accessModifier = AccessType.PUBLIC)
     {
-      OpenStructure(true, className, baseClass, isStatic: isStatic, isPartial: isPartial, accessModifier: accessModifier);
+      OpenStructure(StructureType.CLASS, className, baseClass, isStatic: isStatic, isPartial: isPartial, accessModifier: accessModifier);
     }
 
     public override void OpenInterface(string interfaceName, string baseInterface = null, bool isPartial = false, AccessType accessModifier = AccessType.PUBLIC)
     {
-      OpenStructure(true, interfaceName, baseInterface, isPartial: isPartial, accessModifier: accessModifier);
+      OpenStructure(StructureType.INTERFACE, interfaceName, baseInterface, isPartial: isPartial, accessModifier: accessModifier);
+    }
+
+    public override void OpenEnum(string enumName, bool isPartial = false, AccessType accessModifier = AccessType.PUBLIC)
+    {
+      OpenStructure(StructureType.INTERFACE, enumName, structureBase: null, isPartial: isPartial, accessModifier: accessModifier);
     }
 
     public override void OpenMethod(string methodName, string returnType = "void", AccessType accessModifier = AccessType.PUBLIC, bool isStatic = false)
