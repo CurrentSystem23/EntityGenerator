@@ -12,17 +12,17 @@ namespace EntityGenerator.CodeGeneration.Languages.NET
 {
   public abstract class NETLanguageBase : CodeLanguageBase
   { 
-    protected DatabaseLanguageBase _databaseLanguage;
+    protected List<DatabaseLanguageBase> _databaseLanguages;
 
-    public NETLanguageBase(StringBuilder sb, DatabaseLanguageBase? databaseLanguage) : base(sb)
+    public NETLanguageBase(StringBuilder sb, List<DatabaseLanguageBase> databaseLanguages = null) : base(sb)
     {
       ParameterFormat = "{0} {1}";
-      _databaseLanguage = databaseLanguage;
+      _databaseLanguages = databaseLanguages;
     }
 
     public abstract void OpenClass(string className, string baseClass, bool isStatic, bool isPartial, bool isAbstract, AccessType accessModifier);
     public abstract void OpenInterface(string interfaceName, string baseInterface, bool isPartial, AccessType accessModifier);
-    //protected abstract void OpenInterface(string interfaceName, StructureOptions options);
+    public abstract void OpenEnum(string enumName, bool isPartial, AccessType accessModifier);
     public abstract void BuildTraceLogCall(string message, string paramsStr, bool async);
     public abstract void BuildErrorLogCall(string message, string paramsStr, bool async);
     public abstract void OpenMethod(string methodName, string returnType, AccessType accessModifier, bool isStatic);
@@ -30,7 +30,5 @@ namespace EntityGenerator.CodeGeneration.Languages.NET
     protected abstract void CloseNameSpace();
     public abstract void CloseStructure();
     public abstract void CloseMethod();
-    public abstract List<string> GetMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null);
-    public abstract List<string> GetInternalMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null, bool useNamespace = false);
   }
 }

@@ -10,16 +10,15 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface ICommonGenerator
   {
-    void BuildConstants(StringBuilder sb, Database db, ProfileDto profile);
+    void BuildConstants(Database db);
 
-    void BuildBaseDTO(StringBuilder sb, ProfileDto profile);
-    void BuildTenantBase(StringBuilder sb, ProfileDto profile);
-    void BuildSchemaDTO(StringBuilder sb, ProfileDto profile);
+    void BuildBaseDTO();
+    void BuildTenantBase();
+    void BuildSchemaDTO(Database db);
 
-    void BuildDatabaseTableDTO(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
-    void BuildDatabaseFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, Function function);
-    void BuildDatabaseTableValuedFunctionDTO(StringBuilder sb, ProfileDto profile, Schema schema, Function tableValuedFunction);
-    void BuildDatabaseViewDTO(StringBuilder sb, ProfileDto profile, Schema schema, View view);
+    void BuildTableDTO(Schema schema, Table table);
+    void BuildTableValuedFunctionDTO(Schema schema, Function tableValuedFunction);
+    void BuildViewDTO(Schema schema, View view);
 
   }
 }
