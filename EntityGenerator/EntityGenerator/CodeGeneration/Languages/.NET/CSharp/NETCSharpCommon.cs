@@ -1,4 +1,5 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces.Modules;
+using EntityGenerator.CodeGeneration.Languages.Helper;
 using EntityGenerator.Core.Extensions;
 using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
@@ -93,7 +94,19 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void ICommonGenerator.BuildConstants(Database db)
     {
-      throw new NotImplementedException();
+      BuildImports(new List<string>() { "System" });
+      BuildNameSpace($"{_profile.Global.ProjectName}.Common.Constants");
+      
+      OpenClass("Constants", isStatic: true, isPartial: true);
+
+      foreach (ConstantTable constantTable in db.ConstantTables)
+      {
+        OpenClass(constantTable.Name, null, true);
+        foreach (KeyValuePair<string, string> constant in constantTable.Constants)
+        {
+          _sb.AppendLine($"public const {GetColumnDataType(constantTable.ConstantColumn)} {constant.Key.TransformToCharOrDigitOnlyCamelCase()} = {TypeHelper.ParseTypeValue((DataTypes)Enum.Parse(typeof(DataTypes), constant.Key), constant.Value)};");
+        }
+      }
     }
 
     void ICommonGenerator.BuildTableDTO(Schema schema, Table table)

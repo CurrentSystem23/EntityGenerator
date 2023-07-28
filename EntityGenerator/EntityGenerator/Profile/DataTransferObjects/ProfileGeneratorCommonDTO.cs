@@ -1,5 +1,6 @@
 ﻿using EntityGenerator.Profile.DataTransferObjects;
 using System;
+using System.Collections.Generic;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -20,6 +21,8 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// Flag for generating backend constants.
     /// </summary>
     public bool ConstantsBackend { get; set; }
+
+    public List<ProfileGeneratorCommonConstant> Constants { get; set; }
 
     /// <summary>
     /// Flag for generating data transfer objects.

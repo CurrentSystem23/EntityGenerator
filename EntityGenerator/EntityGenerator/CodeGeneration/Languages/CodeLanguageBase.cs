@@ -1,6 +1,8 @@
-﻿using EntityGenerator.CodeGeneration.Languages.Enums;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.CodeGeneration.Languages.Enums;
 using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
+using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +16,8 @@ namespace EntityGenerator.CodeGeneration.Languages
     protected CodeLanguageBase(StringBuilder sb) : base(sb)
     {
     }
+
+    public abstract List<string> GetMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name,
+      bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null);
   }
 }
