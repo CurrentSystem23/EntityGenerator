@@ -50,5 +50,9 @@ namespace EntityGenerator.Profile.DataTransferObjects.Enums
     [EnumMember(Value = "DBScripts")]
     [StringValue("IDBScriptsGenerator")]
     DBScriptsGenerator,
+
+    [EnumMember(Value = "CS23.DomainTypeValues")]
+    [StringValue("ICS23DomainTypeValueGenerator")]
+    CS23DomainTypeValueGenerator
   }
 }

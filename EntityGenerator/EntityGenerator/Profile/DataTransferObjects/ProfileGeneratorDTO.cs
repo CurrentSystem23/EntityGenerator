@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityGenerator.Profile.DataTransferObjects;
+using System;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -53,5 +54,6 @@ namespace EntityGenerator.Profile.DataTransferObject
     public ProfileGeneratorAPIDto GeneratorAPI { get; set; }
     public ProfileGeneratorUserRightsDto GeneratorUserRights { get; set; }
     public ProfileGeneratorDBScriptsDto GeneratorDBScripts { get; set; }
+    public ProfileGeneratorCS23DomainTypeValueDTO GeneratorCS23DomainTypeValue { get; set; }
   }
 }
