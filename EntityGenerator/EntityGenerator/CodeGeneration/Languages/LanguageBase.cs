@@ -59,9 +59,14 @@ namespace EntityGenerator.CodeGeneration.Languages
       public List<Column> Columns { get; set; }
 
       /// <summary>
-      /// External- to internal DAO method signature mapping.
+      /// External DAO method signature names.
       /// </summary>
-      public Dictionary<string, List<string>> MethodSignatures { get; set; }
+      public List<string> ExternalMethodSignatures { get; set; }
+
+      /// <summary>
+      /// Internal DAO method signature names.
+      /// </summary>
+      public List<string> InternalMethodSignatures { get; set; }
 
       /// <summary>
       /// DAO name to be used in generated output.

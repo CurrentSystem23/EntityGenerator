@@ -11,11 +11,11 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL
 {
   public abstract class SQLLanguageBase : DatabaseLanguageBase
   {
-    public SQLLanguageBase(StringBuilder sb, CodeLanguageBase backendLanguage) : base(sb, backendLanguage)
+    public SQLLanguageBase(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile) : base(sb, backendLanguage, profile)
     {
       ParameterFormat = "{1} AS {0}";
     }
 
-    public abstract void BuildGetSqlStatement(ProfileDto profile, Schema schema, string name, bool isTable, List<Column> parameters, List<Column> columns);
+    public abstract void BuildGetSqlStatement(Schema schema, string name, bool isTable, List<Column> parameters, List<Column> columns);
   }
 }

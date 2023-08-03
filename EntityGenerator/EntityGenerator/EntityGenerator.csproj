@@ -24,6 +24,7 @@
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpBusinessLogic.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpCommon.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpCommonPresentation.cs" />
+    <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpCS23DomainTypeValues.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpDataAccess.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpDataAccessFacade.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpDataAccessSQL.cs" />

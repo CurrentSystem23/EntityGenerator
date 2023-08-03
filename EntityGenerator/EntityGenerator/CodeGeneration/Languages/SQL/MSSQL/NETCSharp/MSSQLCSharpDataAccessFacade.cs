@@ -14,7 +14,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 {
   public partial class MSSQLCSharp : MSSQL
   {
-    public override void BuildInternalGetFacadeMethod(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, List<string> internalMethodSignatures, List<Column> parameters)
+    public override void BuildInternalGetFacadeMethod(Schema schema, MethodType methodType, string name, bool isTable, bool async, List<string> internalMethodSignatures, List<Column> parameters)
     {
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}";
       string parametersStr = ParameterHelper.GetParametersString(parameters);
@@ -44,7 +44,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       }
     }
 
-    public override void BuildInternalSaveFacadeMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public override void BuildInternalSaveFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures)
     {
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}";
@@ -53,7 +53,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Save{(async ? "Async" : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
     }
 
-    public override void BuildInternalDeleteFacadeMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public override void BuildInternalDeleteFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures)
     {
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}";
@@ -68,7 +68,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}().{name}Delete{(async ? "Async" : "")}(con, cmd, id){(async ? ".ConfigureAwait(false)" : "")};");
     }
 
-    public override void BuildInternalMergeFacadeMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public override void BuildInternalMergeFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures)
     {
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}";
@@ -77,7 +77,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine($"{(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}Merge{(async ? "Async" : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
     }
 
-    public override void BuildInternalCountFacadeMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public override void BuildInternalCountFacadeMethod(Schema schema, string name, bool isTable, bool async,
   List<string> internalMethodSignatures, List<Column> parameters)
     {
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}";
@@ -88,7 +88,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 
     }
 
-    public override void BuildInternalHasChangedFacadeMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public override void BuildInternalHasChangedFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures)
     {
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}";
@@ -97,7 +97,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine($"return {(async ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{name}HasChanged{(async ? "Async" : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
     }
 
-    public override void BuildInternalHistFacadeMethod(ProfileDto profile, Schema schema, string name, bool isTable, bool async,
+    public override void BuildInternalHistFacadeMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures)
     {
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{schema.Name}.I{TypeHelper.GetInternalDaoType(name, isTable)}";

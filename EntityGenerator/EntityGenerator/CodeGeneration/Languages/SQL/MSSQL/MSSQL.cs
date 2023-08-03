@@ -1,5 +1,6 @@
 ﻿using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
+using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -11,9 +12,9 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL
 {
   public abstract partial class MSSQL : SQLLanguageBase
   {
-    public override string Name { get => "MSSQL"; }
+    public new string Name = "MSSQL";
 
-    public MSSQL(StringBuilder sb, CodeLanguageBase backendLanguage) : base(sb, backendLanguage) { }
+    public MSSQL(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile) : base(sb, backendLanguage, profile) { }
 
     public override string GetColumnDataType(Column column)
     {

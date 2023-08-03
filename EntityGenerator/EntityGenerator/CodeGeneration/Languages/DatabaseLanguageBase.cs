@@ -41,8 +41,16 @@ namespace EntityGenerator.CodeGeneration.Languages
       List<string> internalMethodSignatures);
 
     public abstract void BuildGetMethod(Schema schema, MethodType methodType, string name, bool isTable,
-  bool async, List<string> externalMethodSignatures, List<string> internalMethodSignatures, List<Column> parameters);
+      bool async, List<string> externalMethodSignatures, List<string> internalMethodSignatures, List<Column> parameters);
+    public abstract void BuildSaveMethod(Schema schema, string name, bool isTable, bool async,
+      List<string> internalMethodSignatures, List<string> externalMethodSignatures, List<Column> columns);
+    public abstract void BuildDeleteMethod(Schema schema, string name, bool isTable, bool async,
+      List<string> internalMethodSignatures, List<string> externalMethodSignatures);
+    public abstract void BuildMergeMethod(Schema schema, string name, bool isTable, bool async,
+      List<string> internalMethodSignatures, List<string> externalMethodSignatures, List<Column> columns);
     public abstract void BuildInternalCountMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures, List<Column> parameters);
+    public abstract void BuildHasChangedMethod(Schema schema, string name, bool isTable, bool async,
+      List<string> internalMethodSignatures, List<string> externalMethodSignatures, List<Column> columns);
   }
 }

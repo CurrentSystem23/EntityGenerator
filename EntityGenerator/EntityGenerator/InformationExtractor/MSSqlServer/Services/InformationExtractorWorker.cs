@@ -66,6 +66,7 @@ public class InformationExtractorWorker : IInformationExtractorWorker
     ICollection<TriggerDto> triggers = _informationExtractor.TriggerGets(con, profile.Database.DatabaseName);
     ICollection<TypeDto> types = _informationExtractor.UsedTypeGets(con, profile.Database.DatabaseName);
     ICollection<UserDefinedTableTypeColumnDto> userDefinedTableTypeColumns = _informationExtractor.UserDefinedTableTypeGets(con, profile.Database.DatabaseName);
+
     con.Close();
 
     return CoreMapper.MapToCoreModel(
