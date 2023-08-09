@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EntityGenerator.Core.Models.Enums;
+using System.Runtime.CompilerServices;
 
 namespace EntityGenerator.InformationExtractor.MSSqlServer.Services.Mapper;
 
@@ -113,7 +114,6 @@ public static partial class CoreMapper
     {
       Name = tableValueFunctionsReturnValueDto.ObjectName,
       Id = tableValueFunctionsReturnValueDto.ObjectId,
-      ColumnTypeDataType = MapToCoreDataType(tableValueFunctionsReturnValueDto.ColumnTypeDataType),
       ColumnIsIdentity = tableValueFunctionsReturnValueDto.ColumnIsIdentity,
       ColumnIsNullable = tableValueFunctionsReturnValueDto.ColumnIsNullable,
       ColumnDefaultDefinition = tableValueFunctionsReturnValueDto.ColumnDefaultDefinition,
@@ -125,7 +125,7 @@ public static partial class CoreMapper
       ColumnNumericScale = tableValueFunctionsReturnValueDto.ColumnNumericScale,
       ColumnDatetimePrecision = null,
     };
-
+    column.SetColumnTypeData(MapToCoreDataType(tableValueFunctionsReturnValueDto.ColumnTypeDataType), tableValueFunctionsReturnValueDto.ColumnTypeDataType);
     return column;
   }
 }

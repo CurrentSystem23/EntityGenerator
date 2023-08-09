@@ -24,7 +24,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     private bool openStructure = false;
     private bool openNameSpace = false;
 
-    public NETCSharp(StringBuilder sb, List<DatabaseLanguageBase> databaseLanguages) : base(sb, databaseLanguages)
+    public NETCSharp(StringBuilder sb, ProfileDto profile, List<DatabaseLanguageBase> databaseLanguages) : base(sb, profile, databaseLanguages)
     {
       CloseExistingScope = true;
     }
@@ -241,7 +241,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       return string.Empty;
     }
 
-    public override List<string> GetMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null)
+    public override List<string> GetMethodSignatures(Schema schema, MethodType methodType, string name, bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null)
     {
       string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
       List<string> signatures = new();
@@ -253,7 +253,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {prefix}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{name}[] orderBy);");
           if (isTable)
           {
-            signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}Get{(async ? "Async" : "")}({(profile.Global.GuidIndexing ? "Guid" : "long")} id);");
+            signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}Get{(async ? "Async" : "")}({(_profile.Global.GuidIndexing ? "Guid" : "long")} id);");
             signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}Get{(async ? "Async" : "")}(Guid globalId);");
           }
           break;
@@ -261,7 +261,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           signatures.Add($"{(async ? "Task" : "void")} {prefix}Save{(async ? "Async" : "")}({dtoName} dto);");
           break;
         case MethodType.DELETE:
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
           break;
         case MethodType.MERGE:
           signatures.Add($"{(async ? "Task" : "void")} {prefix}Merge{(async ? "Async" : "")}({dtoName} dto);");
@@ -286,7 +286,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkUpdate{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
           break;
         case MethodType.HIST_GET:
-          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {prefix}HistGets{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          signatures.Add($"{(async ? $"Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {prefix}HistGets{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
           signatures.Add($"{(async ? $"Task<{dtoName}>" : $"{dtoName}")} {prefix}HistEntryGet{(async ? "Async" : "")}(long histId);");
           break;
         default:

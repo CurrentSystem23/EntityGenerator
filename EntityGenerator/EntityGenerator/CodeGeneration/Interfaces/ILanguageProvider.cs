@@ -13,7 +13,7 @@ namespace EntityGenerator.CodeGeneration.Interfaces
 {
   public interface ILanguageProvider
   {
-    LanguageService GetLanguageService(Profile.DataTransferObjects.Enums.Languages language);
+    LanguageService GetLanguageService(Profile.DataTransferObjects.Enums.Languages language, ProfileDto profile);
     List<CodeGenerationModules> GetSupportedModules(Profile.DataTransferObjects.Enums.Languages language);
     bool CheckSupportedModule(Profile.DataTransferObjects.Enums.Languages language, CodeGenerationModules module);
   }

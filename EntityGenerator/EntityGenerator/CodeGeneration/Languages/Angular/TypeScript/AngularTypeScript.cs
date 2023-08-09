@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntityGenerator.Profile.DataTransferObject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace EntityGenerator.CodeGeneration.Languages.Angular.TypeScript
 {
   public abstract partial class AngularTypeScript : AngularLanguageBase
   {
-    public AngularTypeScript(StringBuilder sb) : base(sb) { }
+    public AngularTypeScript(StringBuilder sb, ProfileDto profile) : base(sb, profile) { }
   }
 }

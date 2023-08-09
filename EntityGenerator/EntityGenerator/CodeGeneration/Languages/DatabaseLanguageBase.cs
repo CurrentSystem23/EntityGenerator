@@ -52,5 +52,7 @@ namespace EntityGenerator.CodeGeneration.Languages
       List<string> internalMethodSignatures, List<Column> parameters);
     public abstract void BuildHasChangedMethod(Schema schema, string name, bool isTable, bool async,
       List<string> internalMethodSignatures, List<string> externalMethodSignatures, List<Column> columns);
+    public abstract void BuildHistGetMethod(Schema schema, string name, bool isTable, bool async,
+      List<string> internalMethodSignatures, List<string> externalMethodSignatures);
   }
 }

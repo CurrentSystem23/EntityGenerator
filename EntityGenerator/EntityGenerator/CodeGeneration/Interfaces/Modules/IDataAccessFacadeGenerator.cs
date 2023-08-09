@@ -14,35 +14,35 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 
     void BuildADOInterface(ProfileDto profile, Database db);
 
-    void BuildDataAccessFacadeTableExternalInterfaceHeader(ProfileDto profile, Schema schema, Table table);
-    void BuildDataAccessFacadeFunctionExternalInterfaceHeader(ProfileDto profile, Schema schema, Function function);
-    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
-    void BuildDataAccessFacadeViewExternalInterfaceHeader(ProfileDto profile, Schema schema, View view);
+    void BuildDataAccessFacadeTableExternalInterfaceHeader(Schema schema, Table table);
+    void BuildDataAccessFacadeFunctionExternalInterfaceHeader(Schema schema, Function function);
+    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceHeader(Schema schema, Function tableValuedFunction);
+    void BuildDataAccessFacadeViewExternalInterfaceHeader(Schema schema, View view);
 
-    void BuildDataAccessFacadeTableExternalInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildDataAccessFacadeFunctionExternalInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildDataAccessFacadeViewExternalInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessFacadeTableExternalInterfaceMethod(Schema schema, Table table, MethodType methodType);
+    void BuildDataAccessFacadeFunctionExternalInterfaceMethod(Schema schema, Function function, MethodType methodType);
+    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType);
+    void BuildDataAccessFacadeViewExternalInterfaceMethod(Schema schema, View view, MethodType methodType);
     
-    void BuildDataAccessFacadeTableInternalInterfaceHeader(ProfileDto profile, Schema schema, Table table);
-    void BuildDataAccessFacadeFunctionInternalInterfaceHeader(ProfileDto profile, Schema schema, Function function);
-    void BuildDataAccessFacadeTableValuedFunctionInternalInterfaceHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
-    void BuildDataAccessFacadeViewInternalInterfaceHeader(ProfileDto profile, Schema schema, View view);
+    void BuildDataAccessFacadeTableInternalInterfaceHeader(Schema schema, Table table);
+    void BuildDataAccessFacadeFunctionInternalInterfaceHeader(Schema schema, Function function);
+    void BuildDataAccessFacadeTableValuedFunctionInternalInterfaceHeader(Schema schema, Function tableValuedFunction);
+    void BuildDataAccessFacadeViewInternalInterfaceHeader(Schema schema, View view);
 
-    void BuildDataAccessFacadeTableInternalInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildDataAccessFacadeFunctionInternalInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildDataAccessFacadeViewInternalInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessFacadeTableInternalInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync, int databaseId);
+    void BuildDataAccessFacadeFunctionInternalInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync, int databaseId);
+    void BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync, int databaseId);
+    void BuildDataAccessFacadeViewInternalInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync, int databaseId);
 
-    void BuildDataAccessFacadeTableClassHeader(ProfileDto profile, Schema schema, Table table);
-    void BuildDataAccessFacadeFunctionClassHeader(ProfileDto profile, Schema schema, Function function);
-    void BuildDataAccessFacadeTableValuedFunctionClassHeader(ProfileDto profile, Schema schema, Function tableValuedFunction);
-    void BuildDataAccessFacadeViewClassHeader(ProfileDto profile, Schema schema, View view);
+    void BuildDataAccessFacadeTableClassHeader(Schema schema, Table table);
+    void BuildDataAccessFacadeFunctionClassHeader(Schema schema, Function function);
+    void BuildDataAccessFacadeTableValuedFunctionClassHeader(Schema schema, Function tableValuedFunction);
+    void BuildDataAccessFacadeViewClassHeader(Schema schema, View view);
 
-    void BuildDataAccessFacadeTableClassMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildDataAccessFacadeFunctionClassMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildDataAccessFacadeTableValuedFunctionClassMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildDataAccessFacadeViewClassMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildDataAccessFacadeTableClassMethod(Schema schema, Table table, MethodType methodType, bool isAsync, int databaseId);
+    void BuildDataAccessFacadeFunctionClassMethod(Schema schema, Function function, MethodType methodType, bool isAsync, int databaseId);
+    void BuildDataAccessFacadeTableValuedFunctionClassMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync, int databaseId);
+    void BuildDataAccessFacadeViewClassMethod(Schema schema, View view, MethodType methodType, bool isAsync, int databaseId);
 
   }
 }

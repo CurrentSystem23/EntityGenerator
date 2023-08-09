@@ -37,13 +37,13 @@ namespace EntityGenerator.CodeGeneration.Services
 
     public void ExecuteBusinessLogicGenerator(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      LanguageService languageService = _languageProvider.GetLanguageService(profile.Generator.GeneratorBusinessLogic.Language);
+      LanguageService languageService = _languageProvider.GetLanguageService(profile.Generator.GeneratorBusinessLogic.Language, profile);
       languageService.GenerateBusinessLogic(db, profile, writerService);
     }
 
     public void ExecuteCommonGenerator(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      LanguageService languageService = _languageProvider.GetLanguageService(profile.Generator.GeneratorCommon.Language);
+      LanguageService languageService = _languageProvider.GetLanguageService(profile.Generator.GeneratorCommon.Language, profile);
       languageService.GenerateCommon(db, profile, writerService);
     }
 
@@ -64,7 +64,7 @@ namespace EntityGenerator.CodeGeneration.Services
 
     public void ExecuteFrontendGenerator(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      LanguageService languageService = _languageProvider.GetLanguageService(profile.Generator.GeneratorFrontend.Language);
+      LanguageService languageService = _languageProvider.GetLanguageService(profile.Generator.GeneratorFrontend.Language, profile);
       languageService.GenerateFrontend(db, profile, writerService);
     }
 

@@ -20,7 +20,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       return $"{schema.Name.FirstCharToUpper()}_{name}";
     }
 
-    protected void BuildClassMethod(ProfileDto profile, Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null)
+    protected void BuildClassMethod(Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null)
     {
       string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
       string daoName = TypeHelper.GetDaoType(name, isTable);
@@ -42,7 +42,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           CloseMethod();
 
           if (isTable) {
-            OpenMethod($"public {(async ? $"async Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}Get{(async ? "Async" : "")}({(profile.Global.GuidIndexing ? "Guid" : "long")} id);");
+            OpenMethod($"public {(async ? $"async Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}Get{(async ? "Async" : "")}({(_profile.Global.GuidIndexing ? "Guid" : "long")} id);");
             _sb.AppendLine($"var dto = {(async ? "await " : "")}{dataAccessName}Get{(async ? "Async" : "")}(id){(async ? ".ConfigureAwait(false)" : "")};");
             BuildTraceLogCall($"Logic.{name}Get{(async ? "Async" : "")}({{id}})", $"dto", async);
             _sb.AppendLine($"return ({dtoName})dto ?? null;");
@@ -65,7 +65,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           break;
 
         case MethodType.DELETE:
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}Delete{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}Delete{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
           BuildTraceLogCall($"Logic.{name}Delete{(async ? "Async" : "")}({{id}})", string.Empty, async);
           _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}Delete{(async ? "Async" : "")}(id){(async ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
@@ -140,7 +140,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           break;
 
         case MethodType.HIST_GET:
-          OpenMethod($"public {(async ? $"async Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}HistGets{(async ? "Async" : "")}({(profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          OpenMethod($"public {(async ? $"async Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}HistGets{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
           _sb.AppendLine($"var dto = {(async ? "await " : "")}{dataAccessName}HistGets{(async ? "Async" : "")}(id){(async ? ".ConfigureAwait(false)" : "")};");
           BuildTraceLogCall($"Logic.{name}HistGets{(async ? "Async" : "")}({{id}})", $"dto", async);
           _sb.AppendLine($"return dto;");
@@ -159,76 +159,113 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       }
     }
 
-    void IBusinessLogicGenerator.BuildInterfaceHeader(ProfileDto profile, Schema schema)
+    protected void BuildInterfaceMethod(GeneratorParameterObject parameters, MethodType methodType)
+    {
+      List<string> methodSignatures = GetMethodSignatures(parameters.Schema, methodType, parameters.Name, parameters.IsTable, parameters.IsAsync, 
+        GetFullFunctionPrefix(parameters.Schema, parameters.Name),
+        ParameterHelper.GetParametersString(parameters.Parameters),
+        ParameterHelper.GetParametersStringWithType(parameters.Parameters, this));
+
+      foreach (string methodSignature in methodSignatures)
+      {
+        _sb.AppendLine(methodSignature);
+      }
+    }
+
+    void IBusinessLogicGenerator.BuildInterfaceHeader(Schema schema)
     {
       List<string> imports = new()
       {
-        $"{profile.Global.ProjectName}.Common.DTOs.{schema.Name}",
+        $"{_profile.Global.ProjectName}.Common.DTOs.{schema.Name}",
         "System.Threading.Tasks",
         "System.Collections.Generic",
         "System",
       };
 
       BuildImports(imports);
-      BuildNameSpace($"{profile.Global.ProjectName}.Common.Interfaces");
+      BuildNameSpace($"{_profile.Global.ProjectName}.Common.Interfaces");
       OpenInterface("ILogic", isPartial: true);
     }
 
-    void IBusinessLogicGenerator.BuildClassHeader(ProfileDto profile, Schema schema)
+    void IBusinessLogicGenerator.BuildClassHeader(Schema schema)
     {
       List<string> imports = new()
       {
-        $"{profile.Global.ProjectName}.Common.DTOs.{schema.Name}",
+        $"{_profile.Global.ProjectName}.Common.DTOs.{schema.Name}",
         "System.Threading.Tasks",
         "System.Collections.Generic",
         "System",
         "Microsoft.Extensions.Logging",
-        $"{profile.Global.ProjectName}.Common.Interfaces",
+        $"{_profile.Global.ProjectName}.Common.Interfaces",
       };
 
       BuildImports(imports);
-      BuildNameSpace($"{profile.Global.ProjectName}.BusinessLogic");
+      BuildNameSpace($"{_profile.Global.ProjectName}.BusinessLogic");
       OpenClass($"Logic", isPartial: true, accessModifier: AccessType.INTERNAL);
     }
 
-    void IBusinessLogicGenerator.BuildScalarFunctionClassMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType)
+    void IBusinessLogicGenerator.BuildScalarFunctionClassMethod(Schema schema, Function function, MethodType methodType, bool isAsync)
     {
-      BuildClassMethod(profile, schema, methodType, function.Name, false, true, ParameterHelper.GetParametersString(function.Parameters), ParameterHelper.GetParametersStringWithType(function.Parameters, this));
+      BuildClassMethod(schema, methodType, function.Name, false, isAsync, ParameterHelper.GetParametersString(function.Parameters), ParameterHelper.GetParametersStringWithType(function.Parameters, this));
     }
 
-    void IBusinessLogicGenerator.BuildScalarFunctionInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType)
+    void IBusinessLogicGenerator.BuildScalarFunctionInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync)
     {
-      BuildMethodSignature(profile, schema, methodType, function.Name, false, true, GetFullFunctionPrefix(schema, function.Name), ParameterHelper.GetParametersString(function.Parameters), ParameterHelper.GetParametersStringWithType(function.Parameters, this));
+      BuildInterfaceMethod(new GeneratorParameterObject(function)
+      {
+        Schema = schema,
+        IsAsync = isAsync,
+        IsTable = false,
+        MethodType = methodType
+      }, methodType);
     }
 
-    void IBusinessLogicGenerator.BuildTableClassMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType)
+    void IBusinessLogicGenerator.BuildTableClassMethod(Schema schema, Table table, MethodType methodType, bool isAsync)
     {
-      BuildClassMethod(profile, schema, methodType, table.Name, true, true);
+      BuildClassMethod(schema, methodType, table.Name, true, isAsync);
     }
 
-    void IBusinessLogicGenerator.BuildTableInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType)
+    void IBusinessLogicGenerator.BuildTableInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync)
     {
-      BuildMethodSignature(profile, schema, methodType, table.Name, true, true, GetFullFunctionPrefix(schema, table.Name));
+      BuildInterfaceMethod(new GeneratorParameterObject(table)
+      {
+        Schema = schema,
+        IsAsync = isAsync,
+        IsTable = true,
+        MethodType = methodType
+      }, methodType);
     }
 
-    void IBusinessLogicGenerator.BuildTableValuedFunctionClassMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType)
+    void IBusinessLogicGenerator.BuildTableValuedFunctionClassMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync)
     {
-      BuildClassMethod(profile, schema, methodType, tableValuedFunction.Name, false, true, ParameterHelper.GetParametersString(tableValuedFunction.Parameters), ParameterHelper.GetParametersStringWithType(tableValuedFunction.Parameters, this));
+      BuildClassMethod(schema, methodType, tableValuedFunction.Name, false, isAsync, ParameterHelper.GetParametersString(tableValuedFunction.Parameters), ParameterHelper.GetParametersStringWithType(tableValuedFunction.Parameters, this));
     }
 
-    void IBusinessLogicGenerator.BuildTableValuedFunctionInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType)
+    void IBusinessLogicGenerator.BuildTableValuedFunctionInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync)
     {
-      BuildMethodSignature(profile, schema, methodType, tableValuedFunction.Name, false, true, GetFullFunctionPrefix(schema, tableValuedFunction.Name), ParameterHelper.GetParametersString(tableValuedFunction.Parameters), ParameterHelper.GetParametersStringWithType(tableValuedFunction.Parameters, this));
+      BuildInterfaceMethod(new GeneratorParameterObject(tableValuedFunction)
+      {
+        Schema = schema,
+        IsAsync = isAsync,
+        IsTable = false,
+        MethodType = methodType
+      }, methodType);
     }
 
-    void IBusinessLogicGenerator.BuildViewClassMethod(ProfileDto profile, Schema schema, View view, MethodType methodType)
+    void IBusinessLogicGenerator.BuildViewClassMethod(Schema schema, View view, MethodType methodType, bool isAsync)
     {
-      BuildClassMethod(profile, schema, methodType, view.Name, false, true);
+      BuildClassMethod(schema, methodType, view.Name, false, isAsync);
     }
 
-    void IBusinessLogicGenerator.BuildViewInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType)
+    void IBusinessLogicGenerator.BuildViewInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync)
     {
-      BuildMethodSignature(profile, schema, methodType, view.Name, false, true, GetFullFunctionPrefix(schema, view.Name));
+      BuildInterfaceMethod(new GeneratorParameterObject(view)
+      {
+        Schema = schema,
+        IsAsync = isAsync,
+        IsTable = false,
+        MethodType = methodType
+      }, methodType);
     }
   }
 }

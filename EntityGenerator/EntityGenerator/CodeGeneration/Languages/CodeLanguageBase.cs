@@ -13,11 +13,11 @@ namespace EntityGenerator.CodeGeneration.Languages
 {
   public abstract class CodeLanguageBase : LanguageBase
   {
-    protected CodeLanguageBase(StringBuilder sb) : base(sb)
+    protected CodeLanguageBase(StringBuilder sb, ProfileDto profile) : base(sb, profile)
     {
     }
 
-    public abstract List<string> GetMethodSignatures(ProfileDto profile, Schema schema, MethodType methodType, string name,
+    public abstract List<string> GetMethodSignatures(Schema schema, MethodType methodType, string name,
       bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null);
   }
 }

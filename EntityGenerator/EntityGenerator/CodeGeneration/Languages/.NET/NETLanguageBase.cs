@@ -12,12 +12,12 @@ namespace EntityGenerator.CodeGeneration.Languages.NET
 {
   public abstract class NETLanguageBase : CodeLanguageBase
   { 
-    protected List<DatabaseLanguageBase> _databaseLanguages;
+    public List<DatabaseLanguageBase> DatabaseLanguages { get; private set; }
 
-    public NETLanguageBase(StringBuilder sb, List<DatabaseLanguageBase> databaseLanguages = null) : base(sb)
+    public NETLanguageBase(StringBuilder sb, ProfileDto profile, List<DatabaseLanguageBase> databaseLanguages = null) : base(sb, profile)
     {
       ParameterFormat = "{0} {1}";
-      _databaseLanguages = databaseLanguages;
+      DatabaseLanguages = databaseLanguages;
     }
 
     public abstract void OpenClass(string className, string baseClass, bool isStatic, bool isPartial, bool isAbstract, AccessType accessModifier);

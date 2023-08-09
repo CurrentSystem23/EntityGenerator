@@ -14,6 +14,7 @@ using EntityGenerator.CodeGeneration.Services;
 using EntityGenerator.CodeGeneration.Languages.NET.CSharp;
 using System.Text.Json.Serialization;
 using EntityGenerator.CodeGeneration.Languages.Angular.TypeScript;
+using EntityGenerator.Profile.DataTransferObject;
 
 namespace EntityGenerator.CodeGeneration.Languages
 {
@@ -23,12 +24,12 @@ namespace EntityGenerator.CodeGeneration.Languages
     {
     }
 
-    public LanguageService GetLanguageService(Profile.DataTransferObjects.Enums.Languages language)
+    public LanguageService GetLanguageService(Profile.DataTransferObjects.Enums.Languages language, ProfileDto profile)
     {
       switch (language)
       {
         case Profile.DataTransferObjects.Enums.Languages.DOTNET_6_CSHARP:
-          return new NETCSharpLanguageService();
+          return new NETCSharpLanguageService(profile);
         case Profile.DataTransferObjects.Enums.Languages.ANGULAR_15_TYPESCRIPT:
           return new AngularTypeScriptLanguageService();
         default:

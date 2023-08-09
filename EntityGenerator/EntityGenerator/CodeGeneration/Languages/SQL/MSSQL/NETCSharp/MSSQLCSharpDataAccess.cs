@@ -591,6 +591,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
     {
       string parametersSqlStr = ParameterHelper.GetParametersSqlString(parameters);
 
+      // GetCount(WhereClause)
       _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
       _sb.AppendLine("{");
@@ -672,5 +673,12 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       }
       _sb.AppendLine("return HasChangedWork(dto, dtoDb);");
     }
+
+    public override void BuildHistGetMethod(Schema schema, string name, bool isTable, bool async,
+  List<string> internalMethodSignatures, List<string> externalMethodSignatures)
+    {
+      // TODO : Implement
+    }
+
   }
 }

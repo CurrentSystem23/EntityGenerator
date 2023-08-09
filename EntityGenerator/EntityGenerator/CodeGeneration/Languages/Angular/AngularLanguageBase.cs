@@ -1,4 +1,6 @@
 ﻿using EntityGenerator.Core.Models.Enums;
+using EntityGenerator.Core.Models.ModelObjects;
+using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +11,9 @@ namespace EntityGenerator.CodeGeneration.Languages.Angular
 {
   public abstract class AngularLanguageBase : LanguageBase
   {
-    public AngularLanguageBase(StringBuilder sb) : base(sb) { }
+    public AngularLanguageBase(StringBuilder sb, ProfileDto profile) : base(sb, profile) { }
 
-    public override string GetDataType(DataTypes type)
+    public override string GetColumnDataType(Column column)
     {
       throw new NotImplementedException();
     }

@@ -6,18 +6,18 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IBusinessLogicGenerator
   {
-    void BuildInterfaceHeader(ProfileDto profile, Schema schema);
+    void BuildInterfaceHeader(Schema schema);
 
-    void BuildTableInterfaceMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildScalarFunctionInterfaceMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildTableValuedFunctionInterfaceMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildViewInterfaceMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildTableInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync);
+    void BuildScalarFunctionInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync);
+    void BuildTableValuedFunctionInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync);
+    void BuildViewInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync);
 
-    void BuildClassHeader(ProfileDto profile, Schema schema);
+    void BuildClassHeader(Schema schema);
  
-    void BuildTableClassMethod(ProfileDto profile, Schema schema, Table table, MethodType methodType);
-    void BuildScalarFunctionClassMethod(ProfileDto profile, Schema schema, Function function, MethodType methodType);
-    void BuildTableValuedFunctionClassMethod(ProfileDto profile, Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildViewClassMethod(ProfileDto profile, Schema schema, View view, MethodType methodType);
+    void BuildTableClassMethod(Schema schema, Table table, MethodType methodType, bool isAsync);
+    void BuildScalarFunctionClassMethod(Schema schema, Function function, MethodType methodType, bool isAsync);
+    void BuildTableValuedFunctionClassMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync);
+    void BuildViewClassMethod(Schema schema, View view, MethodType methodType, bool isAsync);
   }
 }
