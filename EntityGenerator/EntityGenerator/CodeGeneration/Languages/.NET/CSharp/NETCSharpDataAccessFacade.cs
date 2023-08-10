@@ -19,6 +19,60 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : IDataAccessFacadeGenerator
   {
+    protected List<string> GetFacadeMethodSignatures(GeneratorBaseModel baseModel, MethodType methodType, bool async, string prefix)
+    {
+      List<string> signatures = new();
+      string parametersWithTypeStr = ParameterHelper.GetParametersStringWithType(baseModel.Parameters, this);
+
+      switch (methodType)
+      {
+        case MethodType.GET:
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{baseModel.Name}[] orderBy);");
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{baseModel.Name}[] orderBy);");
+          if (baseModel.DbObjectType == DbObjectType.TABLE)
+          {
+            signatures.Add($"{(async ? $"Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {prefix}Get{(async ? "Async" : "")}({(_profile.Global.GuidIndexing ? "Guid" : "long")} id);");
+            signatures.Add($"{(async ? $"Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {prefix}Get{(async ? "Async" : "")}(Guid globalId);");
+          }
+          break;
+        case MethodType.SAVE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Save{(async ? "Async" : "")}({baseModel.DtoName} dto);");
+          break;
+        case MethodType.DELETE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          break;
+        case MethodType.MERGE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Merge{(async ? "Async" : "")}({baseModel.DtoName} dto);");
+          break;
+        case MethodType.COUNT:
+          signatures.Add($"{(async ? $"Task<long>" : $"long")} {prefix}GetCount{(async ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")});");
+          break;
+        case MethodType.HAS_CHANGED:
+          signatures.Add($"{(async ? "Task<bool>" : "bool")} {prefix}HasChanged{(async ? "Async" : "")}({baseModel.DtoName} dto);");
+          break;
+        case MethodType.BUlK_INSERT:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          break;
+        case MethodType.BULK_MERGE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          break;
+        case MethodType.BULK_UPDATE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkUpdate{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          break;
+        case MethodType.HIST_GET:
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.HistDtoName}>>" : $"ICollection<{baseModel.HistDtoName}>")} {prefix}HistGets{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          signatures.Add($"{(async ? $"Task<{baseModel.HistDtoName}>" : $"{baseModel.HistDtoName}")} {prefix}HistEntryGet{(async ? "Async" : "")}(long histId);");
+          break;
+        default:
+          break;
+      }
+
+      return signatures;
+    }
     protected void BuildInterfaceBase(Schema schema)
     {
       List<string> imports = new List<string>
@@ -68,119 +122,114 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess");
 
       OpenClass("DataAccess", "IDataAccessInternal", isStatic: false, isPartial: true);
-      _sb.AppendLine($"    private readonly ILogger<DataAccess> _logger;");
-      _sb.AppendLine("    private readonly IServiceProvider _provider;");
+      _sb.AppendLine($"private readonly ILogger<DataAccess> _logger;");
+      _sb.AppendLine("private readonly IServiceProvider _provider;");
     }
 
-    protected void BuildDataAccessFacadeExternalMethod(Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null)
+    protected void BuildDataAccessFacadeExternalMethod(GeneratorBaseModel baseModel, MethodType methodType, bool async)
     {
-      foreach (string methodSignature in GetMethodSignatures(schema, methodType, name, isTable, async, name, parametersStr, parametersWithTypeStr))
+      foreach (string methodSignature in GetFacadeMethodSignatures(baseModel, methodType, async, baseModel.Name))
       {
         _sb.AppendLine(methodSignature);
       }
     }
 
-    protected void BuildDataAccessFacadeInternalMethod(GeneratorParameterObject parameters, string parametersStr = null, string parametersWithTypeStr = null)
+    protected void BuildDataAccessFacadeInternalMethod(GeneratorBaseModel baseModel, MethodType methodType, bool isAsync, int databaseId)
     {
-      foreach (string methodSignature in DatabaseLanguages[parameters.DatabaseId].GetInternalMethodSignatures(parameters.Schema, parameters.MethodType, parameters.Name, parameters.IsTable, parameters.IsAsync, parametersStr, parametersWithTypeStr, true))
+      foreach (string methodSignature in DatabaseLanguages[databaseId].GetInternalMethodSignatures(baseModel.Schema, methodType, baseModel.Name, 
+        baseModel.DbObjectType, isAsync, ParameterHelper.GetParametersString(baseModel.Parameters), 
+        ParameterHelper.GetParametersStringWithType(baseModel.Parameters, this), true))
       {
         _sb.AppendLine(methodSignature);
       }
     }
 
-    protected void BuildDataAccessFacadeClassMethod(GeneratorParameterObject parameters)
+    protected void BuildDataAccessFacadeClassMethod(GeneratorBaseModel baseModel, MethodType methodType, bool isAsync, int databaseId)
     {
-      InternalGeneratorParameterObject internalParameters = TinyMapper.Map<InternalGeneratorParameterObject>(parameters);
-      internalParameters.ExternalMethodSignatures = GetMethodSignatures(parameters.Schema, parameters.MethodType, parameters.Name, true, true, 
-        $"Common.DataAccess.Interfaces.Ado.{parameters.Schema.Name}.I{TypeHelper.GetDaoType(parameters.Name, parameters.IsTable)}");
-      internalParameters.InternalMethodSignatures = DatabaseLanguages[parameters.DatabaseId].GetInternalMethodSignatures(parameters.Schema, parameters.MethodType, parameters.Name, parameters.IsTable, parameters.IsAsync, useNamespace: true);
+      string parametersStr = ParameterHelper.GetParametersString(baseModel.Parameters);
+      string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{baseModel.Schema.Name}.I{baseModel.InternalDaoName}";
+      List<string> externalMethodSignatures = GetFacadeMethodSignatures(baseModel, methodType, isAsync,
+        $"Common.DataAccess.Interfaces.Ado.{baseModel.Schema.Name}.I{baseModel.DaoName}");
+      List<string> internalMethodSignatures = DatabaseLanguages[databaseId].GetInternalMethodSignatures(baseModel.Schema, methodType, baseModel.Name, baseModel.DbObjectType, isAsync, useNamespace: true);
 
-      BuildDataAccessFacadeClassMethodBody(internalParameters);
-    }
 
-    protected void BuildDataAccessFacadeClassMethodBody(InternalGeneratorParameterObject parameters)
-    {
-      string parametersStr = ParameterHelper.GetParametersString(parameters.Parameters);
-      string dtoName = TypeHelper.GetDtoType(parameters.Name, parameters.IsTable, (parameters.MethodType == MethodType.HIST_GET));
-      string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{parameters.Schema.Name}.I{TypeHelper.GetInternalDaoType(parameters.Name, parameters.IsTable)}";
-
-      switch (parameters.MethodType)
+      switch (methodType)
       {
         case MethodType.GET:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"return {(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}Gets{(parameters.IsAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}orderBy){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(1));
-          _sb.AppendLine($"return {(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}Gets{(parameters.IsAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"return {(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Gets{(isAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}orderBy){(isAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(1));
+          _sb.AppendLine($"return {(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Gets{(isAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[parameters.DatabaseId].BuildInternalGetFacadeMethod(parameters.Schema, parameters.MethodType, parameters.Name, parameters.IsTable, parameters.IsAsync, parameters.InternalMethodSignatures, parameters.Parameters);
+          DatabaseLanguages[databaseId].BuildInternalGetFacadeMethod(baseModel.Schema, methodType, baseModel.Name, baseModel.DbObjectType, isAsync, internalMethodSignatures, baseModel.Parameters);
           break;
 
         case MethodType.SAVE:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}Save{(parameters.IsAsync ? "Async" : "")}(dto){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Save{(isAsync ? "Async" : "")}(dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[parameters.DatabaseId].BuildInternalSaveFacadeMethod(parameters.Schema, parameters.Name, parameters.IsTable, parameters.IsAsync, parameters.InternalMethodSignatures);
+          DatabaseLanguages[databaseId].BuildInternalSaveFacadeMethod(baseModel.Schema, baseModel.Name, baseModel.DbObjectType, isAsync, internalMethodSignatures);
           break;
 
         case MethodType.DELETE:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}Delete{(parameters.IsAsync ? "Async" : "")}(id){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Delete{(isAsync ? "Async" : "")}(id){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[parameters.DatabaseId].BuildInternalDeleteFacadeMethod(parameters.Schema, parameters.Name, parameters.IsTable, parameters.IsAsync, parameters.InternalMethodSignatures);
+          DatabaseLanguages[databaseId].BuildInternalDeleteFacadeMethod(baseModel.Schema, baseModel.Name, baseModel.DbObjectType, isAsync, internalMethodSignatures);
           break;
 
         case MethodType.MERGE:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}Merge{(parameters.IsAsync ? "Async" : "")}(dto){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
-          DatabaseLanguages[parameters.DatabaseId].BuildInternalMergeFacadeMethod(parameters.Schema, parameters.Name, parameters.IsTable, parameters.IsAsync, parameters.InternalMethodSignatures);
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Merge{(isAsync ? "Async" : "")}(dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
+          DatabaseLanguages[databaseId].BuildInternalMergeFacadeMethod(baseModel.Schema, baseModel.Name, baseModel.DbObjectType, isAsync, internalMethodSignatures);
           break;
           
         case MethodType.COUNT:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"return {(parameters.IsAsync ? "await" : string.Empty)} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}GetCount{(parameters.IsAsync ? "Async" : string.Empty)}(new WhereClause(){(parametersStr != "" ? $", {parametersStr}" : "")}){(parameters.IsAsync ? ".ConfigureAwait(false)" : string.Empty)};");
-          DatabaseLanguages[parameters.DatabaseId].BuildInternalCountFacadeMethod(parameters.Schema, parameters.Name, parameters.IsTable, parameters.IsAsync, parameters.InternalMethodSignatures, parameters.Parameters);
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"return {(isAsync ? "await" : string.Empty)} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}GetCount{(isAsync ? "Async" : string.Empty)}(new WhereClause(){(parametersStr != "" ? $", {parametersStr}" : "")}){(isAsync ? ".ConfigureAwait(false)" : string.Empty)};");
+          DatabaseLanguages[databaseId].BuildInternalCountFacadeMethod(baseModel.Schema, baseModel.Name, baseModel.DbObjectType, isAsync, internalMethodSignatures, baseModel.Parameters);
           break;
 
         case MethodType.HAS_CHANGED:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"return {(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}HasChanged{(parameters.IsAsync ? "Async" : "")}(dto){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"return {(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}HasChanged{(isAsync ? "Async" : "")}(dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[parameters.DatabaseId].BuildInternalHasChangedFacadeMethod(parameters.Schema, parameters.Name, parameters.IsTable, parameters.IsAsync, parameters.InternalMethodSignatures);
+          DatabaseLanguages[databaseId].BuildInternalHasChangedFacadeMethod(baseModel.Schema, baseModel.Name, baseModel.DbObjectType, isAsync, internalMethodSignatures);
           break;
 
         case MethodType.BUlK_INSERT:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}BulkInsert{(parameters.IsAsync ? "Async" : "")}(dtos){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(1));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}BulkInsert{(parameters.IsAsync ? "Async" : "")}(dtos, identityInsert){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(2));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}_TempBulkInsert{(parameters.IsAsync ? "Async" : "")}(dtos){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(3));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}_TempBulkInsert{(parameters.IsAsync ? "Async" : "")}(dtos, identityInsert){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}BulkInsert{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(1));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}BulkInsert{(isAsync ? "Async" : "")}(dtos, identityInsert){(isAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(2));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}_TempBulkInsert{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(3));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}_TempBulkInsert{(isAsync ? "Async" : "")}(dtos, identityInsert){(isAsync ? ".ConfigureAwait(false)" : "")};");
           break;
 
         case MethodType.BULK_MERGE:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}BulkMerge{(parameters.IsAsync ? "Async" : "")}(dtos){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(1));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}BulkMerge{(parameters.IsAsync ? "Async" : "")}(dtos, identityInsert){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}BulkMerge{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(1));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}BulkMerge{(isAsync ? "Async" : "")}(dtos, identityInsert){(isAsync ? ".ConfigureAwait(false)" : "")};");
           break;
 
         case MethodType.BULK_UPDATE:
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"{(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}BulkUpdate{(parameters.IsAsync ? "Async" : "")}(dtos){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}BulkUpdate{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
           break;
 
         case MethodType.HIST_GET:
           // HistGet
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(0));
-          _sb.AppendLine($"return {(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}HistGets{(parameters.IsAsync ? "Async" : "")}(id){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"return {(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}HistGets{(isAsync ? "Async" : "")}(id){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
           // HistEntryGet
-          OpenMethod(parameters.ExternalMethodSignatures.ElementAt(1));
-          _sb.AppendLine($"return {(parameters.IsAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{parameters.Name}HistEntryGet{(parameters.IsAsync ? "Async" : "")}(histId){(parameters.IsAsync ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod(externalMethodSignatures.ElementAt(1));
+          _sb.AppendLine($"return {(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}HistEntryGet{(isAsync ? "Async" : "")}(histId){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[parameters.DatabaseId].BuildInternalHistFacadeMethod(parameters.Schema, parameters.Name, parameters.IsTable, parameters.IsAsync, parameters.InternalMethodSignatures);
+          DatabaseLanguages[databaseId].BuildInternalHistFacadeMethod(baseModel.Schema, baseModel.Name, baseModel.DbObjectType, isAsync, internalMethodSignatures);
           break;
 
         default:
@@ -250,24 +299,24 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       BuildExternalInterfaceHeader(schema, view.Name, false);
     }
 
-    void IDataAccessFacadeGenerator.BuildDataAccessFacadeFunctionExternalInterfaceMethod(Schema schema, Function function, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessFacadeFunctionExternalInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync)
     {
-      BuildDataAccessFacadeExternalMethod(schema, methodType, function.Name, false, true, ParameterHelper.GetParametersString(function.Parameters), ParameterHelper.GetParametersStringWithType(function.Parameters, this));
+      BuildDataAccessFacadeExternalMethod(new GeneratorBaseModel(function, schema), methodType, isAsync);
     }
 
-    void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableExternalInterfaceMethod(Schema schema, Table table, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableExternalInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync)
     {
-      BuildDataAccessFacadeExternalMethod(schema, methodType, table.Name, true, true);
+      BuildDataAccessFacadeExternalMethod(new GeneratorBaseModel(table, schema), methodType, isAsync);
     }
 
-    void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync)
     {
-      BuildDataAccessFacadeExternalMethod(schema, methodType, tableValuedFunction.Name, false, true, ParameterHelper.GetParametersString(tableValuedFunction.Parameters), ParameterHelper.GetParametersStringWithType(tableValuedFunction.Parameters, this));
+      BuildDataAccessFacadeExternalMethod(new GeneratorBaseModel(tableValuedFunction, schema), methodType, isAsync);
     }
 
-    void IDataAccessFacadeGenerator.BuildDataAccessFacadeViewExternalInterfaceMethod(Schema schema, View view, MethodType methodType)
+    void IDataAccessFacadeGenerator.BuildDataAccessFacadeViewExternalInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync)
     {
-      BuildDataAccessFacadeExternalMethod(schema, methodType, view.Name, false, true);
+      BuildDataAccessFacadeExternalMethod(new GeneratorBaseModel(view, schema), methodType, isAsync);
     }
     #endregion
 
@@ -294,55 +343,22 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableInternalInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync, int databaseId)
     {
-      BuildDataAccessFacadeInternalMethod(new GeneratorParameterObject(table)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = true,
-        DatabaseId = databaseId,
-        MethodType = methodType,        
-      });
+      BuildDataAccessFacadeInternalMethod(new GeneratorBaseModel(table, schema), methodType, isAsync, databaseId);
     }
 
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeFunctionInternalInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync, int databaseId)
     {
-      BuildDataAccessFacadeInternalMethod(new GeneratorParameterObject(function)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        DatabaseId = databaseId,
-        MethodType = methodType
-      },
-        ParameterHelper.GetParametersString(function.Parameters),
-        ParameterHelper.GetParametersStringWithType(function.Parameters, this));
+      BuildDataAccessFacadeInternalMethod(new GeneratorBaseModel(function, schema), methodType, isAsync, databaseId);
     }
 
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync, int databaseId)
     {
-
-      BuildDataAccessFacadeInternalMethod(new GeneratorParameterObject(tableValuedFunction)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        DatabaseId = databaseId,
-        MethodType = methodType
-      },
-        ParameterHelper.GetParametersString(tableValuedFunction.Parameters), 
-        ParameterHelper.GetParametersStringWithType(tableValuedFunction.Parameters, this));
+      BuildDataAccessFacadeInternalMethod(new GeneratorBaseModel(tableValuedFunction, schema), methodType, isAsync, databaseId);
     }
 
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeViewInternalInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync, int databaseId)
     {
-      BuildDataAccessFacadeInternalMethod(new GeneratorParameterObject(view)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        DatabaseId = databaseId,
-        MethodType = methodType
-      });
+      BuildDataAccessFacadeInternalMethod(new GeneratorBaseModel(view, schema), methodType, isAsync, databaseId);
     }
 
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableClassHeader(Schema schema, Table table)
@@ -367,48 +383,20 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableClassMethod(Schema schema, Table table, MethodType methodType, bool isAsync, int databaseId)
     {
-      BuildDataAccessFacadeClassMethod(new GeneratorParameterObject(table)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        DatabaseId = databaseId,
-        MethodType = methodType
-      });
+      BuildDataAccessFacadeClassMethod(new GeneratorBaseModel(table, schema), methodType, isAsync, databaseId);
     }
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeFunctionClassMethod(Schema schema, Function function, MethodType methodType, bool isAsync, int databaseId)
     {
-      BuildDataAccessFacadeClassMethod(new GeneratorParameterObject(function)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        DatabaseId = databaseId,
-        MethodType = methodType
-      });
+      BuildDataAccessFacadeClassMethod(new GeneratorBaseModel(function, schema), methodType, isAsync, databaseId);
     }
 
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeTableValuedFunctionClassMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync, int databaseId)
     {
-      BuildDataAccessFacadeClassMethod(new GeneratorParameterObject(tableValuedFunction)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        DatabaseId = databaseId,
-        MethodType = methodType
-      });
+      BuildDataAccessFacadeClassMethod(new GeneratorBaseModel(tableValuedFunction, schema), methodType, isAsync, databaseId);
     }
     void IDataAccessFacadeGenerator.BuildDataAccessFacadeViewClassMethod(Schema schema, View view, MethodType methodType, bool isAsync, int databaseId)
     {
-      BuildDataAccessFacadeClassMethod(new GeneratorParameterObject(view)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        DatabaseId = databaseId,
-        MethodType = methodType
-      });
+      BuildDataAccessFacadeClassMethod(new GeneratorBaseModel(view, schema), methodType, isAsync, databaseId);
     }
     #endregion
   }

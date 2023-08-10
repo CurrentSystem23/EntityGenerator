@@ -19,18 +19,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : IDataAccessSQLGenerator
   {
-    void IDataAccessSQLGenerator.BuildBaseFileExtension(int databaseId)
-    {
-      List<string> imports = new() { "System", "System.Collections.Generic", "System.Text", $"{_profile.Global.ProjectName}.Common.DTOs" };
-      BuildImports(imports.Concat(MSSQLCSharp.GetClientImports()).ToList());
-      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.BaseClasses");
-      OpenClass("Dao", isPartial: true);
-
-      DatabaseLanguages[databaseId].BuildBeforeSaveMethod();
-      DatabaseLanguages[databaseId].BuildAfterSaveMethod();
-    }
-
-    protected void BuildDAOClassHeader(GeneratorParameterObject parameters)
+    protected void BuildDAOClassHeader(GeneratorBaseModel parameters)
     {
       List<string> imports = new()
       {
@@ -137,9 +126,65 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       }
     }
 
-    void IDataAccessSQLGenerator.BuildDependencyInjections(Database db)
+    void IDataAccessSQLGenerator.BuildBaseFileExtension(int databaseId)
     {
-      throw new NotImplementedException();
+      List<string> imports = new() { "System", "System.Collections.Generic", "System.Text", $"{_profile.Global.ProjectName}.Common.DTOs" };
+      BuildImports(imports.Concat(MSSQLCSharp.GetClientImports()).ToList());
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.BaseClasses");
+      OpenClass("Dao", isPartial: true);
+
+      DatabaseLanguages[databaseId].BuildBeforeSaveMethod();
+      DatabaseLanguages[databaseId].BuildAfterSaveMethod();
+    }
+
+    void IDataAccessSQLGenerator.BuildDependencyInjections(Database db, int databaseId)
+    {
+      // Class Header
+      List<string> imports = new()
+      {
+        "Microsoft.Extensions.DependencyInjection"
+      };
+
+      // Add all available schemata as imports
+      foreach (Schema schema in db.Schemas)
+      {
+        foreach (DatabaseLanguageBase databaseLanguage in DatabaseLanguages)
+        {
+          imports.Add($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}");
+        }
+      }
+
+      BuildImports(imports);
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.Helper");
+
+      OpenClass($"DataAccess{DatabaseLanguages[databaseId].Name}Initializer", isStatic: true, isPartial: true);
+
+      OpenMethod("InitializeGeneratedSqlDataAccess(IServiceCollection services)", isStatic: true);
+      _sb.AppendLine("{");
+
+      foreach (Schema schema in db.Schemas)
+      {
+        foreach (Table table in schema.Tables)
+        {
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}Dao, {_profile.Global.ProjectName}.DataAccess.{dbSpecifier}.{ti.TableSchema}.{ti.TableName}Dao{(isView ? "V" : "")}>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}InternalDao, {_profile.Global.ProjectName}.DataAccess.{dbSpecifier}.{ti.TableSchema}.{ti.TableName}Dao{(isView ? "V" : "")}>();");
+        }
+        foreach (Function function in schema.FunctionsScalar)
+        {
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoS, {_profile.Global.ProjectName}.DataAccess.{dbSpecifier}.{ti.TableSchema}.{ti.TableName}DaoS>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoS, {_profile.Global.ProjectName}.DataAccess.{dbSpecifier}.{ti.TableSchema}.{ti.TableName}DaoS>();");
+        }
+        foreach (Function function in schema.FunctionsTableValued)
+        {
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoV, {_profile.Global.ProjectName}.DataAccess.{dbSpecifier}.{ti.TableSchema}.{ti.TableName}Dao{(isView ? "V" : "")}>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoV, {_profile.Global.ProjectName}.DataAccess.{dbSpecifier}.{ti.TableSchema}.{ti.TableName}Dao{(isView ? "V" : "")}>();");
+        }
+        foreach (View view in schema.Views)
+        {
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{view.Name}Dao{TypeHelper.GetDaoType(view.Name, false)}, {_profile.Global.ProjectName}.DataAccess.{dbSpecifier}.{ti.TableSchema}.{ti.TableName}Dao{(isView ? "V" : "")}>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{view.Name}Internal{TypeHelper.GetDaoType(view.Name, false)}, {_profile.Global.ProjectName}.DataAccess.{dbSpecifier}.{ti.TableSchema}.{ti.TableName}Dao{(isView ? "V" : "")}>();");
+        }
+      }
     }
 
     void IDataAccessSQLGenerator.BuildBaseFile()

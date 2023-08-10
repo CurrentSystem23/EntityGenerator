@@ -19,10 +19,10 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
     void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceHeader(Schema schema, Function tableValuedFunction);
     void BuildDataAccessFacadeViewExternalInterfaceHeader(Schema schema, View view);
 
-    void BuildDataAccessFacadeTableExternalInterfaceMethod(Schema schema, Table table, MethodType methodType);
-    void BuildDataAccessFacadeFunctionExternalInterfaceMethod(Schema schema, Function function, MethodType methodType);
-    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildDataAccessFacadeViewExternalInterfaceMethod(Schema schema, View view, MethodType methodType);
+    void BuildDataAccessFacadeTableExternalInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync);
+    void BuildDataAccessFacadeFunctionExternalInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync);
+    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync);
+    void BuildDataAccessFacadeViewExternalInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync);
     
     void BuildDataAccessFacadeTableInternalInterfaceHeader(Schema schema, Table table);
     void BuildDataAccessFacadeFunctionInternalInterfaceHeader(Schema schema, Function function);

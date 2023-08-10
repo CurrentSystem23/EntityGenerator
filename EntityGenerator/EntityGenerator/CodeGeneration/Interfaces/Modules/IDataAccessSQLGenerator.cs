@@ -12,7 +12,7 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
   {
     void BuildBaseFileExtension(int databaseId);
     void BuildWhereParameterClass(int databaseId);
-    void BuildDependencyInjections(Database db);
+    void BuildDependencyInjections(Database db, int databaseId);
     void BuildBaseFile();
 
     void BuildTableDAOHeader(Schema schema, Table table);
