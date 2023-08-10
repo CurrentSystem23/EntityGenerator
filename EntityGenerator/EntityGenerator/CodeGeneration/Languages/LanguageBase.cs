@@ -17,36 +17,47 @@ namespace EntityGenerator.CodeGeneration.Languages
 {
   public abstract class LanguageBase
   {
-    protected class InternalGeneratorParameterObject : GeneratorParameterObject
+    public enum DbObjectType
     {
-      public InternalGeneratorParameterObject() : base() { }
-
-      public InternalGeneratorParameterObject(BaseModel baseModel) : base(baseModel)
-      {
-      }
-
-      /// <summary>
-      /// External DAO method signature names.
-      /// </summary>
-      public List<string> ExternalMethodSignatures { get; set; }
-
-      /// <summary>
-      /// Internal DAO method signature names.
-      /// </summary>
-      public List<string> InternalMethodSignatures { get; set; }
+      TABLE,
+      FUNCTION,
+      VIEW,
+      TABLEVALUEFUNCTION
     }
     /// <summary>
     /// Clustered parameter object for common parameter sharing.
     /// </summary>
-    protected class GeneratorParameterObject
+    protected class GeneratorBaseModel
     {
-      public GeneratorParameterObject()
+      public GeneratorBaseModel(BaseModel baseModel, Schema schema)
       {
-      }
+        this.Schema = schema;
 
-      public GeneratorParameterObject(BaseModel baseModel)
-      {
-        List<PropertyInfo> propertiesSrc = baseModel.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(prop => prop.CanRead).ToList();
+        Type baseType = baseModel.GetType();
+        
+        switch (baseType)
+        {
+          case Type tableType when tableType == typeof(Table):
+            DbObjectType = DbObjectType.TABLE;
+            break;
+          case Type functionType when functionType == typeof(Function):
+            if (((Function)baseModel).FunctionType is "InLineTableFunction" or "TableFunction")
+            {
+              DbObjectType = DbObjectType.TABLEVALUEFUNCTION;
+            }
+            else
+            {
+              DbObjectType = DbObjectType.FUNCTION;
+            }
+            break;
+          case Type viewType when viewType == typeof(View):
+            DbObjectType = DbObjectType.VIEW;
+            break;
+          default:
+            throw new NotSupportedException();
+        }
+ 
+        List<PropertyInfo> propertiesSrc = baseType.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(prop => prop.CanRead).ToList();
         List<PropertyInfo> propertiesDest = this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(prop => prop.CanWrite).ToList();
 
         foreach (PropertyInfo propDest in propertiesDest)
@@ -63,37 +74,22 @@ namespace EntityGenerator.CodeGeneration.Languages
         }
       }
       /// <summary>
-      /// Id of currently being used databse language in _dataseLanguages list.
-      /// </summary>
-      public int DatabaseId { get; set; }
-
-      /// <summary>
       /// Name of currently indexed database object.
       /// </summary>
-      public string Name { get; set; }
+      public string Name { get; private set; }
 
       /// <summary>
       /// Parent schema.
       /// </summary>
-      public Schema Schema { get; set; }
-
+      public Schema Schema { get; private set; }
+      
       /// <summary>
-      /// Toggle on whether to use a- or synchronous function generation.
+      /// Database object type.
       /// </summary>
-      public bool IsAsync { get; set; }
+      public DbObjectType DbObjectType { get; private set; }
 
       /// <summary>
-      /// Toggle if currently used database object is table or other type.
-      /// </summary>
-      public bool IsTable { get; set; }
-
-      /// <summary>
-      /// Actively generated CRUD method type.
-      /// </summary>
-      public MethodType MethodType { get; set; }
-
-      /// <summary>
-      /// List of parameters in indexed database object.
+      /// List of parameters in indexed database object.  
       /// </summary>
       public List<Column> Parameters { get; set; }
 
@@ -105,12 +101,53 @@ namespace EntityGenerator.CodeGeneration.Languages
       /// <summary>
       /// DAO name to be used in generated output.
       /// </summary>
-      public string DaoName { get => TypeHelper.GetDaoType(Name, IsTable); }
+      public string DaoName => DbObjectType switch
+      {
+        DbObjectType.TABLE => $"{Name}Dao",
+        DbObjectType.FUNCTION => $"{Name}DaoS",
+        DbObjectType.VIEW => $"{Name}DaoV",
+        DbObjectType.TABLEVALUEFUNCTION => $"{Name}DaoV",
+        _ => throw new NotSupportedException(),
+      };
+
+      public string InternalDaoName => DbObjectType switch
+      {
+        DbObjectType.TABLE => $"{Name}InternalDao",
+        DbObjectType.FUNCTION => $"{Name}InternalDaoS",
+        DbObjectType.VIEW => $"{Name}InternalDaoV",
+        DbObjectType.TABLEVALUEFUNCTION => $"{Name}InternalDaoV",
+        _ => throw new NotSupportedException(),
+      };
 
       /// <summary>
       /// DTO name to be used in generated output.
       /// </summary>
-      public string DtoName { get => TypeHelper.GetDtoType(Name, IsTable, (MethodType == MethodType.HIST_GET)); }
+      public string DtoName => DbObjectType switch
+      {
+        DbObjectType.TABLE => $"{Name}Dto",
+        DbObjectType.VIEW => $"{Name}DtoV",
+        DbObjectType.TABLEVALUEFUNCTION => $"{Name}DtoV",
+        _ => throw new NotSupportedException(),
+      };
+
+      /// <summary>
+      /// HistDTO name for table objects.
+      /// </summary>
+      public string HistDtoName => DbObjectType switch
+      {
+        DbObjectType.TABLE => $"{Name}HistDto",
+        _ => throw new NotSupportedException(),
+      };
+
+      /// <summary>
+      /// External DAO method signature names. Boolean is asynchronity toggle.
+      /// </summary>
+      public Dictionary<(MethodType, bool), List<string>> ExternalMethodSignatures { get; private set; }
+
+      /// <summary>
+      /// Internal DAO method signature names. Boolean is asynchronity toggle.
+      /// </summary>
+      public Dictionary<(MethodType, bool), List<string>> InternalMethodSignatures { get; private set; }
     }
 
     /// <summary>
@@ -140,7 +177,6 @@ namespace EntityGenerator.CodeGeneration.Languages
     {
       _sb = sb;
       _profile = profile;
-      TinyMapper.Bind<GeneratorParameterObject, InternalGeneratorParameterObject>();
     }
 
     /// <summary>

@@ -49,17 +49,17 @@ namespace EntityGenerator.CodeGeneration.Services
 
     public void ExecuteCommonPresentationGenerator(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      throw new NotImplementedException();
+      _languageProvider.GetLanguageService(profile.Generator.GeneratorCommon.Language, profile).GenerateCommonPresentation(db, profile, writerService);
     }
 
     public void ExecuteDataAccessFacadeGenerator(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      throw new NotImplementedException();
+      _languageProvider.GetLanguageService(profile.Generator.GeneratorDataAccessFacade.Language, profile).GenerateDataAccessFacade(db, profile, writerService);
     }
 
     public void ExecuteDataAccessGenerator(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      throw new NotImplementedException();
+      _languageProvider.GetLanguageService(profile.Generator.GeneratorDataAccess.Language, profile).GenerateDataAccess(db, profile, writerService);
     }
 
     public void ExecuteFrontendGenerator(Database db, ProfileDto profile, IFileWriterService writerService)

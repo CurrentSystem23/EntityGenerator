@@ -16,8 +16,5 @@ namespace EntityGenerator.CodeGeneration.Languages
     protected CodeLanguageBase(StringBuilder sb, ProfileDto profile) : base(sb, profile)
     {
     }
-
-    public abstract List<string> GetMethodSignatures(Schema schema, MethodType methodType, string name,
-      bool isTable, bool async, string prefix, string parametersStr = null, string parametersWithTypeStr = null);
   }
 }
