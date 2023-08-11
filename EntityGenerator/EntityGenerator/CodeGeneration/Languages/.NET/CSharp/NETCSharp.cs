@@ -165,12 +165,14 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     public override void BuildTraceLogCall(string message, string paramsStr, bool async)
     {
-      throw new NotImplementedException();
+      // TODO use async toggle.
+      _sb.AppendLine("_logger.LogTrace(message, paramsStr)");
     }
 
     public override void BuildErrorLogCall(string message, string paramsStr, bool async)
     {
-      throw new NotImplementedException();
+      // TODO use async toggle.
+      _sb.AppendLine("_logger.LogError(message, paramsStr)");
     }
 
     public override string GetColumnDataType(Column column)
@@ -190,7 +192,8 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         case DataTypes.Int64:
           return "long";
         case DataTypes.SByte:
-          break; // TODO
+          // TODO
+          throw new NotSupportedException();
         case DataTypes.UInt16:
           return "ushort";
         case DataTypes.UInt32:
@@ -239,6 +242,65 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           throw new NotSupportedException($"Error: Type {column.ColumnTypeDataType} is not supported.");
       }
       return string.Empty;
+    }
+    protected List<string> GetExternalMethodSignatures(GeneratorBaseModel baseModel, MethodType methodType, bool async, string prefix = null)
+    {
+      if (!MethodHelper.IsValidMethodType(baseModel.DbObjectType, methodType))
+      {
+        return new List<string>();
+      }
+
+      List<string> signatures = new();
+      string parametersWithTypeStr = ParameterHelper.GetParametersStringWithType(baseModel.Parameters, this);
+
+      switch (methodType)
+      {
+        case MethodType.GET:
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{baseModel.Name}[] orderBy);");
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{baseModel.Name}[] orderBy);");
+          if (baseModel.DbObjectType == DbObjectType.TABLE)
+          {
+            signatures.Add($"{(async ? $"Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {prefix}Get{(async ? "Async" : "")}({(_profile.Global.GuidIndexing ? "Guid" : "long")} id);");
+            signatures.Add($"{(async ? $"Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {prefix}Get{(async ? "Async" : "")}(Guid globalId);");
+          }
+          break;
+        case MethodType.SAVE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Save{(async ? "Async" : "")}({baseModel.DtoName} dto);");
+          break;
+        case MethodType.DELETE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          break;
+        case MethodType.MERGE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Merge{(async ? "Async" : "")}({baseModel.DtoName} dto);");
+          break;
+        case MethodType.COUNT:
+          signatures.Add($"{(async ? $"Task<long>" : $"long")} {prefix}GetCount{(async ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")});");
+          break;
+        case MethodType.HAS_CHANGED:
+          signatures.Add($"{(async ? "Task<bool>" : "bool")} {prefix}HasChanged{(async ? "Async" : "")}({baseModel.DtoName} dto);");
+          break;
+        case MethodType.BUlK_INSERT:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          break;
+        case MethodType.BULK_MERGE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          break;
+        case MethodType.BULK_UPDATE:
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkUpdate{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          break;
+        case MethodType.HIST_GET:
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.HistDtoName}>>" : $"ICollection<{baseModel.HistDtoName}>")} {prefix}HistGets{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          signatures.Add($"{(async ? $"Task<{baseModel.HistDtoName}>" : $"{baseModel.HistDtoName}")} {prefix}HistEntryGet{(async ? "Async" : "")}(long histId);");
+          break;
+        default:
+          break;
+      }
+
+      return signatures;
     }
   }
 }

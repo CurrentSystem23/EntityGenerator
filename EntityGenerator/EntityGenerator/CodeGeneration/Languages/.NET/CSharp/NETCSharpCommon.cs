@@ -16,7 +16,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : ICommonGenerator
   {
-    protected void BuildDTO(GeneratorParameterObject parameters)
+    protected void BuildDTO(GeneratorBaseModel parameters)
     {
       BuildImports(new List<string> {
         $"{_profile.Global.ProjectName}.Common.DTOs",
@@ -40,14 +40,14 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
       // TODO : Allow config to decide over special Dto (currently Tenant)
       OpenClass($"{parameters.DtoName}", $"{(parameters.Columns.Exists(column => column.Name == "TenantId") ? "DtoBaseTenant" : "DtoBase")}");
-      foreach (Column column in parameters.Columns.Where(column => !column.ColumnIsIdentity || !parameters.IsTable))
+      foreach (Column column in parameters.Columns.Where(column => !column.ColumnIsIdentity || (parameters.DbObjectType == DbObjectType.TABLE)))
       {
         string dataType = column.ColumnTypeDataType is DataTypes.XDocument or DataTypes.XElement ? "string" : GetColumnDataType(column);
         _sb.AppendLine($"public {String.Format(ParameterFormat, dataType, column.Name)} {{ get; set; }} {(column.ColumnDefaultDefinition.IsNullOrEmpty() ? $"= {column.ColumnDefaultDefinition}" : "")}");
       }
     }
 
-    protected void BuildHistDto(GeneratorParameterObject parameters)
+    protected void BuildHistDto(GeneratorBaseModel parameters)
     {
       // Ignore history for logging tables
       if (parameters.Schema.Name.ToLower().Equals("log") || (parameters.Name.ToLower().Equals("logging") || parameters.Name.ToLower().Equals("log")))
@@ -111,35 +111,17 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void ICommonGenerator.BuildTableDTO(Schema schema, Table table)
     {
-      BuildDTO(new GeneratorParameterObject
-      { 
-        Columns = table.Columns,
-        IsTable = true,
-        Name = table.Name,
-        Schema = schema
-      });
+      BuildDTO(new GeneratorBaseModel(table, schema));
     }
 
     void ICommonGenerator.BuildTableValuedFunctionDTO(Schema schema, Function tableValuedFunction)
     {
-      BuildDTO(new GeneratorParameterObject
-      {
-        Columns = tableValuedFunction.ReturnTable,
-        IsTable = false,
-        Name = tableValuedFunction.Name,
-        Schema = schema
-      });
+      BuildDTO(new GeneratorBaseModel(tableValuedFunction, schema));
     }
 
     void ICommonGenerator.BuildViewDTO(Schema schema, View view)
     {
-      BuildDTO(new GeneratorParameterObject
-      {
-        Columns = view.Columns,
-        IsTable = false,
-        Name = view.Name,
-        Schema = schema
-      });
+      BuildDTO(new GeneratorBaseModel(view, schema));
     }
   }
 }

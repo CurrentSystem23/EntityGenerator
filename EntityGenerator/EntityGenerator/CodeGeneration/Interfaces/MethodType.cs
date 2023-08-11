@@ -18,5 +18,6 @@ namespace EntityGenerator.CodeGeneration.Interfaces
     BULK_MERGE,
     BULK_UPDATE,
     HIST_GET,
+    EXECUTE
   }
 }

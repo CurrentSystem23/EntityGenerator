@@ -20,136 +20,141 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       return $"{schema.Name.FirstCharToUpper()}_{name}";
     }
 
-    protected void BuildClassMethod(Schema schema, MethodType methodType, string name, bool isTable, bool async, string parametersStr = null, string parametersWithTypeStr = null)
+    protected void BuildClassMethod(GeneratorBaseModel baseModel, MethodType methodType, bool isAsync)
     {
-      string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
-      string daoName = TypeHelper.GetDaoType(name, isTable);
-      string dataAccessName = $"((Common.DataAccess.Interfaces.Ado.{schema.Name}.I{daoName})_dataAccess).{name}";
+      if (!MethodHelper.IsValidMethodType(baseModel.DbObjectType, methodType))
+      {
+        return;
+      }
+
+      string dataAccessName = $"((Common.DataAccess.Interfaces.Ado.{baseModel.Schema.Name}.I{baseModel.DaoName})_dataAccess).{baseModel.Name}";
+      string parametersStr = ParameterHelper.GetParametersString(baseModel.Parameters);
+      string parametersWithTypeStr = ParameterHelper.GetParametersStringWithType(baseModel.Parameters, this);
 
       switch (methodType)
       {
         case MethodType.GET:
-          OpenMethod($"public {(async ? $"async Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}Gets{(async ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{name}[] orderBy)");
-          _sb.AppendLine($"var dto = {(async ? "await " : string.Empty)}{dataAccessName}Gets{(async ? "Async" : string.Empty)}({(parametersStr != "" ? $"{parametersStr}, " : "")}orderBy){(async ? ".ConfigureAwait(false)" : string.Empty)};");
-          BuildTraceLogCall($"Logic.{name}Gets{(async ? "Async" : "")}()", $"{(parametersStr != "" ? $"{parametersStr}, " : "")}orderBy", async);
+          OpenMethod($"public {(isAsync ? $"async Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}Gets{(isAsync ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{baseModel.Name}[] orderBy)");
+          _sb.AppendLine($"var dto = {(isAsync ? "await " : string.Empty)}{dataAccessName}Gets{(isAsync ? "Async" : string.Empty)}({(parametersStr != "" ? $"{parametersStr}, " : "")}orderBy){(isAsync ? ".ConfigureAwait(false)" : string.Empty)};");
+          BuildTraceLogCall($"Logic.{baseModel.Name}Gets{(isAsync ? "Async" : "")}()", $"{(parametersStr != "" ? $"{parametersStr}, " : "")}orderBy", isAsync);
           _sb.AppendLine($"return dto;");
           CloseMethod();
 
-          OpenMethod($"public {(async ? $"async Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}Gets{(async ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{name}[] orderBy)");
-          _sb.AppendLine($"var dto = {(async ? "await " : string.Empty)}{dataAccessName}Gets{(async ? "Async" : string.Empty)}({(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(async ? ".ConfigureAwait(false)" : string.Empty)};");
-          BuildTraceLogCall($"Logic.{name}Gets{(async ? "Async" : "")}()", $"dto, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy", async);
+          OpenMethod($"public {(isAsync ? $"async Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}Gets{(isAsync ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{baseModel.Name}[] orderBy)");
+          _sb.AppendLine($"var dto = {(isAsync ? "await " : string.Empty)}{dataAccessName}Gets{(isAsync ? "Async" : string.Empty)}({(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(isAsync ? ".ConfigureAwait(false)" : string.Empty)};");
+          BuildTraceLogCall($"Logic.{baseModel.Name}Gets{(isAsync ? "Async" : "")}()", $"dto, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy", isAsync);
           _sb.AppendLine($"return dto;");
           CloseMethod();
 
-          if (isTable) {
-            OpenMethod($"public {(async ? $"async Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}Get{(async ? "Async" : "")}({(_profile.Global.GuidIndexing ? "Guid" : "long")} id);");
-            _sb.AppendLine($"var dto = {(async ? "await " : "")}{dataAccessName}Get{(async ? "Async" : "")}(id){(async ? ".ConfigureAwait(false)" : "")};");
-            BuildTraceLogCall($"Logic.{name}Get{(async ? "Async" : "")}({{id}})", $"dto", async);
-            _sb.AppendLine($"return ({dtoName})dto ?? null;");
+          if (baseModel.DbObjectType == DbObjectType.TABLE) {
+            OpenMethod($"public {(isAsync ? $"async Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}Get{(isAsync ? "Async" : "")}({(_profile.Global.GuidIndexing ? "Guid" : "long")} id);");
+            _sb.AppendLine($"var dto = {(isAsync ? "await " : "")}{dataAccessName}Get{(isAsync ? "Async" : "")}(id){(isAsync ? ".ConfigureAwait(false)" : "")};");
+            BuildTraceLogCall($"Logic.{baseModel.Name}Get{(isAsync ? "Async" : "")}({{id}})", $"dto", isAsync);
+            _sb.AppendLine($"return ({baseModel.DtoName})dto ?? null;");
             CloseMethod();
 
-            OpenMethod($"public {(async ? $"async Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}Get{(async ? "Async" : "")}(Guid globalId);");
-            _sb.AppendLine($"var dto = {(async ? "await " : "")}{dataAccessName}Get{(async ? "Async" : "")}(globalId){(async ? ".ConfigureAwait(false)" : "")};");
-            BuildTraceLogCall($"Logic.{name}Get{(async ? "Async" : "")}({{globalId}})", $"dto", async);
-            _sb.AppendLine($"return ({dtoName})dto ?? null;");
+            OpenMethod($"public {(isAsync ? $"async Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}Get{(isAsync ? "Async" : "")}(Guid globalId);");
+            _sb.AppendLine($"var dto = {(isAsync ? "await " : "")}{dataAccessName}Get{(isAsync ? "Async" : "")}(globalId){(isAsync ? ".ConfigureAwait(false)" : "")};");
+            BuildTraceLogCall($"Logic.{baseModel.Name}Get{(isAsync ? "Async" : "")}({{globalId}})", $"dto", isAsync);
+            _sb.AppendLine($"return ({baseModel.DtoName})dto ?? null;");
             CloseMethod();
           }
           break;
 
         case MethodType.SAVE:
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}Save{(async ? "Async" : "")}({dtoName} dto);");
-          BuildTraceLogCall($"Logic.{name}Save{(async ? "Async" : "")}()", $"dto", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}Save{(async ? "Async" : "")}(({dtoName})dto){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}Save{(isAsync ? "Async" : "")}({baseModel.DtoName} dto);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}Save{(isAsync ? "Async" : "")}()", $"dto", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}Save{(isAsync ? "Async" : "")}(({baseModel.DtoName})dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
           break;
 
         case MethodType.DELETE:
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}Delete{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
-          BuildTraceLogCall($"Logic.{name}Delete{(async ? "Async" : "")}({{id}})", string.Empty, async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}Delete{(async ? "Async" : "")}(id){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}Delete{(isAsync ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}Delete{(isAsync ? "Async" : "")}({{id}})", string.Empty, isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}Delete{(isAsync ? "Async" : "")}(id){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
           break;
 
         case MethodType.MERGE:
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}Merge{(async ? "Async" : "")}({dtoName} dto);");
-          BuildTraceLogCall($"Logic.{name}Merge{(async ? "Async" : "")}()", $"dto", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}Merge{(async ? "Async" : "")}(({dtoName}) dto){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}Merge{(isAsync ? "Async" : "")}({baseModel.DtoName} dto);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}Merge{(isAsync ? "Async" : "")}()", $"dto", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}Merge{(isAsync ? "Async" : "")}(({baseModel.DtoName}) dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
          break;
 
         case MethodType.COUNT:
-          OpenMethod($"public {(async ? $"async Task<long>" : $"long")} {GetFullFunctionPrefix(schema, name)}GetCount{(async ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")})");
-          _sb.AppendLine($"var count = {(async ? "await " : string.Empty)}((Common.DataAccess.Interfaces.Ado.{schema.Name}.I{daoName})_dataAccess).{name}GetCount{(async ? "Async" : "")}({(parametersStr != "" ? $"{parametersStr}" : "")}){(async ? ".ConfigureAwait(false)" : string.Empty)};");
-          BuildTraceLogCall($"Logic.{GetFullFunctionPrefix(schema, name)}GetCount{(async ? "Async" : string.Empty)}()", $"{(parametersStr != "" ? $"{parametersStr}, " : "")}count", async);
+          OpenMethod($"public {(isAsync ? $"async Task<long>" : $"long")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}GetCount{(isAsync ? "Async" : string.Empty)}({(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")})");
+          _sb.AppendLine($"var count = {(isAsync ? "await " : string.Empty)}((Common.DataAccess.Interfaces.Ado.{baseModel.Schema.Name}.I{baseModel.DaoName})_dataAccess).{baseModel.Name}GetCount{(isAsync ? "Async" : "")}({(parametersStr != "" ? $"{parametersStr}" : "")}){(isAsync ? ".ConfigureAwait(false)" : string.Empty)};");
+          BuildTraceLogCall($"Logic.{GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}GetCount{(isAsync ? "Async" : string.Empty)}()", $"{(parametersStr != "" ? $"{parametersStr}, " : "")}count", isAsync);
           _sb.AppendLine("return count;");
           CloseMethod();
           break;
 
         case MethodType.HAS_CHANGED:
-          OpenMethod($"public {(async ? "async Task<bool>" : "bool")} {GetFullFunctionPrefix(schema, name)}HasChanged{(async ? "Async" : "")}({dtoName} dto);");
-          BuildTraceLogCall($"Logic.{name}HasChanged{(async ? "Async" : "")}()", $"dto", async);
-          _sb.AppendLine($"return {(async ? "await " : "")}{dataAccessName}HasChanged{(async ? "Async" : "")}(({dtoName})dto){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task<bool>" : "bool")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}HasChanged{(isAsync ? "Async" : "")}({baseModel.DtoName} dto);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}HasChanged{(isAsync ? "Async" : "")}()", $"dto", isAsync);
+          _sb.AppendLine($"return {(isAsync ? "await " : "")}{dataAccessName}HasChanged{(isAsync ? "Async" : "")}(({baseModel.DtoName})dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
           break;
 
         case MethodType.BUlK_INSERT:
-          _sb.AppendLine($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          BuildTraceLogCall($"Logic.{name}BulkInsert{(async ? "Async" : "")}()", $"dtos", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}BulkInsert{(async ? "Async" : "")}(dtos){(async ? ".ConfigureAwait(false)" : "")};");
+          _sb.AppendLine($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}BulkInsert{(isAsync ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}BulkInsert{(isAsync ? "Async" : "")}()", $"dtos", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}BulkInsert{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
-          BuildTraceLogCall($"Logic.{name}BulkInsert{(async ? "Async" : "")}()", $"dtos", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}BulkInsert{(async ? "Async" : "")}(dtos){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}BulkInsert{(isAsync ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}BulkInsert{(isAsync ? "Async" : "")}()", $"dtos", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}BulkInsert{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          BuildTraceLogCall($"Logic.{name}_TempBulkInsert{(async ? "Async" : "")}()", $"dtos", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}TempBulkInsert{(async ? "Async" : "")}(dtos){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}_TempBulkInsert{(isAsync ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}_TempBulkInsert{(isAsync ? "Async" : "")}()", $"dtos", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}TempBulkInsert{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
-          BuildTraceLogCall($"Logic.{name}_TempBulkInsert{(async ? "Async" : "")}()", $"dtos", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}TempBulkInsert{(async ? "Async" : "")}(dtos){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}_TempBulkInsert{(isAsync ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}_TempBulkInsert{(isAsync ? "Async" : "")}()", $"dtos", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}TempBulkInsert{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
           break;
 
         case MethodType.BULK_MERGE:
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          BuildTraceLogCall($"Logic.{name}BulkMerge{(async ? "Async" : "")}()", $"dtos", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}BulkMerge{(async ? "Async" : "")}(dtos){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}BulkMerge{(isAsync ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}BulkMerge{(isAsync ? "Async" : "")}()", $"dtos", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}BulkMerge{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkMerge{(async ? "Async" : "")}(ICollection<{dtoName}> dtos, bool identityInsert);");
-          BuildTraceLogCall($"Logic.{name}BulkMerge{(async ? "Async" : "")}()", $"dtos", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}BulkMerge{(async ? "Async" : "")}(dtos){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}BulkMerge{(isAsync ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}BulkMerge{(isAsync ? "Async" : "")}()", $"dtos", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}BulkMerge{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
           break;
 
         case MethodType.BULK_UPDATE:
-          OpenMethod($"public {(async ? "async Task" : "void")} {GetFullFunctionPrefix(schema, name)}BulkUpdate{(async ? "Async" : "")}(ICollection<{dtoName}> dtos);");
-          BuildTraceLogCall($"Logic.{name}BulkUpdate{(async ? "Async" : "")}()", $"dtos", async);
-          _sb.AppendLine($"{(async ? "await " : "")}{dataAccessName}BulkUpdate{(async ? "Async" : "")}(dtos){(async ? ".ConfigureAwait(false)" : "")};");
+          OpenMethod($"public {(isAsync ? "async Task" : "void")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}BulkUpdate{(isAsync ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          BuildTraceLogCall($"Logic.{baseModel.Name}BulkUpdate{(isAsync ? "Async" : "")}()", $"dtos", isAsync);
+          _sb.AppendLine($"{(isAsync ? "await " : "")}{dataAccessName}BulkUpdate{(isAsync ? "Async" : "")}(dtos){(isAsync ? ".ConfigureAwait(false)" : "")};");
           CloseMethod();
 
           break;
 
         case MethodType.HIST_GET:
-          OpenMethod($"public {(async ? $"async Task<ICollection<{dtoName}>>" : $"ICollection<{dtoName}>")} {GetFullFunctionPrefix(schema, name)}HistGets{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
-          _sb.AppendLine($"var dto = {(async ? "await " : "")}{dataAccessName}HistGets{(async ? "Async" : "")}(id){(async ? ".ConfigureAwait(false)" : "")};");
-          BuildTraceLogCall($"Logic.{name}HistGets{(async ? "Async" : "")}({{id}})", $"dto", async);
+          OpenMethod($"public {(isAsync ? $"async Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}HistGets{(isAsync ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
+          _sb.AppendLine($"var dto = {(isAsync ? "await " : "")}{dataAccessName}HistGets{(isAsync ? "Async" : "")}(id){(isAsync ? ".ConfigureAwait(false)" : "")};");
+          BuildTraceLogCall($"Logic.{baseModel.Name}HistGets{(isAsync ? "Async" : "")}({{id}})", $"dto", isAsync);
           _sb.AppendLine($"return dto;");
           CloseMethod();
 
-          OpenMethod($"public {(async ? $"async Task<{dtoName}>" : $"{dtoName}")} {GetFullFunctionPrefix(schema, name)}HistEntryGet{(async ? "Async" : "")}(long histId);");
-          _sb.AppendLine($"var dto = {(async ? "await " : "")}{dataAccessName}HistEntryGet{(async ? "Async" : "")}(histId){(async ? ".ConfigureAwait(false)" : "")};");
-          BuildTraceLogCall($"Logic.{name}HistEntryGet{(async ? "Async" : "")}({{histId}})", $"dto", async);
-          _sb.AppendLine($"return ({name}HistDto)dto ?? null;");
+          OpenMethod($"public {(isAsync ? $"async Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {GetFullFunctionPrefix(baseModel.Schema, baseModel.Name)}HistEntryGet{(isAsync ? "Async" : "")}(long histId);");
+          _sb.AppendLine($"var dto = {(isAsync ? "await " : "")}{dataAccessName}HistEntryGet{(isAsync ? "Async" : "")}(histId){(isAsync ? ".ConfigureAwait(false)" : "")};");
+          BuildTraceLogCall($"Logic.{baseModel.Name}HistEntryGet{(isAsync ? "Async" : "")}({{histId}})", $"dto", isAsync);
+          _sb.AppendLine($"return ({baseModel.Name}HistDto)dto ?? null;");
           CloseMethod();
 
           break;
@@ -159,12 +164,10 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       }
     }
 
-    protected void BuildInterfaceMethod(GeneratorParameterObject parameters, MethodType methodType)
+    protected void BuildInterfaceMethod(GeneratorBaseModel baseModel, MethodType methodType, bool isAsync)
     {
-      List<string> methodSignatures = GetMethodSignatures(parameters.Schema, methodType, parameters.Name, parameters.IsTable, parameters.IsAsync, 
-        GetFullFunctionPrefix(parameters.Schema, parameters.Name),
-        ParameterHelper.GetParametersString(parameters.Parameters),
-        ParameterHelper.GetParametersStringWithType(parameters.Parameters, this));
+      List<string> methodSignatures = GetExternalMethodSignatures(baseModel, methodType, isAsync, 
+        GetFullFunctionPrefix(baseModel.Schema, baseModel.Name));
 
       foreach (string methodSignature in methodSignatures)
       {
@@ -206,66 +209,42 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     void IBusinessLogicGenerator.BuildScalarFunctionClassMethod(Schema schema, Function function, MethodType methodType, bool isAsync)
     {
-      BuildClassMethod(schema, methodType, function.Name, false, isAsync, ParameterHelper.GetParametersString(function.Parameters), ParameterHelper.GetParametersStringWithType(function.Parameters, this));
+      BuildClassMethod(new GeneratorBaseModel(function, schema), methodType, isAsync);
     }
 
     void IBusinessLogicGenerator.BuildScalarFunctionInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync)
     {
-      BuildInterfaceMethod(new GeneratorParameterObject(function)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        MethodType = methodType
-      }, methodType);
+      BuildInterfaceMethod(new GeneratorBaseModel(function, schema), methodType, isAsync);
     }
 
     void IBusinessLogicGenerator.BuildTableClassMethod(Schema schema, Table table, MethodType methodType, bool isAsync)
     {
-      BuildClassMethod(schema, methodType, table.Name, true, isAsync);
+      BuildClassMethod(new GeneratorBaseModel(table, schema), methodType, isAsync);
     }
 
     void IBusinessLogicGenerator.BuildTableInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync)
     {
-      BuildInterfaceMethod(new GeneratorParameterObject(table)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = true,
-        MethodType = methodType
-      }, methodType);
+      BuildInterfaceMethod(new GeneratorBaseModel(table, schema), methodType, isAsync);
     }
 
     void IBusinessLogicGenerator.BuildTableValuedFunctionClassMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync)
     {
-      BuildClassMethod(schema, methodType, tableValuedFunction.Name, false, isAsync, ParameterHelper.GetParametersString(tableValuedFunction.Parameters), ParameterHelper.GetParametersStringWithType(tableValuedFunction.Parameters, this));
+      BuildClassMethod(new GeneratorBaseModel(tableValuedFunction, schema), methodType, isAsync);
     }
 
     void IBusinessLogicGenerator.BuildTableValuedFunctionInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync)
     {
-      BuildInterfaceMethod(new GeneratorParameterObject(tableValuedFunction)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        MethodType = methodType
-      }, methodType);
+      BuildInterfaceMethod(new GeneratorBaseModel(tableValuedFunction, schema), methodType, isAsync);
     }
 
     void IBusinessLogicGenerator.BuildViewClassMethod(Schema schema, View view, MethodType methodType, bool isAsync)
     {
-      BuildClassMethod(schema, methodType, view.Name, false, isAsync);
+      BuildClassMethod(new GeneratorBaseModel(view, schema), methodType, isAsync);
     }
 
     void IBusinessLogicGenerator.BuildViewInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync)
     {
-      BuildInterfaceMethod(new GeneratorParameterObject(view)
-      {
-        Schema = schema,
-        IsAsync = isAsync,
-        IsTable = false,
-        MethodType = methodType
-      }, methodType);
+      BuildInterfaceMethod(new GeneratorBaseModel(view, schema), methodType, isAsync);
     }
   }
 }

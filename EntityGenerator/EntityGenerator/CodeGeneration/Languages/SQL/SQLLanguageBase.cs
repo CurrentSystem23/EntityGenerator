@@ -16,6 +16,6 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL
       ParameterFormat = "{1} AS {0}";
     }
 
-    public abstract void BuildGetSqlStatement(Schema schema, string name, bool isTable, List<Column> parameters, List<Column> columns);
+    public abstract void BuildGetSqlStatement(GeneratorBaseModel baseModel);
   }
 }

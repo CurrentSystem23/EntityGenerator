@@ -18,5 +18,7 @@ public class Database : BaseModel
   /// Get or set the used database types.
   /// </summary>
   public List<DatabaseType> UsedDatabaseTypes { get; set; } = new();
+
+  public List<ConstantTable> ConstantTables { get; set; } = new();
 }
 

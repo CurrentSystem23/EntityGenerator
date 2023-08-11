@@ -10,9 +10,9 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessFacadeGenerator
   {
-    void BuildWhereParameterClass(ProfileDto profile);
+    void BuildWhereParameterClass();
 
-    void BuildADOInterface(ProfileDto profile, Database db);
+    void BuildADOInterface(Database db);
 
     void BuildDataAccessFacadeTableExternalInterfaceHeader(Schema schema, Table table);
     void BuildDataAccessFacadeFunctionExternalInterfaceHeader(Schema schema, Function function);

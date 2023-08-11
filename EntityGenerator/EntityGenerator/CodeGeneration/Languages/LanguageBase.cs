@@ -27,7 +27,7 @@ namespace EntityGenerator.CodeGeneration.Languages
     /// <summary>
     /// Clustered parameter object for common parameter sharing.
     /// </summary>
-    protected class GeneratorBaseModel
+    public class GeneratorBaseModel
     {
       public GeneratorBaseModel(BaseModel baseModel, Schema schema)
       {
