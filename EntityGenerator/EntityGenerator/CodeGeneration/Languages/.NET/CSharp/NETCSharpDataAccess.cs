@@ -1,6 +1,8 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
 using EntityGenerator.CodeGeneration.Languages.Helper;
+using EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp;
+using EntityGenerator.CodeGeneration.Languages.SQL;
 using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
@@ -13,233 +15,228 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : IDataAccessGenerator
   {
-    void IDataAccessGenerator.BuildBaseFile(int databaseId)
+    protected void BuildDAOClassHeader(GeneratorBaseModel baseModel, int databaseId)
     {
-      BuildImports(new List<string> { "System", "System.Collections.Generic", "Microsoft.Data.SqlClient", "System.Text", $"{_profile.Global.ProjectName}.Common.DTOs" });
-      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.BaseClasses");
+      List<string> imports = new()
+      {
+        "System",
+        "System.Collections.Generic",
+        "System.Data",
+        "System.Linq",
+        "System.Threading.Tasks",
+        "System.Transactions",
+        "Microsoft.Extensions.Logging",
+        $"{_profile.Global.ProjectName}.Common",
+        $"{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.BaseClasses",
+        $"{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{baseModel.Schema.Name}",
+        $"{_profile.Global.ProjectName}.Common.DTOs.{baseModel.Schema.Name}",
+        $"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.BaseClasses",
+      };
 
-      OpenClass("Dao", isPartial: true);
+      BuildImports(imports.Concat(DatabaseLanguages[databaseId].GetClientImports()).ToList());
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{baseModel.Schema.Name}");
+
+      // Create Dao class
+      OpenClass(baseModel.DaoName,
+        $"Dao, I{baseModel.DaoName}, I{baseModel.InternalDaoName}",
+        isStatic: false, isPartial: true);
+
+      // Add service members
+      _sb.AppendLine($"private readonly ILogger<{baseModel.DaoName}> _logger;");
+      _sb.AppendLine($"private readonly IServiceProvider _provider;");
+
+      // Constructor
+      OpenMethod($"{baseModel.DaoName}(IServiceProvider provider, ILogger<{baseModel.DaoName}> logger = null", null);
+      _sb.AppendLine($"_logger = logger;");
+      _sb.AppendLine("_provider = provider;");
     }
 
-    void IDataAccessGenerator.BuildDependencyInjections(Database db)
+    protected void BuildDAOMethod(GeneratorBaseModel baseModel, MethodType methodType, bool isAsync, int databaseId)
+    {
+      if (!MethodHelper.IsValidMethodType(baseModel.DbObjectType, methodType))
+      {
+        return;
+      }
+      SQLLanguageBase _databaseLanguage = this.DatabaseLanguages[databaseId] as SQLLanguageBase;
+
+      string parametersStr = ParameterHelper.GetParametersString(baseModel.Parameters);
+      List<string> externalMethodSignatures = GetExternalMethodSignatures(baseModel, methodType, isAsync);
+      List<string> internalMethodSignatures = _databaseLanguage.GetInternalMethodSignatures(baseModel, methodType, isAsync);
+
+      switch (methodType)
+      {
+        case MethodType.GET:
+          _databaseLanguage.BuildPrepareCommand(baseModel, isAsync);
+          _databaseLanguage.BuildGetSqlStatement(baseModel);
+
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"return{(isAsync ? " await" : "")} {baseModel.Name}Gets{(isAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null, orderBy){(isAsync ? ".ConfigureAwait(false)" : "")};");
+
+          OpenMethod(externalMethodSignatures.ElementAt(1));
+          _sb.AppendLine($"return{(isAsync ? " await" : "")} {baseModel.Name}Gets{(isAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(isAsync ? ".ConfigureAwait(false)" : "")};");
+
+          _databaseLanguage.BuildGetMethod(baseModel, methodType, isAsync, externalMethodSignatures, internalMethodSignatures);
+
+          break;
+
+        case MethodType.SAVE:
+          _databaseLanguage.BuildSaveMethod(baseModel, isAsync, internalMethodSignatures,
+            externalMethodSignatures);
+          break;
+
+        case MethodType.DELETE:
+          _databaseLanguage.BuildDeleteMethod(baseModel, isAsync,
+            internalMethodSignatures, externalMethodSignatures);
+          break;
+
+        case MethodType.MERGE:
+          _databaseLanguage.BuildMergeMethod(baseModel, isAsync, internalMethodSignatures,
+            externalMethodSignatures);
+          break;
+
+        case MethodType.COUNT:
+          OpenMethod(externalMethodSignatures.ElementAt(0));
+          _sb.AppendLine($"return{(isAsync ? " await" : "")} {baseModel.Name}GetCount{(isAsync ? "Async" : "")}(new WhereClause(){(parametersStr != "" ? $", {parametersStr}" : "")}){(isAsync ? ".ConfigureAwait(false)" : "")};");
+
+          _databaseLanguage.BuildInternalCountMethod(baseModel, isAsync,
+            internalMethodSignatures);
+          break;
+
+        case MethodType.HAS_CHANGED:
+          _databaseLanguage.BuildHasChangedMethod(baseModel, isAsync,
+            internalMethodSignatures, externalMethodSignatures);
+          break;
+
+        case MethodType.BUlK_INSERT:
+          break;
+
+        case MethodType.BULK_MERGE:
+          break;
+
+        case MethodType.BULK_UPDATE:
+          break;
+
+        case MethodType.HIST_GET:
+          _databaseLanguage.BuildHistGetMethod(baseModel, isAsync, internalMethodSignatures,
+            externalMethodSignatures);
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    void IDataAccessGenerator.BuildBaseFile(int databaseId)
+    {
+      List<string> imports = new() { "System", "System.Collections.Generic", "System.Text", $"{_profile.Global.ProjectName}.Common.DTOs" };
+      BuildImports(imports.Concat(DatabaseLanguages[databaseId].GetClientImports()).ToList());
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.BaseClasses");
+      OpenClass("Dao");
+
+      DatabaseLanguages[databaseId].BuildBeforeSaveMethod();
+      DatabaseLanguages[databaseId].BuildAfterSaveMethod();
+    }
+
+    void IDataAccessGenerator.BuildDependencyInjectionBaseFile()
     {
       List<string> imports = new()
       {
         "Microsoft.Extensions.DependencyInjection"
       };
 
+      foreach (DatabaseLanguageBase databaseLanguage in DatabaseLanguages)
+      {
+        imports.Add($"{_profile.Global.ProjectName}.DataAccess.{databaseLanguage.Name}.Helper");
+      }
+
+      BuildNameSpace($"");
+      OpenClass($"DataAccessInitializer", isStatic: true, isPartial: true);
+
+      OpenMethod("InitializeGeneratedDataAccess(IServiceCollection services)", isStatic: true);
+      foreach (DatabaseLanguageBase databaseLanguage in DatabaseLanguages)
+      {
+        _sb.AppendLine($"DataAccess{databaseLanguage.Name}Initializer.InitializeGeneratedDataAccess(services);");
+      }
+    }
+
+    void IDataAccessGenerator.BuildDependencyInjections(Database db, int databaseId)
+    {
+      // Add all available schemata as imports
+      List<string> imports = new();
       foreach (Schema schema in db.Schemas)
       {
-        imports.Add($"{_profile.Global.ProjectName}.DataAccess.{db.Name}.{schema.Name}");
+        imports.Add($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}");
       }
+
       BuildImports(imports);
-      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{db.Name}.Helper");
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.Helper");
 
-      OpenClass("DataAccessAdoInitializer", null, false, true);
-      OpenMethod("InitializeGenerated(IServiceCollection services)", accessModifier: Enums.AccessType.PRIVATE);
+      OpenClass($"DataAccess{DatabaseLanguages[databaseId].Name}Initializer", isStatic: true, isPartial: true);
 
+      OpenMethod($"InitializeGeneratedDataAccess(IServiceCollection services)", isStatic: true);
       foreach (Schema schema in db.Schemas)
       {
         foreach (Table table in schema.Tables)
         {
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}Dao, {_profile.Global.ProjectName}.DataAccess.{db.Name}.{schema.Name}.{table.Name}Dao>();");
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}InternalDao, {_profile.Global.ProjectName}.DataAccess.{db.Name}.{schema.Name}.{table.Name}Dao>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}Dao, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{table.Name}Dao>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}InternalDao, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{table.Name}Dao>();");
         }
         foreach (Function function in schema.FunctionsScalar)
         {
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoS, {_profile.Global.ProjectName}.DataAccess.{db.Name}.{schema.Name}.{function.Name}DaoS>();");
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoS, {_profile.Global.ProjectName}.DataAccess.{db.Name}.{schema.Name}.{function.Name}DaoS>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoS, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoS>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoS, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoS>();");
         }
-        foreach (BaseModel baseModel in schema.FunctionsTableValued.Cast<BaseModel>().Concat(schema.Views))
+        foreach (Function function in schema.FunctionsTableValued)
         {
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{baseModel.Name}DaoV, {_profile.Global.ProjectName}.DataAccess.{db.Name}.{schema.Name}.{baseModel.Name}DaoV>();");
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{baseModel.Name}InternalDaoV, {_profile.Global.ProjectName}.DataAccess.{db.Name}.{schema.Name}.{baseModel.Name}DaoV>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoV, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoV>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoV, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoV>();");
+        }
+        foreach (View view in schema.Views)
+        {
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{view.Name}DaoV, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{view.Name}DaoV>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{view.Name}InternalDaoV, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{view.Name}DaoV>();");
         }
       }
     }
 
-    void IDataAccessSQLGenerator.BuildWhereParameterClass(int databaseId)
+    void IDataAccessGenerator.BuildFunctionDAOHeader(Schema schema, Function function, int databaseId)
     {
-      BuildImports(new List<string> { "System", "System.Collections.Generic", "System.Data" });
-      BuildNameSpace($"{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.BaseClasses");
-
-      // WhereParameters Class
-      OpenClass("WhereParameters");
-      _sb.AppendLine("public List<IWhereParameter> Parameters { get; }");
-      OpenMethod("WhereParameters()", null);
-      _sb.AppendLine($"Parameters = new List<IWhereParameter>();");
-
-      // WhereClause Class
-      OpenClass("WhereClause : WhereParameters");
-      _sb.AppendLine("public string Where { get; set; }");
-      OpenMethod(@"WhereClause() : base()", null);
-      OpenMethod(@"WhereClause(string where) : this()", null);
-      _sb.AppendLine($"Where = where;");
-
-      // IWhereParameter Interface
-      OpenInterface("IWhereParameter");
-      _sb.AppendLine("string ParameterName { get; }");
-      _sb.AppendLine("SqlDbType ParameterType { get; }");
-      _sb.AppendLine("object ParameterValue { get; }");
-
-      // IWhereParameterTyped<T> Interface
-      OpenInterface("IWhereParameterTyped<T> : IWhereParameter");
-      _sb.AppendLine("T ParameterValueTyped { get; }");
-
-      // WhereBaseParameter<T> Class
-      OpenClass("WhereBaseParameter<T> : IWhereParameterTyped<T>", null, false, false, true);
-      _sb.AppendLine("public T ParameterValueTyped { get; }");
-      _sb.AppendLine("public string ParameterName { get; }");
-      _sb.AppendLine("public abstract SqlDbType ParameterType { get; }");
-      _sb.AppendLine("public object ParameterValue => ParameterValueTyped;");
-      OpenMethod("WhereBaseParameter(string parameterName, T parameterValue)", null);
-      _sb.AppendLine("ParameterName = parameterName.StartsWith(\"@\") ? parameterName : $\"@{ parameterName}\";");
-      _sb.AppendLine("ParameterValueTyped = parameterValue;");
-
-      // WhereBoolParameter Class
-      OpenClass("WhereBoolParameter", "WhereBaseParameter<bool>");
-      _sb.AppendLine("public override SqlDbType ParameterType => SqlDbType.Bit;");
-      OpenMethod(@"WhereBoolParameter(string parameterName, bool parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereByteParameter Class
-      OpenClass("WhereByteParameter : WhereBaseParameter<byte>");
-      _sb.AppendLine("public override SqlDbType ParameterType => SqlDbType.TinyInt;");
-      OpenMethod(@"WhereByteParameter(string parameterName, byte parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereShortParameter Class
-      OpenClass("WhereShortParameter : WhereBaseParameter<short>");
-      _sb.AppendLine("public override SqlDbType ParameterType => SqlDbType.SmallInt;");
-      OpenMethod(@"WhereShortParameter(string parameterName, short parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereIntParameter Class
-      OpenClass("WhereIntParameter : WhereBaseParameter<int>");
-      _sb.AppendLine("public override SqlDbType ParameterType => SqlDbType.Int;");
-      OpenMethod(@"WhereIntParameter(string parameterName, int parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereLongParameter Class
-      OpenClass("WhereLongParameter : WhereBaseParameter<long>");
-      _sb.AppendLine("public override SqlDbType ParameterType => SqlDbType.BigInt;");
-      OpenMethod(@"WhereLongParameter(string parameterName, long parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereFloatParameter Class
-      OpenClass("WhereFloatParameter : WhereBaseParameter<float>");
-      _sb.AppendLine("public override SqlDbType ParameterType => SqlDbType.Real;");
-      OpenMethod(@"WhereFloatParameter(string parameterName, float parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereDoubleParameter Class
-      OpenClass("WhereDoubleParameter : WhereBaseParameter<double>");
-      _sb.AppendLine("public override SqlDbType ParameterType => SqlDbType.Float;");
-      OpenMethod(@"WhereDoubleParameter(string parameterName, double parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereDecimalParameter Class
-      OpenClass("WhereDecimalParameter : WhereBaseParameter<decimal>");
-      _sb.AppendLine("public override SqlDbType ParameterType => SqlDbType.Decimal;");
-      OpenMethod(@"WhereDecimalParameter(string parameterName, decimal parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereCharParameter Class
-      OpenClass("WhereCharParameter : WhereBaseParameter<char>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.Char;");
-      OpenMethod(@"WhereCharParameter(string parameterName, char parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereNCharParameter Class
-      OpenClass("WhereNCharParameter : WhereBaseParameter<char>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.NChar;");
-      OpenMethod(@"WhereNCharParameter(string parameterName, char parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereVarcharParameter Class
-      OpenClass("WhereVarcharParameter : WhereBaseParameter<string>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.VarChar;");
-      OpenMethod(@"WhereVarcharParameter(string parameterName, string parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereNVarcharParameter Class
-      OpenClass("WhereNVarcharParameter : WhereBaseParameter<string>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.NVarChar;");
-      OpenMethod(@"WhereNVarcharParameter(string parameterName, string parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereTextParameter Class
-      OpenClass("WhereTextParameter : WhereBaseParameter<string>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.Text;");
-      OpenMethod(@"WhereTextParameter(string parameterName, string parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereXmlParameter Class
-      OpenClass("WhereXmlParameter : WhereBaseParameter<string>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.Xml;");
-      OpenMethod(@"WhereXmlParameter(string parameterName, string parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereDataTimeParameter Class
-      OpenClass("WhereDateTimeParameter : WhereBaseParameter<DateTime>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.DateTime;");
-      OpenMethod(@"WhereDateTimeParameter(string parameterName, DateTime parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereDateTime2Parameter Class
-      OpenClass("WhereDateTime2Parameter : WhereBaseParameter<DateTime>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.DateTime2;");
-      OpenMethod(@"WhereDateTime2Parameter(string parameterName, DateTime parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereDateTimeOffsetParameter Class
-      OpenClass("WhereDateTimeOffsetParameter : WhereBaseParameter<DateTimeOffset>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.DateTimeOffset;");
-      OpenMethod(@"WhereDateTimeOffsetParameter(string parameterName, DateTimeOffset parameterValue): base(parameterName, parameterValue)", null);
-
-      // WhereDateParameter Class
-      OpenClass("WhereDateParameter : WhereBaseParameter<DateTime>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.Date;");
-      OpenMethod(@"WhereDateParameter(string parameterName, DateTime parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereVarBinaryParameter Class
-      OpenClass("WhereVarBinaryParameter : WhereBaseParameter<byte[]>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.VarBinary;");
-      OpenMethod(@"WhereVarBinaryParameter(string parameterName, byte[] parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereImageParameter Class
-      OpenClass("WhereImageParameter : WhereBaseParameter<byte[]>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.Image;");
-      OpenMethod(@"WhereImageParameter(string parameterName, byte[] parameterValue) : base(parameterName, parameterValue)", null);
-
-      // WhereUniqueIdentifierParameter Class
-      OpenClass("WhereUniqueIdentifierParameter : WhereBaseParameter<Guid>");
-      _sb.AppendLine("    public override SqlDbType ParameterType => SqlDbType.UniqueIdentifier;");
-      OpenMethod(@"WhereUniqueIdentifierParameter(string parameterName, Guid parameterValue) : base(parameterName, parameterValue)", null);
+      BuildDAOClassHeader(new GeneratorBaseModel(function, schema), databaseId);
     }
 
-    void IDataAccessGenerator.BuildFunctionDAOHeader(Schema schema, Function function)
+    void IDataAccessGenerator.BuildFunctionDAOMethod(Schema schema, Function function, MethodType methodType, bool isAsync, int databaseId)
     {
-      throw new NotImplementedException();
+      BuildDAOMethod(new GeneratorBaseModel(function, schema), methodType, isAsync, databaseId);
     }
 
-    void IDataAccessGenerator.BuildFunctionDAOMethod(Schema schema, Function function, MethodType methodType)
+    void IDataAccessGenerator.BuildTableDAOHeader(Schema schema, Table table, int databaseId)
     {
-      throw new NotImplementedException();
+      BuildDAOClassHeader(new GeneratorBaseModel(table, schema), databaseId);
     }
 
-    void IDataAccessGenerator.BuildTableDAOHeader(Schema schema, Table table)
+    void IDataAccessGenerator.BuildTableDAOMethod(Schema schema, Table table, MethodType methodType, bool isAsync, int databaseId)
     {
-      throw new NotImplementedException();
+      BuildDAOMethod(new GeneratorBaseModel(table, schema), methodType, isAsync, databaseId);
     }
 
-    void IDataAccessGenerator.BuildTableDAOMethod(Schema schema, Table table, MethodType methodType)
+    void IDataAccessGenerator.BuildTableValuedFunctionDAOHeader(Schema schema, Function tableValuedFunction, int databaseId)
     {
-      throw new NotImplementedException();
+      BuildDAOClassHeader(new GeneratorBaseModel(tableValuedFunction, schema), databaseId);
     }
 
-    void IDataAccessGenerator.BuildTableValuedFunctionDAOHeader(Schema schema, Function tableValuedFunction)
+    void IDataAccessGenerator.BuildTableValuedFunctionDAOMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync, int databaseId)
     {
-      throw new NotImplementedException();
+      BuildDAOMethod(new GeneratorBaseModel(tableValuedFunction, schema), methodType, isAsync, databaseId);
     }
 
-    void IDataAccessGenerator.BuildTableValuedFunctionDAOMethod(Schema schema, Function tableValuedFunction, MethodType methodType)
+    void IDataAccessGenerator.BuildViewDAOHeader(Schema schema, View view, int databaseId)
     {
-      throw new NotImplementedException();
+      BuildDAOClassHeader(new GeneratorBaseModel(view, schema), databaseId);
     }
 
-    void IDataAccessGenerator.BuildViewDAOHeader(Schema schema, View view)
+    void IDataAccessGenerator.BuildViewDAOMethod(Schema schema, View view, MethodType methodType, bool isAsync, int databaseId)
     {
-      throw new NotImplementedException();
-    }
-
-    void IDataAccessGenerator.BuildViewDAOMethod(Schema schema, View view, MethodType methodType)
-    {
-      throw new NotImplementedException();
+      BuildDAOMethod(new GeneratorBaseModel(view, schema), methodType, isAsync, databaseId);
     }
   }
 }

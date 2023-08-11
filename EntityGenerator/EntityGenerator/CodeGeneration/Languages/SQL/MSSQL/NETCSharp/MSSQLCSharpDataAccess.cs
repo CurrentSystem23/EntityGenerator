@@ -14,12 +14,12 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 {
   public partial class MSSQLCSharp : MSSQL
   {
-    private void BuildSavePrepareCommand(string name, List<Column> columns)
+    private void BuildSavePrepareCommand(GeneratorBaseModel baseModel)
     {
-      _backendLanguage.OpenMethod($"SavePrepareCommand(SqlCommand cmd, {name}Dto dto)", "void", Enums.AccessType.PRIVATE);
+      _backendLanguage.OpenMethod($"SavePrepareCommand(SqlCommand cmd, {baseModel.DtoName} dto)", "void", Enums.AccessType.PRIVATE);
       _sb.AppendLine("      cmd.Parameters.Clear();");
 
-      foreach (Column column in columns)
+      foreach (Column column in baseModel.Columns)
       {
         if (column.ColumnIsNullable)
         {
@@ -46,15 +46,15 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("cmd.CommandType = CommandType.Text;");
     }
 
-    private void BuildSaveUpdateSqlStatement(string name, string schemaName, List<Column> columns)
+    private void BuildSaveUpdateSqlStatement(GeneratorBaseModel baseModel)
     {
       _backendLanguage.OpenMethod("SaveUpdateSqlStatement()", "string", Enums.AccessType.PRIVATE);
       _sb.AppendLine(@"return @""");
-      _sb.AppendLine($"UPDATE [{schemaName}].[{name}]");
+      _sb.AppendLine($"UPDATE [{baseModel.Schema.Name}].[{baseModel.Name}]");
       _sb.AppendLine($"SET");
 
       string prefix = " ";
-      foreach (Column column in columns.Where(c => !c.ColumnIsIdentity && !c.ColumnIsComputed))
+      foreach (Column column in baseModel.Columns.Where(c => !c.ColumnIsIdentity && !c.ColumnIsComputed))
       {
         _sb.AppendLine($"{prefix}[{column.Name}] = @{column.Name}");
         prefix = ",";
@@ -62,18 +62,18 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine(@"WHERE [Id] = @Id"";");
     }
 
-    private void BuildMergeSqlStatement(string name, string schemaName, List<Column> columns)
+    private void BuildMergeSqlStatement(GeneratorBaseModel baseModel)
     {
       _backendLanguage.OpenMethod("MergeSqlStatement()", "string", Enums.AccessType.PRIVATE);
       _sb.AppendLine(@"      return @""");
-      _sb.AppendLine($"  SET IDENTITY_INSERT [{schemaName}].[{name}] ON;");
-      _sb.AppendLine($"  MERGE INTO [{schemaName}].[{name}] AS Target");
+      _sb.AppendLine($"  SET IDENTITY_INSERT [{baseModel.Schema.Name}].[{baseModel.Name}] ON;");
+      _sb.AppendLine($"  MERGE INTO [{baseModel.Schema.Name}].[{baseModel.Name}] AS Target");
       _sb.AppendLine("  USING (VALUES");
 
       string rowData = "  (";
       bool isFirstColumn = true;
 
-      foreach (Column column in columns)
+      foreach (Column column in baseModel.Columns)
       {
         string sTemplate = string.Empty;
 
@@ -93,7 +93,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       rowData = "  AS Source (";
       isFirstColumn = true;
 
-      foreach (Column column in columns)
+      foreach (Column column in baseModel.Columns)
       {
         string template = " ";
 
@@ -114,7 +114,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 
       isFirstColumn = true;
 
-      foreach (Column column in columns)
+      foreach (Column column in baseModel.Columns)
       {
         string template = " ";
 
@@ -131,7 +131,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 
       isFirstColumn = true;
 
-      foreach (Column column in columns)
+      foreach (Column column in baseModel.Columns)
       {
         string template = " ";
 
@@ -149,7 +149,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 
       isFirstColumn = true;
 
-      foreach (Column column in columns)
+      foreach (Column column in baseModel.Columns)
       {
         if (column.ColumnIsIdentity)
           continue;
@@ -161,7 +161,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       }
 
       _sb.AppendLine("  ;");
-      _sb.AppendLine($"  SET IDENTITY_INSERT [{schemaName}].[{name}] OFF;");
+      _sb.AppendLine($"  SET IDENTITY_INSERT [{baseModel.Schema.Name}].[{baseModel.Name}] OFF;");
 
       _sb.AppendLine(@""";");
     }
@@ -184,27 +184,27 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("cmd.CommandText = DeleteSqlStatement(whereClause.Where);");
     }
 
-    private void BuildDeleteSqlStatement(string name, string schemaName)
+    private void BuildDeleteSqlStatement(GeneratorBaseModel baseModel)
     {
       _backendLanguage.OpenMethod("DeleteSqlStatement()", "string", Enums.AccessType.PRIVATE);
       _sb.AppendLine(@"return @""");
-      _sb.AppendLine($"DELETE FROM [{schemaName}].[{name}]");
+      _sb.AppendLine($"DELETE FROM [{baseModel.Schema.Name}].[{baseModel.Name}]");
       _sb.AppendLine(@"WHERE [Id] = @Id"";");
 
       _backendLanguage.OpenMethod("DeleteSqlStatement(string where)", "string", Enums.AccessType.PRIVATE);
       _sb.AppendLine(@"return $@""");
-      _sb.AppendLine($"DELETE pt FROM [{schemaName}].[{name}] AS pt");
+      _sb.AppendLine($"DELETE pt FROM [{baseModel.Schema.Name}].[{baseModel.Name}] AS pt");
       _sb.AppendLine(@"{where}"";");
     }
 
-    private void BuildHasChangedWork(string name, List<Column> columns)
+    private void BuildHasChangedWork(GeneratorBaseModel baseModel)
     {
-      _backendLanguage.OpenMethod($"HasChangedWork({name}Dto dto, {name}Dto dtoDb)", returnType: "bool", accessModifier: Enums.AccessType.PRIVATE);
+      _backendLanguage.OpenMethod($"HasChangedWork({baseModel.DtoName} dto, {baseModel.DtoName}Dto dtoDb)", returnType: "bool", accessModifier: Enums.AccessType.PRIVATE);
       _sb.AppendLine("if (dtoDb == null)");
       _sb.AppendLine("return true;");
       _sb.AppendLine("bool ret = true;");
 
-      foreach (Column column in columns)
+      foreach (Column column in baseModel.Columns)
       {
         _sb.AppendLine(column.ColumnTypeDataType == DataTypes.ByteArray
           ? $"ret = ret && dto.{column.Name}.SequenceEqual(dtoDb.{column.Name});"
@@ -214,14 +214,13 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("return !ret;");
     }
 
-    public override void BuildPrepareCommand(Schema schema, string name, bool isTable, bool async, List<Column> parameters)
+    public override void BuildPrepareCommand(GeneratorBaseModel baseModel, bool async)
     {
-      string parametersStr = ParameterHelper.GetParametersString(parameters);
-      string parametersWithTypeStr = ParameterHelper.GetParametersStringWithType(parameters, this);
-      string parametersSqlStr = ParameterHelper.GetParametersSqlString(parameters);
+      string parametersStr = ParameterHelper.GetParametersString(baseModel.Parameters);
+      string parametersWithTypeStr = ParameterHelper.GetParametersStringWithType(baseModel.Parameters, _backendLanguage);
 
       // Table-exclusive Function for Global GUID
-      if (isTable)
+      if (baseModel.DbObjectType == DbObjectType.TABLE)
       {
         // GetPrepareCommand(SqlCommand cmd, Guid globalId)
         _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, Guid globalId)", "void", Enums.AccessType.PRIVATE);
@@ -232,17 +231,17 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       }
 
       // GetPrepareCommand(SqlCommand cmd, <params|id>, string where, bool distinct, int pageNum, int pageSize,params Order[] orderBy)
-      _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, {(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
+      _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, {(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
       _sb.AppendLine("cmd.Parameters.Clear();");
       _sb.AppendLine("cmd.CommandType = CommandType.Text;");
-      if (isTable)
+      if (baseModel.DbObjectType == DbObjectType.TABLE)
       {
         _sb.AppendLine("if (id != null)");
         _sb.AppendLine(@$"cmd.Parameters.Add(""@id"", {(_profile.Global.GuidIndexing ? "SqlDbType.UniqueIdentifier" : "SqlDbType.BigInt")}).Value = id;");
       }
       else
       {
-        foreach (Column param in parameters)
+        foreach (Column param in baseModel.Parameters)
         {
           if (param.ColumnTypeDataType == DataTypes.TableValue)
           {
@@ -260,13 +259,13 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine(@"cmd.Parameters.Add(""@pageNum"", SqlDbType.Int).Value = pageNum;");
       _sb.AppendLine(@"cmd.Parameters.Add(""@pageSize"", SqlDbType.Int).Value = pageSize;");
       _sb.AppendLine("}");
-      _sb.AppendLine($"cmd.CommandText = GetSqlStatement({(isTable ? "id" : (parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty))}where, distinct, pageNum, pageSize, orderBy);");
+      _sb.AppendLine($"cmd.CommandText = GetSqlStatement({(baseModel.DbObjectType == DbObjectType.TABLE ? "id" : (parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty))}where, distinct, pageNum, pageSize, orderBy);");
 
       // GetPrepareCommand(SqlCommand cmd, <params|id>, WhereClause where, bool distinct, int pageNum, int pageSize,params Order[] orderBy)
-      _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, {(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}WhereClause whereClause, bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
+      _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, {(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}WhereClause whereClause, bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
       _sb.AppendLine("cmd.Parameters.Clear();");
       _sb.AppendLine("cmd.CommandType = CommandType.Text;");
-      if (isTable)
+      if (baseModel.DbObjectType == DbObjectType.TABLE)
       {
         _sb.AppendLine("if (id != null)");
         _sb.AppendLine(@$"cmd.Parameters.Add(""@id"", {(_profile.Global.GuidIndexing ? "SqlDbType.UniqueIdentifier" : "SqlDbType.BigInt")}).Value = id;");
@@ -275,7 +274,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("{");
       _sb.AppendLine("cmd.Parameters.Add(whereParameter.ParameterName, whereParameter.ParameterType).Value = whereParameter.ParameterValue;");
       _sb.AppendLine("}");
-      foreach (Column param in parameters)
+      foreach (Column param in baseModel.Parameters)
       {
         if (param.ColumnTypeDataType == DataTypes.TableValue)
         {
@@ -291,27 +290,27 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine(@"cmd.Parameters.Add(""@pageNum"", SqlDbType.Int).Value = pageNum;");
       _sb.AppendLine(@"cmd.Parameters.Add(""@pageSize"", SqlDbType.Int).Value = pageSize;");
       _sb.AppendLine("}");
-      _sb.AppendLine($"cmd.CommandText = GetSqlStatement({(isTable ? "id" : (parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty))}whereClause.Where, distinct, pageNum, pageSize, orderBy);");
+      _sb.AppendLine($"cmd.CommandText = GetSqlStatement({(baseModel.DbObjectType == DbObjectType.TABLE ? "id" : (parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty))}whereClause.Where, distinct, pageNum, pageSize, orderBy);");
     }
 
-    public override void BuildGetSqlStatement(Schema schema, string name, bool isTable, List<Column> parameters, List<Column> columns)
+    public override void BuildGetSqlStatement(GeneratorBaseModel baseModel)
     {
-      string parametersWithTypeStr = ParameterHelper.GetParametersStringWithType(parameters, this);
-      string parametersSqlStr = ParameterHelper.GetParametersSqlString(parameters);
+      string parametersWithTypeStr = ParameterHelper.GetParametersStringWithType(baseModel.Parameters, this);
+      string parametersSqlStr = ParameterHelper.GetParametersSqlString(baseModel.Parameters);
 
       // GetSqlStatement
-      _backendLanguage.OpenMethod(@$"GetSqlStatement({(parametersWithTypeStr.IsNullOrEmpty() ? string.Empty : $"{parametersWithTypeStr}, ")}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{name}[] orderBy)", "string", Enums.AccessType.PRIVATE);
+      _backendLanguage.OpenMethod(@$"GetSqlStatement({(parametersWithTypeStr.IsNullOrEmpty() ? string.Empty : $"{parametersWithTypeStr}, ")}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "string", Enums.AccessType.PRIVATE);
       _sb.AppendLine(@"string sql =  $@""");
       _sb.AppendLine(@"SELECT {(distinct ? ""DISTINCT "": """")}");
 
       bool isFirst = true;
-      foreach (Column column in columns)
+      foreach (Column column in baseModel.Columns)
       {
         _sb.AppendLine($"{(isFirst ? " " : ",")}pv.[{column.Name}]");
         isFirst = false;
       }
 
-      _sb.AppendLine($"  FROM [{schema.Name}].[{name}]{(parametersSqlStr.IsNullOrEmpty() ? $"({parametersSqlStr})" : " AS")} pv");
+      _sb.AppendLine($"  FROM [{baseModel.Schema.Name}].[{baseModel.Name}]{(parametersSqlStr.IsNullOrEmpty() ? $"({parametersSqlStr})" : " AS")} pv");
       _sb.AppendLine(@""";");
       _sb.AppendLine(@"sql += where;");
       _sb.AppendLine("sql += GetOrderBy(orderBy);");
@@ -319,15 +318,17 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("return sql;");
     }
 
-    public override void BuildGetMethod(Schema schema, MethodType methodType, string name,
-      bool isTable, bool async, List<string> externalMethodSignatures, List<string> internalMethodSignatures,
-      List<Column> parameters)
+    public override void BuildGetMethod(GeneratorBaseModel baseModel, MethodType methodType, bool async, List<string> externalMethodSignatures, List<string> internalMethodSignatures)
     {
-      string dtoName = TypeHelper.GetDtoType(name, isTable, (methodType == MethodType.HIST_GET));
-      string parametersStr = ParameterHelper.GetParametersString(parameters);
+      // Functions can only execute.
+      if (baseModel.DbObjectType == DbObjectType.FUNCTION)
+      {
+        return;
+      }
+      string parametersStr = ParameterHelper.GetParametersString(baseModel.Parameters);
 
       _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
-      _sb.AppendLine($"return{(async ? " await" : "")} {name}Gets{(async ? "Async" : "")}(whereClause, distinct, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
+      _sb.AppendLine($"return{(async ? " await" : "")} {baseModel.Name}Gets{(async ? "Async" : "")}(whereClause, distinct, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
 
       _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(1));
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
@@ -335,20 +336,20 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
       _sb.AppendLine("{");
       _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-      _sb.AppendLine($"var ret = {(async ? "await " : "")}{name}Gets{(async ? "Async" : "")}(con, cmd, whereClause, distinct, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
+      _sb.AppendLine($"var ret = {(async ? "await " : "")}{baseModel.Name}Gets{(async ? "Async" : "")}(con, cmd, whereClause, distinct, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
       _sb.AppendLine("con.Close();");
       _sb.AppendLine("return ret;");
       _sb.AppendLine("}");
       _sb.AppendLine("}");
 
       _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(2));
-      _sb.AppendLine($"return {(async ? "await " : "")}{name}Gets{(async ? "Async" : "")}(con, cmd, new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null){(async ? ".ConfigureAwait(false)" : "")};");
+      _sb.AppendLine($"return {(async ? "await " : "")}{baseModel.Name}Gets{(async ? "Async" : "")}(con, cmd, new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null){(async ? ".ConfigureAwait(false)" : "")};");
 
       _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(3));
-      _sb.AppendLine($"ICollection<{dtoName}> dtos = new List<{dtoName}>();");
+      _sb.AppendLine($"ICollection<{baseModel.DtoName}> dtos = new List<{baseModel.DtoName}>();");
       _sb.AppendLine("try");
       _sb.AppendLine("{");
-      _sb.AppendLine($"GetPrepareCommand({(parametersStr != "" ? $"{parametersStr}, " : "")}cmd, whereClause, {(isTable ? " null," : "")} distinct, pageNum, pageSize, orderBy);");
+      _sb.AppendLine($"GetPrepareCommand({(parametersStr != "" ? $"{parametersStr}, " : "")}cmd, whereClause, {(baseModel.DbObjectType == DbObjectType.TABLE ? " null," : "")} distinct, pageNum, pageSize, orderBy);");
       _sb.AppendLine($"using (SqlDataReader reader = {(async ? "await " : "")}cmd.ExecuteReader{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")})");
       _sb.AppendLine("{");
       _sb.AppendLine($"while ({(async ? "await " : "")}reader.Read{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")})");
@@ -360,12 +361,12 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
       _sb.AppendLine("catch (Exception ex)");
       _sb.AppendLine("{");
-      _backendLanguage.BuildErrorLogCall($"{{nameof({name}{(isTable ? "Dao" : "DaoV")})}}.{{nameof({name}Gets{(async ? "Async" : "")})}}", null, async);
+      _backendLanguage.BuildErrorLogCall($"{{nameof({baseModel.Name}{(baseModel.DbObjectType == DbObjectType.TABLE ? "Dao" : "DaoV")})}}.{{nameof({baseModel.Name}Gets{(async ? "Async" : "")})}}", null, async);
       _sb.AppendLine("throw;");
       _sb.AppendLine("}");
       _sb.AppendLine("return dtos;");
 
-      if (isTable)
+      if (baseModel.DbObjectType == DbObjectType.TABLE)
       {
         // Get
         _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(2));
@@ -374,14 +375,14 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
         _sb.AppendLine("{");
         _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-        _sb.AppendLine($"var ret = {(async ? "await " : "")}{name}Get{(async ? "Async" : "")}(con, cmd, id){(async ? ".ConfigureAwait(false)" : "")};");
+        _sb.AppendLine($"var ret = {(async ? "await " : "")}{baseModel.Name}Get{(async ? "Async" : "")}(con, cmd, id){(async ? ".ConfigureAwait(false)" : "")};");
         _sb.AppendLine("con.Close();");
         _sb.AppendLine("return ret;");
         _sb.AppendLine("}");
         _sb.AppendLine("}");
 
         _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(4));
-        _sb.AppendLine($"{name}Dto dto = null;");
+        _sb.AppendLine($"{baseModel.DtoName} dto = null;");
         _sb.AppendLine("try");
         _sb.AppendLine("{");
         _sb.AppendLine("GetPrepareCommand(cmd, id);");
@@ -397,7 +398,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("}");
         _sb.AppendLine("catch (Exception ex)");
         _sb.AppendLine("{");
-        _backendLanguage.BuildErrorLogCall($"{{nameof({name}Dao)}}.{{nameof({name}Get{(async ? "Async" : "")})}}", null, async);
+        _backendLanguage.BuildErrorLogCall($"{{nameof({baseModel.DaoName})}}.{{nameof({baseModel.Name}Get{(async ? "Async" : "")})}}", null, async);
         _sb.AppendLine("throw;");
         _sb.AppendLine("}");
         _sb.AppendLine("return dto;");
@@ -409,14 +410,14 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
         _sb.AppendLine("{");
         _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-        _sb.AppendLine($"var ret = {(async ? "await " : "")}{name}Get{(async ? "Async" : "")}(con, cmd, globalId){(async ? ".ConfigureAwait(false)" : "")};");
+        _sb.AppendLine($"var ret = {(async ? "await " : "")}{baseModel.Name}Get{(async ? "Async" : "")}(con, cmd, globalId){(async ? ".ConfigureAwait(false)" : "")};");
         _sb.AppendLine("con.Close();");
         _sb.AppendLine("return ret;");
         _sb.AppendLine("}");
         _sb.AppendLine("}");
 
         _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(5));
-        _sb.AppendLine($"{name}Dto dto = null;");
+        _sb.AppendLine($"{baseModel.DtoName} dto = null;");
         _sb.AppendLine("try");
         _sb.AppendLine("{");
         _sb.AppendLine("GetPrepareCommand(cmd, globalId);");
@@ -432,21 +433,26 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("}");
         _sb.AppendLine("catch (Exception ex)");
         _sb.AppendLine("{");
-        _backendLanguage.BuildErrorLogCall($"{{nameof({name}Dao)}}.{{nameof({name}Get{(async ? "Async" : "")})}}", null, async);
+        _backendLanguage.BuildErrorLogCall($"{{nameof({baseModel.DaoName})}}.{{nameof({baseModel.Name}Get{(async ? "Async" : "")})}}", null, async);
         _sb.AppendLine("throw;");
         _sb.AppendLine("}");
         _sb.AppendLine("return dto;");
       }
     }
 
-    public override void BuildSaveMethod(Schema schema, string name, bool isTable, bool async,
-      List<string> internalMethodSignatures, List<string> externalMethodSignatures, List<Column> columns)
+    public override void BuildSaveMethod(GeneratorBaseModel baseModel, bool async,
+      List<string> internalMethodSignatures, List<string> externalMethodSignatures)
     {
+      // Only table objects can save data.
+      if (baseModel.DbObjectType != DbObjectType.TABLE)
+      {
+        return;
+      }
       // SavePrepareCommand
-      BuildSavePrepareCommand(name, columns);
+      BuildSavePrepareCommand(baseModel);
 
       // SaveUpdateSQLStatement
-      BuildSaveUpdateSqlStatement(name, schema.Name, columns);
+      BuildSaveUpdateSqlStatement(baseModel);
 
       // Save(Dto)
       _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(1));
@@ -455,7 +461,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
         _sb.AppendLine("{");
         _sb.AppendLine($"{(async ? "await con.OpenAsync().ConfigureAwait(false)" : "con.Open()")};");
-        _sb.AppendLine($"{(async ? "await " : "")}{name}Save{(async ? "Async" : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
+        _sb.AppendLine($"{(async ? "await " : "")}{baseModel.Name}Save{(async ? "Async" : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
         _sb.AppendLine("con.Close();");
         _sb.AppendLine("}");
         _sb.AppendLine("}");
@@ -483,18 +489,18 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
       _sb.AppendLine("catch (Exception ex)");
       _sb.AppendLine("{");
-      _backendLanguage.BuildErrorLogCall($"{{nameof({name}Dao)}}.{{nameof({name}Save{(async ? "Async " : "")})}}", "dto", true);
+      _backendLanguage.BuildErrorLogCall($"{{nameof({baseModel.DaoName})}}.{{nameof({baseModel.Name}Save{(async ? "Async " : "")})}}", "dto", true);
       _sb.AppendLine("throw;");
       _sb.AppendLine("}");
     }
-    public override void BuildDeleteMethod(Schema schema, string name, bool isTable, bool async,
+    public override void BuildDeleteMethod(GeneratorBaseModel baseModel, bool async,
       List<string> internalMethodSignatures, List<string> externalMethodSignatures)
     {
       // DeletePrepareCommand
       BuildDeletePrepareCommand();
 
       // DeleteSqlStatement
-      BuildDeleteSqlStatement(name, schema.Name);
+      BuildDeleteSqlStatement(baseModel);
 
       // Delete(id)
       _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0));
@@ -503,7 +509,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
       _sb.AppendLine("{");
       _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-      _sb.AppendLine($"{(async ? "await " : "")}{name}Delete{(async ? "Async" : "")}(con, cmd, id){(async ? ".ConfigureAwait(false)" : "")};");
+      _sb.AppendLine($"{(async ? "await " : "")}{baseModel.Name}Delete{(async ? "Async" : "")}(con, cmd, id){(async ? ".ConfigureAwait(false)" : "")};");
       _sb.AppendLine("con.Close();");
       _sb.AppendLine("}");
       _sb.AppendLine("}");
@@ -515,7 +521,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
       _sb.AppendLine("{");
       _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-      _sb.AppendLine($"{(async ? "await " : "")}{name}Delete{(async ? "Async" : "")}(con, cmd, whereClause){(async ? ".ConfigureAwait(false)" : "")};");
+      _sb.AppendLine($"{(async ? "await " : "")}{baseModel.Name}Delete{(async ? "Async" : "")}(con, cmd, whereClause){(async ? ".ConfigureAwait(false)" : "")};");
       _sb.AppendLine("con.Close();");
       _sb.AppendLine("}");
       _sb.AppendLine("}");
@@ -529,7 +535,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
       _sb.AppendLine("catch (Exception ex)");
       _sb.AppendLine("{");
-      _backendLanguage.BuildErrorLogCall($"{{nameof({name}Dao)}}.{{nameof({name}Delete{(async ? "Async" : "")})}}", "id", true);
+      _backendLanguage.BuildErrorLogCall($"{{nameof({baseModel.DaoName})}}.{{nameof({baseModel.Name}Delete{(async ? "Async" : "")})}}", "id", true);
       _sb.AppendLine("throw;");
       _sb.AppendLine("}");
 
@@ -542,15 +548,15 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
       _sb.AppendLine("catch (Exception ex)");
       _sb.AppendLine("{");
-      _backendLanguage.BuildErrorLogCall($"{{nameof({name}Dao)}}.{{nameof({name}Delete{(async ? "Async" : "")})}}", "whereClause", true);
+      _backendLanguage.BuildErrorLogCall($"{{nameof({baseModel.DaoName} )}}.{{nameof({baseModel.Name}Delete{(async ? "Async" : "")})}}", "whereClause", true);
       _sb.AppendLine("throw;");
       _sb.AppendLine("}");
     }
-    public override void BuildMergeMethod(Schema schema, string name, bool isTable, bool async,
-      List<string> internalMethodSignatures, List<string> externalMethodSignatures, List<Column> columns)
+    public override void BuildMergeMethod(GeneratorBaseModel baseModel, bool async,
+      List<string> internalMethodSignatures, List<string> externalMethodSignatures)
     {
       // MergeSqlStatement
-      BuildMergeSqlStatement(name, schema.Name, columns);
+      BuildMergeSqlStatement(baseModel);
 
       // Merge(Dto)
       _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0));
@@ -559,7 +565,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
       _sb.AppendLine("{");
       _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async " : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-      _sb.AppendLine($"{(async ? "await " : "")}{name}Merge{(async ? "Async " : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
+      _sb.AppendLine($"{(async ? "await " : "")}{baseModel.Name}Merge{(async ? "Async " : "")}(con, cmd, dto){(async ? ".ConfigureAwait(false)" : "")};");
       _sb.AppendLine("con.Close();");
       _sb.AppendLine("}");
       _sb.AppendLine("}");
@@ -581,15 +587,15 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
       _sb.AppendLine("catch (Exception ex)");
       _sb.AppendLine("{");
-      _backendLanguage.BuildErrorLogCall($"{{nameof({name}Dao)}}.{{nameof({name}Merge{(async ? "Async " : "")})}}", "dto", true);
+      _backendLanguage.BuildErrorLogCall($"{{nameof({baseModel.DaoName})}}.{{nameof({baseModel.Name}Merge{(async ? "Async " : "")})}}", "dto", true);
       _sb.AppendLine("throw;");
       _sb.AppendLine("}");
     }
 
-    public override void BuildInternalCountMethod(Schema schema, string name, bool isTable, bool async,
-  List<string> internalMethodSignatures, List<Column> parameters)
+    public override void BuildInternalCountMethod(GeneratorBaseModel baseModel, bool async,
+  List<string> internalMethodSignatures)
     {
-      string parametersSqlStr = ParameterHelper.GetParametersSqlString(parameters);
+      string parametersSqlStr = ParameterHelper.GetParametersSqlString(baseModel.Parameters);
 
       // GetCount(WhereClause)
       _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
@@ -604,7 +610,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
 
       // Add function parameters
-      foreach (Column param in (parameters))
+      foreach (Column param in (baseModel.Parameters))
       {
         if (param.ColumnTypeDataType == DataTypes.TableValue)
         {
@@ -619,7 +625,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("cmd.CommandType = CommandType.Text;");
       _sb.AppendLine(@"string sql = $@""");
       _sb.AppendLine("SELECT COUNT_BIG(*)");
-      _sb.AppendLine($"FROM [{schema.Name}].[{name}]{(parametersSqlStr.Length > 0 ? $"({parametersSqlStr})" : "")} pv");
+      _sb.AppendLine($"FROM [{baseModel.Schema.Name}].[{baseModel.Name}]{(parametersSqlStr.Length > 0 ? $"({parametersSqlStr})" : "")} pv");
       _sb.AppendLine(@""";");
       _sb.AppendLine("sql += whereClause.Where;");
       _sb.AppendLine(@$"cmd.CommandText = sql;");
@@ -632,11 +638,11 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
     }
 
-    public override void BuildHasChangedMethod(Schema schema, string name, bool isTable, bool async,
-      List<string> internalMethodSignatures, List<string> externalMethodSignatures, List<Column> columns)
+    public override void BuildHasChangedMethod(GeneratorBaseModel baseModel, bool async,
+      List<string> internalMethodSignatures, List<string> externalMethodSignatures)
     {
       // HasChangedWork
-      BuildHasChangedWork(name, columns);
+      BuildHasChangedWork(baseModel);
 
       // HasChanged(Dto)
       _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0));
@@ -647,12 +653,12 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       if (async)
       {
         _sb.AppendLine("await con.OpenAsync().ConfigureAwait(false);");
-        _sb.AppendLine($"var ret = await {name}HasChangedAsync(con, cmd, dto).ConfigureAwait(false);");
+        _sb.AppendLine($"var ret = await {baseModel.Name}HasChangedAsync(con, cmd, dto).ConfigureAwait(false);");
       }
       else
       {
         _sb.AppendLine("con.Open();");
-        _sb.AppendLine($"var ret = {name}HasChanged(con, cmd, dto);");
+        _sb.AppendLine($"var ret = {baseModel.Name}HasChanged(con, cmd, dto);");
       }
       _sb.AppendLine("con.Close();");
       _sb.AppendLine("return ret;");
@@ -665,16 +671,16 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("return true;");
       if (async)
       {
-        _sb.AppendLine($"{name}Dto dtoDb = await {name}GetAsync(con, cmd, dto.Id).ConfigureAwait(false);");
+        _sb.AppendLine($"{baseModel.DtoName} dtoDb = await {baseModel.Name}GetAsync(con, cmd, dto.Id).ConfigureAwait(false);");
       }
       else
       {
-        _sb.AppendLine($"{name}Dto dtoDb = {name}Get(con, cmd, dto.Id);");
+        _sb.AppendLine($"{baseModel.DtoName} dtoDb = {baseModel.Name}Get(con, cmd, dto.Id);");
       }
       _sb.AppendLine("return HasChangedWork(dto, dtoDb);");
     }
 
-    public override void BuildHistGetMethod(Schema schema, string name, bool isTable, bool async,
+    public override void BuildHistGetMethod(GeneratorBaseModel baseModel, bool async,
   List<string> internalMethodSignatures, List<string> externalMethodSignatures)
     {
       // TODO : Implement

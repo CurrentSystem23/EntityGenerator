@@ -10,17 +10,18 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessGenerator
   {
-    void BuildDependencyInjections(Database db);
+    void BuildDependencyInjectionBaseFile();
+    void BuildDependencyInjections(Database db, int databaseId);
     void BuildBaseFile(int databaseId);
-    
-    void BuildTableDAOHeader(Schema schema, Table table);
-    void BuildFunctionDAOHeader(Schema schema, Function function);
-    void BuildTableValuedFunctionDAOHeader(Schema schema, Function tableValuedFunction);
-    void BuildViewDAOHeader(Schema schema, View view);
 
-    void BuildTableDAOMethod(Schema schema, Table table, MethodType methodType);
-    void BuildFunctionDAOMethod(Schema schema, Function function, MethodType methodType);
-    void BuildTableValuedFunctionDAOMethod(Schema schema, Function tableValuedFunction, MethodType methodType);
-    void BuildViewDAOMethod(Schema schema, View view, MethodType methodType);
+    void BuildTableDAOHeader(Schema schema, Table table, int databaseId);
+    void BuildFunctionDAOHeader(Schema schema, Function function, int databaseId);
+    void BuildTableValuedFunctionDAOHeader(Schema schema, Function tableValuedFunction, int databaseId);
+    void BuildViewDAOHeader(Schema schema, View view, int databaseId);
+
+    void BuildTableDAOMethod(Schema schema, Table table, MethodType methodType, bool isAsync, int databaseId);
+    void BuildFunctionDAOMethod(Schema schema, Function function, MethodType methodType, bool isAsync, int databaseId);
+    void BuildTableValuedFunctionDAOMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync, int databaseId);
+    void BuildViewDAOMethod(Schema schema, View view, MethodType methodType, bool isAsync, int databaseId);
   }
 }
