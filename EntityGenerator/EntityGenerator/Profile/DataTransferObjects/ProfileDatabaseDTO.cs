@@ -38,7 +38,7 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// The type of database for which it is being generated.
     /// </summary>
     [JsonConverter(typeof(ListStringEnumConverter<List<Enums.DatabaseTypes>>))]
-    public List<Enums.DatabaseTypes> TargetDatabaseTypes { get; set; } = new List<Enums.DatabaseTypes>() { Enums.DatabaseTypes.MicrosoftSqlServer, Enums.DatabaseTypes.Oracle };
+    public List<Enums.DatabaseTypes> TargetDatabaseTypes { get; set; } = new List<Enums.DatabaseTypes>() { Enums.DatabaseTypes.MicrosoftSqlServer };
 
     public bool GuidIndexing { get; set; }
   }

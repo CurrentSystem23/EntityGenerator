@@ -1,5 +1,7 @@
-﻿using EntityGenerator.Profile.DataTransferObjects;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Profile.DataTransferObjects;
 using System;
+using System.Collections.Generic;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -19,6 +21,11 @@ namespace EntityGenerator.Profile.DataTransferObject
       GeneratorCommon = new ProfileGeneratorCommonDto();
       GeneratorDatabase = new ProfileGeneratorDatabaseDto();
     }
+
+    /// <summary>
+    /// The list of method types for which functions should be generated. Default is all.
+    /// </summary>
+    public List<MethodType> MethodTypes { get; set; } = new List<MethodType>((IEnumerable<MethodType>)Enum.GetValues(typeof(MethodType)));
 
     /// <summary>
     /// The generator settings for the frontend project.

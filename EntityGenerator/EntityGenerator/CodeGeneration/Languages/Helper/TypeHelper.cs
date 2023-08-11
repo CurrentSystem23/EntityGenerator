@@ -16,10 +16,20 @@ namespace EntityGenerator.CodeGeneration.Languages.Helper
       return isTable ? daoName : $"{daoName}V";
     }
 
-    public static string GetInternalDaoType(string name, bool isTable)
+    public static string GetInternalDaoType(string name, LanguageBase.DbObjectType dbObjectType)
     {
       string daoName = $"{name}InternalDao";
-      return isTable ? daoName : $"{daoName}V";
+      switch (dbObjectType)
+      {
+        case LanguageBase.DbObjectType.TABLE:
+          return daoName;
+        case LanguageBase.DbObjectType.VIEW:
+          return $"{daoName}V";
+        case LanguageBase.DbObjectType.TABLEVALUEFUNCTION:
+          return $"{daoName}V";
+        default:
+          throw new NotSupportedException();
+      }
     }
 
     /// <summary>
