@@ -38,7 +38,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         _sb.AppendLine($"public {(column.ColumnTypeDataType is DataTypes.XDocument or DataTypes.XElement ? "string" : GetColumnDataType(column))} {column.Name} {{ get; set; }}{column.ColumnDefaultDefinition}");
       }
 
-      // TODO : Allow config to decide over special Dto (currently Tenant)
+      // TODO : Allow config to decide over special Dto (currently fixed to Tenant)
       OpenClass($"{parameters.DtoName}", $"{(parameters.Columns.Exists(column => column.Name == "TenantId") ? "DtoBaseTenant" : "DtoBase")}");
       foreach (Column column in parameters.Columns.Where(column => !column.ColumnIsIdentity || (parameters.DbObjectType == DbObjectType.TABLE)))
       {
