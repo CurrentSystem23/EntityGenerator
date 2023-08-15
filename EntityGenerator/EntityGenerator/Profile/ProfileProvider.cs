@@ -1,4 +1,7 @@
-﻿using EntityGenerator.Profile.DataTransferObject;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.Core.Interfaces;
+using EntityGenerator.Profile.DataTransferObject;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -121,9 +124,17 @@ namespace EntityGenerator.Profile
     /// <param name="profilePath"> The path of the json profile file.</param>
     public void SaveProfileToFileJson(string profilePath)
     {
-      _profile = new ProfileDto();
+      _profile ??= new ProfileDto();
 
-      string profileDto = JsonSerializer.Serialize(_profile);
+      JsonSerializerOptions options = new JsonSerializerOptions()
+      {
+        WriteIndented = true
+      };
+
+      string profileDto = JsonSerializer.Serialize(_profile, options);
+
+      IFileWriterService fileWriter = _serviceProvider.GetService<IFileWriterService>();
+      fileWriter.WriteToFile(profilePath, string.Empty, profileDto);
     }
 
     /// <summary>
