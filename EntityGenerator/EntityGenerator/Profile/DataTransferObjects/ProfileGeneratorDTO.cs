@@ -20,6 +20,13 @@ namespace EntityGenerator.Profile.DataTransferObject
       GeneratorBusinessLogic = new ProfileGeneratorBusinessLogicDto();
       GeneratorCommon = new ProfileGeneratorCommonDto();
       GeneratorDatabase = new ProfileGeneratorDatabaseDto();
+      GeneratorAPI = new ProfileGeneratorAPIDto();
+      GeneratorCS23DomainTypeValue = new();
+      GeneratorDataAccess = new();
+      GeneratorDataAccessFacade = new();
+      GeneratorUserRights = new();
+      GeneratorTest = new();
+      GeneratorDBScripts = new();
     }
 
     /// <summary>

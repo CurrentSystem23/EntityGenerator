@@ -78,22 +78,22 @@ namespace EntityGenerator.CodeGeneration.Services
       _profile = profile;
     }
 
-    private List<ProfileCodeGenerationBase> GetActiveModulesList(ProfileGeneratorDto generatorProfile)
+    private static List<ProfileCodeGenerationBase> GetActiveModulesList(ProfileGeneratorDto generatorProfile)
     {
-      // Iterate over all generator profile property objects and filter by null value.
+      // Iterate over all generator profile property objects and filter by null and Enabled values.
       return generatorProfile.GetType().GetProperties()
         .Where((prop) => (prop.PropertyType.BaseType == typeof(ProfileCodeGenerationBase)) && prop.GetValue(generatorProfile) != null)
-        .ToList().ConvertAll(prop => (ProfileCodeGenerationBase)prop.GetValue(generatorProfile));
+        .ToList().ConvertAll(prop => (ProfileCodeGenerationBase)prop.GetValue(generatorProfile))
+        .Where(generator => generator.Enabled).ToList();
     }
 
-    private dynamic ConvertToGeneratorProfile(ProfileCodeGenerationBase generator)
+    private static dynamic ConvertToGeneratorProfile(ProfileCodeGenerationBase generator)
     {
       return Convert.ChangeType(generator, Type.GetType(generator.GetType().Name));
     }
 
-    private MethodInfo GetGeneratorFunctionHandle(ProfileCodeGenerationBase generator)
+    private static MethodInfo GetGeneratorFunctionHandle(ProfileCodeGenerationBase generator)
     {
-      string modName = generator.ModuleName.ToString();
       return typeof(ICodeGenerator).GetMethod($"Execute{generator.ModuleName.ToString()}");
     }
 
@@ -110,7 +110,7 @@ namespace EntityGenerator.CodeGeneration.Services
       }
     }
 
-    private long CountDbItems(Database db)
+    private static long CountDbItems(Database db)
     {
       long count = 0;
       foreach (Schema schema in db.Schemas)
