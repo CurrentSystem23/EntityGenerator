@@ -17,7 +17,7 @@ namespace EntityGenerator.CodeGeneration.Services
     {
       string filePath = path;
 
-      if (!(filePath.EndsWith('/') || filePath.EndsWith(@"\")))
+      if (!(filePath.EndsWith('/') || filePath.EndsWith(@"\")) && fileName != string.Empty)
       {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
           filePath += @"\";
@@ -29,13 +29,13 @@ namespace EntityGenerator.CodeGeneration.Services
 
       try
       {
-        if (!Directory.Exists(path))
+        if (!Directory.Exists(path) && fileName != string.Empty)
           Directory.CreateDirectory(path);
 
         if (File.Exists(filePath))
           File.Delete(filePath);
 
-        using StreamWriter sw = new StreamWriter(filePath);
+        using StreamWriter sw = new(filePath);
         sw.Write(data);
       }
       catch (Exception ex)
