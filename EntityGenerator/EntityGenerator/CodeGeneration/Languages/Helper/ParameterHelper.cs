@@ -1,4 +1,5 @@
-﻿using EntityGenerator.Core.Models.ModelObjects;
+﻿using EntityGenerator.Core.Extensions;
+using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObjects.Enums;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace EntityGenerator.CodeGeneration.Languages.Helper
   {
     public static string GetParametersString(List<Column> parameters)
     {
+      if (parameters == null || parameters.Count == 0) return string.Empty;
+
       string outStr = string.Empty;
       foreach (Column param in parameters)
       {
@@ -25,7 +28,9 @@ namespace EntityGenerator.CodeGeneration.Languages.Helper
     }
 
     public static string GetParametersStringWithType(List<Column> parameters, LanguageBase language)
-    {      
+    {
+      if (parameters == null || parameters.Count == 0) return string.Empty;
+
       string outStr = string.Empty;
       foreach (Column param in parameters)
       {
@@ -41,7 +46,7 @@ namespace EntityGenerator.CodeGeneration.Languages.Helper
     public static string GetParametersSqlString(List<Column> parameters)
     {
       StringBuilder outStr = new();
-      foreach (Column param in parameters)
+      foreach (Column param in parameters.OrEmptyIfNull())
       {
         outStr.AppendJoin(", ", parameters.Select(param => { return $@"@{param.Name}"; }));
       }

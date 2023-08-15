@@ -1,11 +1,6 @@
-﻿using EntityGenerator.CodeGeneration.Interfaces;
-using EntityGenerator.Core.Models.ModelObjects;
+﻿using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Languages.SQL
 {

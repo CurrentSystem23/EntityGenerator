@@ -19,7 +19,6 @@
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\.NET6\NET6CSharpBusinessLogic.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\.NET6\NET6CSharpCommon.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\Helper\NETCSharpMethodHelper.cs" />
-    <Compile Include="CodeGeneration\Languages\.NET\CSharp\Model\GeneratorBaseModel.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharp.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpBusinessLogic.cs" />
     <Compile Include="CodeGeneration\Languages\.NET\CSharp\NETCSharpCommon.cs" />
@@ -39,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CodeGeneration\Languages\.NET\CSharp\Model\" />
     <Folder Include="CodeGeneration\Languages\SQL\OracleDB\" />
   </ItemGroup>
 

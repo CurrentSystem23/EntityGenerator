@@ -1,4 +1,5 @@
-﻿using EntityGenerator.Core.Models.Enums;
+﻿using EntityGenerator.CodeGeneration.Models.Enums;
+using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
 using System;
 using System.Collections.Generic;
@@ -16,16 +17,16 @@ namespace EntityGenerator.CodeGeneration.Languages.Helper
       return isTable ? daoName : $"{daoName}V";
     }
 
-    public static string GetInternalDaoType(string name, LanguageBase.DbObjectType dbObjectType)
+    public static string GetInternalDaoType(string name, DbObjectType dbObjectType)
     {
       string daoName = $"{name}InternalDao";
       switch (dbObjectType)
       {
-        case LanguageBase.DbObjectType.TABLE:
+        case DbObjectType.TABLE:
           return daoName;
-        case LanguageBase.DbObjectType.VIEW:
+        case DbObjectType.VIEW:
           return $"{daoName}V";
-        case LanguageBase.DbObjectType.TABLEVALUEFUNCTION:
+        case DbObjectType.TABLEVALUEFUNCTION:
           return $"{daoName}V";
         default:
           throw new NotSupportedException();

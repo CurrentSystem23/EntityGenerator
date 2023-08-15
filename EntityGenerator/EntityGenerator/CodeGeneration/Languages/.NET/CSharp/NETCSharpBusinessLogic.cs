@@ -2,14 +2,11 @@
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
 using EntityGenerator.CodeGeneration.Languages.Enums;
 using EntityGenerator.CodeGeneration.Languages.Helper;
-using EntityGenerator.CodeGeneration.Languages.NET.CSharp.Helper;
+using EntityGenerator.CodeGeneration.Models.Enums;
+using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Core.Extensions;
 using EntityGenerator.Core.Models.ModelObjects;
-using EntityGenerator.Profile.DataTransferObject;
-using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Text;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {

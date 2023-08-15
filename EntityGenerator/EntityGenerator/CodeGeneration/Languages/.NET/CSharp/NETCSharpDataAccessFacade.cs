@@ -1,19 +1,11 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
 using EntityGenerator.CodeGeneration.Languages.Helper;
-using EntityGenerator.CodeGeneration.Languages.SQL;
-using EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp;
+using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Core.Models.ModelObjects;
-using EntityGenerator.Profile.DataTransferObject;
-using Nelibur.ObjectMapper;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
@@ -29,7 +21,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         "System.Threading.Tasks",
         "System",
       };
-      foreach (DatabaseLanguageBase databaseLanguage in DatabaseLanguages)
+      foreach (DatabaseLanguageBase databaseLanguage in _databaseLanguages)
       {
         imports = imports.Concat(databaseLanguage.GetClientImports()).ToList();
       }
@@ -84,7 +76,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     protected void BuildDataAccessFacadeInternalMethod(GeneratorBaseModel baseModel, MethodType methodType, bool isAsync, int databaseId)
     {
-      foreach (string methodSignature in DatabaseLanguages[databaseId].GetInternalMethodSignatures(baseModel, methodType, isAsync, true))
+      foreach (string methodSignature in _databaseLanguages[databaseId].GetInternalMethodSignatures(baseModel, methodType, isAsync, true))
       {
         _sb.AppendLine(methodSignature);
       }
@@ -101,7 +93,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       string fullDaoName = $"Common.DataAccess.Interfaces.Ado.{baseModel.Schema.Name}.I{baseModel.InternalDaoName}";
       List<string> externalMethodSignatures = GetExternalMethodSignatures(baseModel, methodType, isAsync,
         $"Common.DataAccess.Interfaces.Ado.{baseModel.Schema.Name}.I{baseModel.DaoName}");
-      List<string> internalMethodSignatures = DatabaseLanguages[databaseId].GetInternalMethodSignatures(baseModel, methodType, isAsync, useNamespace: true);
+      List<string> internalMethodSignatures = _databaseLanguages[databaseId].GetInternalMethodSignatures(baseModel, methodType, isAsync, useNamespace: true);
 
 
       switch (methodType)
@@ -112,40 +104,40 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           OpenMethod(externalMethodSignatures.ElementAt(1));
           _sb.AppendLine($"return {(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Gets{(isAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[databaseId].BuildInternalGetFacadeMethod(baseModel, isAsync, internalMethodSignatures);
+          _databaseLanguages[databaseId].BuildInternalGetFacadeMethod(baseModel, isAsync, internalMethodSignatures);
           break;
 
         case MethodType.SAVE:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Save{(isAsync ? "Async" : "")}(dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[databaseId].BuildInternalSaveFacadeMethod(baseModel, isAsync, internalMethodSignatures);
+          _databaseLanguages[databaseId].BuildInternalSaveFacadeMethod(baseModel, isAsync, internalMethodSignatures);
           break;
 
         case MethodType.DELETE:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Delete{(isAsync ? "Async" : "")}(id){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[databaseId].BuildInternalDeleteFacadeMethod(baseModel, isAsync, internalMethodSignatures);
+          _databaseLanguages[databaseId].BuildInternalDeleteFacadeMethod(baseModel, isAsync, internalMethodSignatures);
           break;
 
         case MethodType.MERGE:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"{(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}Merge{(isAsync ? "Async" : "")}(dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
-          DatabaseLanguages[databaseId].BuildInternalMergeFacadeMethod(baseModel, isAsync, internalMethodSignatures);
+          _databaseLanguages[databaseId].BuildInternalMergeFacadeMethod(baseModel, isAsync, internalMethodSignatures);
           break;
           
         case MethodType.COUNT:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"return {(isAsync ? "await" : string.Empty)} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}GetCount{(isAsync ? "Async" : string.Empty)}(new WhereClause(){(parametersStr != "" ? $", {parametersStr}" : "")}){(isAsync ? ".ConfigureAwait(false)" : string.Empty)};");
-          DatabaseLanguages[databaseId].BuildInternalCountFacadeMethod(baseModel, isAsync, internalMethodSignatures);
+          _databaseLanguages[databaseId].BuildInternalCountFacadeMethod(baseModel, isAsync, internalMethodSignatures);
           break;
 
         case MethodType.HAS_CHANGED:
           OpenMethod(externalMethodSignatures.ElementAt(0));
           _sb.AppendLine($"return {(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}HasChanged{(isAsync ? "Async" : "")}(dto){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[databaseId].BuildInternalHasChangedFacadeMethod(baseModel, isAsync, internalMethodSignatures);
+          _databaseLanguages[databaseId].BuildInternalHasChangedFacadeMethod(baseModel, isAsync, internalMethodSignatures);
           break;
 
         case MethodType.BUlK_INSERT:
@@ -180,7 +172,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           OpenMethod(externalMethodSignatures.ElementAt(1));
           _sb.AppendLine($"return {(isAsync ? "await" : "")} _provider.GetRequiredService<{fullDaoName}>().{baseModel.Name}HistEntryGet{(isAsync ? "Async" : "")}(histId){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
-          DatabaseLanguages[databaseId].BuildInternalHistFacadeMethod(baseModel, isAsync, internalMethodSignatures);
+          _databaseLanguages[databaseId].BuildInternalHistFacadeMethod(baseModel, isAsync, internalMethodSignatures);
           break;
 
         default:

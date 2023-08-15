@@ -1,18 +1,15 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Languages.Enums;
 using EntityGenerator.CodeGeneration.Languages.Helper;
-using EntityGenerator.Core.Models;
+using EntityGenerator.CodeGeneration.Models.Enums;
+using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
@@ -24,7 +21,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     private bool openStructure = false;
     private bool openNameSpace = false;
 
-    public NETCSharp(StringBuilder sb, ProfileDto profile, List<DatabaseLanguageBase> databaseLanguages) : base(sb, profile, databaseLanguages)
+    public NETCSharp(StringBuilder sb, ProfileDto profile) : base(sb, profile)
     {
       CloseExistingScope = true;
     }

@@ -1,12 +1,5 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
-using EntityGenerator.Core.Models.ModelObjects;
-using EntityGenerator.Profile.DataTransferObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static EntityGenerator.CodeGeneration.Languages.LanguageBase;
+using EntityGenerator.CodeGeneration.Models.Enums;
 
 namespace EntityGenerator.CodeGeneration.Languages.Helper
 {

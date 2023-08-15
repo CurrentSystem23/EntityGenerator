@@ -13,10 +13,12 @@ namespace EntityGenerator.Profile.DataTransferObjects.Enums
   {
     [EnumMember(Value = "NET6CSharp")]
     [StringValue("NET.CSharp.NET_6.NET6CSharp")]
+    [DataMember]
     DOTNET_6_CSHARP,
 
     [EnumMember(Value = "Angular15TypeScript")]
     [StringValue("Angular.TypeScript.Angular15.Angular15TypeScript")]
+    [DataMember]
     ANGULAR_15_TYPESCRIPT,
   }
 }

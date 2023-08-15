@@ -1,13 +1,10 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Languages.Helper;
-using EntityGenerator.CodeGeneration.Languages.NET.CSharp;
-using EntityGenerator.Core.Extensions;
-using EntityGenerator.Core.Models.Enums;
-using EntityGenerator.Core.Models.ModelObjects;
+using EntityGenerator.CodeGeneration.Languages.NET.CSharp.NET_6;
+using EntityGenerator.CodeGeneration.Models.Enums;
+using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp

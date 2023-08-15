@@ -1,15 +1,11 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Interfaces.Modules;
 using EntityGenerator.CodeGeneration.Languages.Helper;
-using EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp;
 using EntityGenerator.CodeGeneration.Languages.SQL;
 using EntityGenerator.Core.Models.ModelObjects;
-using EntityGenerator.Profile.DataTransferObject;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EntityGenerator.CodeGeneration.Models.ModelObjects;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
@@ -30,11 +26,11 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         $"{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.BaseClasses",
         $"{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{baseModel.Schema.Name}",
         $"{_profile.Global.ProjectName}.Common.DTOs.{baseModel.Schema.Name}",
-        $"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.BaseClasses",
+        $"{_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.BaseClasses",
       };
 
-      BuildImports(imports.Concat(DatabaseLanguages[databaseId].GetClientImports()).ToList());
-      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{baseModel.Schema.Name}");
+      BuildImports(imports.Concat(_databaseLanguages[databaseId].GetClientImports()).ToList());
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{baseModel.Schema.Name}");
 
       // Create Dao class
       OpenClass(baseModel.DaoName,
@@ -57,7 +53,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       {
         return;
       }
-      SQLLanguageBase _databaseLanguage = this.DatabaseLanguages[databaseId] as SQLLanguageBase;
+      SQLLanguageBase _databaseLanguage = this._databaseLanguages[databaseId] as SQLLanguageBase;
 
       string parametersStr = ParameterHelper.GetParametersString(baseModel.Parameters);
       List<string> externalMethodSignatures = GetExternalMethodSignatures(baseModel, methodType, isAsync);
@@ -129,12 +125,12 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     void IDataAccessGenerator.BuildBaseFile(int databaseId)
     {
       List<string> imports = new() { "System", "System.Collections.Generic", "System.Text", $"{_profile.Global.ProjectName}.Common.DTOs" };
-      BuildImports(imports.Concat(DatabaseLanguages[databaseId].GetClientImports()).ToList());
-      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.BaseClasses");
+      BuildImports(imports.Concat(_databaseLanguages[databaseId].GetClientImports()).ToList());
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.BaseClasses");
       OpenClass("Dao");
 
-      DatabaseLanguages[databaseId].BuildBeforeSaveMethod();
-      DatabaseLanguages[databaseId].BuildAfterSaveMethod();
+      _databaseLanguages[databaseId].BuildBeforeSaveMethod();
+      _databaseLanguages[databaseId].BuildAfterSaveMethod();
     }
 
     void IDataAccessGenerator.BuildDependencyInjectionBaseFile()
@@ -144,7 +140,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         "Microsoft.Extensions.DependencyInjection"
       };
 
-      foreach (DatabaseLanguageBase databaseLanguage in DatabaseLanguages)
+      foreach (DatabaseLanguageBase databaseLanguage in _databaseLanguages)
       {
         imports.Add($"{_profile.Global.ProjectName}.DataAccess.{databaseLanguage.Name}.Helper");
       }
@@ -153,7 +149,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       OpenClass($"DataAccessInitializer", isStatic: true, isPartial: true);
 
       OpenMethod("InitializeGeneratedDataAccess(IServiceCollection services)", isStatic: true);
-      foreach (DatabaseLanguageBase databaseLanguage in DatabaseLanguages)
+      foreach (DatabaseLanguageBase databaseLanguage in _databaseLanguages)
       {
         _sb.AppendLine($"DataAccess{databaseLanguage.Name}Initializer.InitializeGeneratedDataAccess(services);");
       }
@@ -165,36 +161,36 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       List<string> imports = new();
       foreach (Schema schema in db.Schemas)
       {
-        imports.Add($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}");
+        imports.Add($"{_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}");
       }
 
       BuildImports(imports);
-      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.Helper");
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.Helper");
 
-      OpenClass($"DataAccess{DatabaseLanguages[databaseId].Name}Initializer", isStatic: true, isPartial: true);
+      OpenClass($"DataAccess{_databaseLanguages[databaseId].Name}Initializer", isStatic: true, isPartial: true);
 
       OpenMethod($"InitializeGeneratedDataAccess(IServiceCollection services)", isStatic: true);
       foreach (Schema schema in db.Schemas)
       {
         foreach (Table table in schema.Tables)
         {
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}Dao, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{table.Name}Dao>();");
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}InternalDao, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{table.Name}Dao>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}Dao, {_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}.{table.Name}Dao>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{table.Name}InternalDao, {_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}.{table.Name}Dao>();");
         }
         foreach (Function function in schema.FunctionsScalar)
         {
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoS, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoS>();");
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoS, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoS>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoS, {_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoS>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoS, {_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoS>();");
         }
         foreach (Function function in schema.FunctionsTableValued)
         {
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoV, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoV>();");
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoV, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoV>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}DaoV, {_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoV>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{function.Name}InternalDaoV, {_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}.{function.Name}DaoV>();");
         }
         foreach (View view in schema.Views)
         {
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{view.Name}DaoV, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{view.Name}DaoV>();");
-          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{view.Name}InternalDaoV, {_profile.Global.ProjectName}.DataAccess.{DatabaseLanguages[databaseId].Name}.{schema.Name}.{view.Name}DaoV>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{view.Name}DaoV, {_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}.{view.Name}DaoV>();");
+          _sb.AppendLine($"services.AddTransient<{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado.{schema.Name}.I{view.Name}InternalDaoV, {_profile.Global.ProjectName}.DataAccess.{_databaseLanguages[databaseId].Name}.{schema.Name}.{view.Name}DaoV>();");
         }
       }
     }

@@ -1,14 +1,13 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
 using EntityGenerator.CodeGeneration.Languages.Helper;
-using EntityGenerator.CodeGeneration.Languages.NET.CSharp;
+using EntityGenerator.CodeGeneration.Models.Enums;
+using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Core.Extensions;
 using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
-using EntityGenerator.Profile.DataTransferObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 {
@@ -241,7 +240,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       }
       else
       {
-        foreach (Column param in baseModel.Parameters)
+        foreach (Column param in baseModel.Parameters.OrEmptyIfNull())
         {
           if (param.ColumnTypeDataType == DataTypes.TableValue)
           {
@@ -274,7 +273,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("{");
       _sb.AppendLine("cmd.Parameters.Add(whereParameter.ParameterName, whereParameter.ParameterType).Value = whereParameter.ParameterValue;");
       _sb.AppendLine("}");
-      foreach (Column param in baseModel.Parameters)
+      foreach (Column param in baseModel.Parameters.OrEmptyIfNull())
       {
         if (param.ColumnTypeDataType == DataTypes.TableValue)
         {
@@ -610,7 +609,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
 
       // Add function parameters
-      foreach (Column param in (baseModel.Parameters))
+      foreach (Column param in (baseModel.Parameters).OrEmptyIfNull())
       {
         if (param.ColumnTypeDataType == DataTypes.TableValue)
         {

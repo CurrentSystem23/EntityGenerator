@@ -11,13 +11,22 @@ using System.Threading.Tasks;
 namespace EntityGenerator.CodeGeneration.Languages.NET
 {
   public abstract class NETLanguageBase : CodeLanguageBase
-  { 
-    public List<DatabaseLanguageBase> DatabaseLanguages { get; private set; }
+  {
+    public List<DatabaseLanguageBase> DatabaseLanguages { get => _databaseLanguages; }
+    protected List<DatabaseLanguageBase> _databaseLanguages;
 
-    public NETLanguageBase(StringBuilder sb, ProfileDto profile, List<DatabaseLanguageBase> databaseLanguages = null) : base(sb, profile)
+    public NETLanguageBase(StringBuilder sb, ProfileDto profile) : base(sb, profile)
     {
       ParameterFormat = "{0} {1}";
-      DatabaseLanguages = databaseLanguages;
+    }
+
+    public void InitializeDatabaseLanguages(List<DatabaseLanguageBase> databaseLanguages)
+    {
+      if (_databaseLanguages != null)
+      {
+        throw new InvalidOperationException("Error: Database languages have already been initialized.");
+      }
+      _databaseLanguages = databaseLanguages;
     }
 
     public abstract void OpenClass(string className, string baseClass, bool isStatic, bool isPartial, bool isAbstract, AccessType accessModifier);

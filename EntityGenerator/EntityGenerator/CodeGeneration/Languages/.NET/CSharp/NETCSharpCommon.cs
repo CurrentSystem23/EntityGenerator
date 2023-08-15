@@ -1,16 +1,13 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces.Modules;
 using EntityGenerator.CodeGeneration.Languages.Helper;
+using EntityGenerator.CodeGeneration.Models.Enums;
+using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Core.Extensions;
 using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
-using EntityGenerator.Profile.DataTransferObject;
-using EntityGenerator.Profile.DataTransferObjects.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
@@ -18,6 +15,10 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
   {
     protected void BuildDTO(GeneratorBaseModel parameters)
     {
+      if (parameters.DbObjectType == DbObjectType.FUNCTION)
+      {
+        return;
+      }
       BuildImports(new List<string> {
         $"{_profile.Global.ProjectName}.Common.DTOs",
         "System",
@@ -27,7 +28,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       BuildNameSpace($"{_profile.Global.ProjectName}.Common.DTOs.{parameters.Schema.Name}");
 
       OpenEnum($"Order{parameters.Name}");
-      foreach (Column column in parameters.Columns)
+      foreach (Column column in parameters.Columns.OrEmptyIfNull())
       {
         _sb.AppendLine($"{column.Name}_Asc,");
         _sb.AppendLine($"{column.Name}_Desc,");

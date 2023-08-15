@@ -1,4 +1,5 @@
 ﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Core.Models.ModelObjects;
 using EntityGenerator.Profile.DataTransferObject;
 using System;
