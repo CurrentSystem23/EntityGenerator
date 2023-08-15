@@ -32,7 +32,12 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     public NETCSharpLanguageService(ProfileDto profile)
     {
       _sb = new();
-      _language = new NET6CSharp(_sb, profile, new List<DatabaseLanguageBase> { new MSSQLCSharp(_sb, _language, profile) });
+
+      // Create and initialize language builders.
+      _language = new NET6CSharp(_sb, profile);
+      List<DatabaseLanguageBase> databaseLanguages = new() { new MSSQLCSharp(_sb, _language, profile) };
+      _language.InitializeDatabaseLanguages(databaseLanguages);
+
       _formatterService = new NETCSharpFormatterService(_sb, _language);
     }
 
@@ -43,7 +48,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       // Tables
       foreach (Schema schema in db.Schemas)
       {
-        string schemaPath = $"{profile.Path.BusinessLogicDir}/{schema.Name}";
+        string schemaPath = $@"{profile.Path.BusinessLogicDir}/{profile.Global.GeneratedFolder}/{schema.Name}";
 
         foreach (Table table in schema.Tables)
         {
@@ -186,26 +191,26 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     {
       ICommonGenerator generator = _language as ICommonGenerator;
 
-      string rootPath = $@"{profile.Path.CommonDir}\{profile.Global.GeneratedSuffix}\";
+      string rootPath = $@"{profile.Path.CommonDir}\{profile.Global.GeneratedFolder}\";
       string schemaInfoPath = $@"{rootPath}\DbSchemaInformation\";
       string constantsPath = $@"{rootPath}\Constants\";
 
       // Schema DTO
       generator.BuildSchemaDTO(db);
-      writerService.WriteToFile(schemaInfoPath, $"{profile.Global.ProjectName}.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+      writerService.WriteToFile(schemaInfoPath, $"{profile.Global.GeneratedPrefix}{profile.Global.ProjectName}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
       // Constants
       generator.BuildConstants(db);
-      writerService.WriteToFile(constantsPath, $"Constants.{profile.Global.GeneratedPrefix}.cs", _formatterService.CloseFile());
+      writerService.WriteToFile(constantsPath, $"{profile.Global.GeneratedPrefix}Constants.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
       // Base DTO
       generator.BuildBaseDTO();
-      writerService.WriteToFile(rootPath, $"DtoBase.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+      writerService.WriteToFile(rootPath, $"{profile.Global.GeneratedPrefix}DtoBase{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
       // Tenant DTO
       // TODO : Refactor into configurable additional base classes
       generator.BuildTenantBase();
-      writerService.WriteToFile(rootPath, $"DtoBaseTenant.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+      writerService.WriteToFile(rootPath, $"{profile.Global.GeneratedPrefix}DtoBaseTenant{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
       // DTOs
       foreach (Schema schema in db.Schemas)
@@ -215,17 +220,17 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         foreach (Table table in schema.Tables)
         {
           generator.BuildTableDTO(schema, table);
-          writerService.WriteToFile(dtoSchemaRootPath, $"{table.Name}Dto.cs", _formatterService.CloseFile());
+          writerService.WriteToFile(dtoSchemaRootPath, $"{profile.Global.GeneratedPrefix}{table.Name}Dto{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
         }
         foreach (Function tableValuedFunction in schema.FunctionsTableValued)
         {
           generator.BuildTableValuedFunctionDTO(schema, tableValuedFunction);
-          writerService.WriteToFile(dtoSchemaRootPath, $"{tableValuedFunction.Name}DtoV.cs", _formatterService.CloseFile());
+          writerService.WriteToFile(dtoSchemaRootPath, $"{profile.Global.GeneratedPrefix}{tableValuedFunction.Name}DtoV{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
         }
         foreach (View view in schema.Views)
         {
           generator.BuildViewDTO(schema, view);
-          writerService.WriteToFile(dtoSchemaRootPath, $"{view.Name}DtoV.cs", _formatterService.CloseFile());
+          writerService.WriteToFile(dtoSchemaRootPath, $"{profile.Global.GeneratedPrefix}{view.Name}DtoV{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
         }
       }
     }
@@ -241,19 +246,19 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       IDataAccessGenerator generator = _language as IDataAccessGenerator;
 
       generator.BuildDependencyInjectionBaseFile();
-      writerService.WriteToFile($@"{profile.Path.DataAccessDir}.{db.Name}\_{profile.Global.GeneratedSuffix}\Helper\", $@"DataAccessAdoInitializer.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+      writerService.WriteToFile($@"{profile.Path.DataAccessDir}.{db.Name}\_{profile.Global.GeneratedFolder}\Helper\", $@"{profile.Global.GeneratedPrefix}DataAccessAdoInitializer{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
       foreach (DatabaseLanguageBase databaseLanguage in _language.DatabaseLanguages)
       {
         int databaseId = _language.DatabaseLanguages.IndexOf(databaseLanguage);
 
-        string rootPath = $@"{profile.Path.DataAccessDir}.{databaseLanguage.Name}\{profile.Global.GeneratedSuffix}\";
+        string rootPath = $@"{profile.Path.DataAccessDir}.{databaseLanguage.Name}\{profile.Global.GeneratedFolder}\";
         string baseFilePath = $@"{rootPath}";
         string helperPath = $@"{rootPath}\Helper\";
 
         // BaseFile
         generator.BuildBaseFile(databaseId);
-        writerService.WriteToFile(baseFilePath, $"Dao.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+        writerService.WriteToFile(baseFilePath, $"{profile.Global.GeneratedPrefix}Dao{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
         // DAO files
         foreach (Schema schema in db.Schemas)
@@ -272,7 +277,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
                 generator.BuildTableDAOMethod(schema, table, methodType, false, databaseId);
               }
             }
-            writerService.WriteToFile($@"{rootPath}\{schema.Name}\", $"{table.Name}.{profile.Global.GeneratedSuffix}", _formatterService.CloseFile());
+            writerService.WriteToFile($@"{rootPath}\{schema.Name}\", $"{profile.Global.GeneratedPrefix}{table.Name}{profile.Global.GeneratedSuffix}", _formatterService.CloseFile());
           }
           foreach (Function function in schema.FunctionsScalar)
           {
@@ -288,7 +293,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
                 generator.BuildFunctionDAOMethod(schema, function, methodType, false, databaseId);
               }
             }
-            writerService.WriteToFile($@"{rootPath}\{schema.Name}\", $"{function.Name}.{profile.Global.GeneratedSuffix}", _formatterService.CloseFile());
+            writerService.WriteToFile($@"{rootPath}\{schema.Name}\", $"{profile.Global.GeneratedPrefix}{function.Name}{profile.Global.GeneratedSuffix}", _formatterService.CloseFile());
           }
           foreach (Function tableValuedFunction in schema.FunctionsTableValued)
           {
@@ -304,7 +309,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
                 generator.BuildTableValuedFunctionDAOMethod(schema, tableValuedFunction, methodType, false, databaseId);
               }
             }
-            writerService.WriteToFile($@"{rootPath}\{schema.Name}\", $"{tableValuedFunction.Name}.{profile.Global.GeneratedSuffix}", _formatterService.CloseFile());
+            writerService.WriteToFile($@"{rootPath}\{schema.Name}\", $"{profile.Global.GeneratedPrefix}{tableValuedFunction.Name}{profile.Global.GeneratedSuffix}", _formatterService.CloseFile());
           }
           foreach (View view in schema.Views)
           {
@@ -320,40 +325,41 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
                 generator.BuildViewDAOMethod(schema, view, methodType, false, databaseId);
               }
             }
-            writerService.WriteToFile($@"{rootPath}\{schema.Name}\", $"{view.Name}.{profile.Global.GeneratedSuffix}", _formatterService.CloseFile());
+            writerService.WriteToFile($@"{rootPath}\{schema.Name}\", $"{profile.Global.GeneratedPrefix}{view.Name}{profile.Global.GeneratedSuffix}", _formatterService.CloseFile());
           }
         }
 
         // Dependency Injections
         generator.BuildDependencyInjections(db, _language.DatabaseLanguages.IndexOf(databaseLanguage));
-        writerService.WriteToFile(helperPath, $@"DataAccessAdoInitializer.{databaseLanguage.Name}.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+        writerService.WriteToFile(helperPath, $@"{profile.Global.GeneratedPrefix}DataAccessAdoInitializer.{databaseLanguage.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
       }
 
       // Base File
       for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
       {
         generator.BuildBaseFile(databaseId);
-        writerService.WriteToFile($@"{profile.Path.DataAccessDir}.SQL\_{profile.Global.GeneratedSuffix}\BaseClasses\", "Dao.cs", _formatterService.CloseFile());
+        writerService.WriteToFile($@"{profile.Path.DataAccessDir}.SQL\{profile.Global.GeneratedFolder}\BaseClasses\", $"{profile.Global.GeneratedPrefix}Dao{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
       }
 
       // Dependency Injections
       generator.BuildDependencyInjectionBaseFile();
-      writerService.WriteToFile($@"{profile.Path.DataAccessDir}.{db.Name}\_{profile.Global.GeneratedSuffix}\Helper\", $@"DataAccessAdoInitializer.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+      writerService.WriteToFile($@"{profile.Path.DataAccessDir}.{db.Name}\{profile.Global.GeneratedFolder}\Helper\", $@"{profile.Global.GeneratedPrefix}DataAccessAdoInitializer{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
       for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
       {
         generator.BuildDependencyInjections(db, databaseId);
-        writerService.WriteToFile($@"{profile.Path.DataAccessDir}.{db.Name}\_{profile.Global.GeneratedSuffix}\Helper\", $@"DataAccessAdoInitializer.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+        writerService.WriteToFile($@"{profile.Path.DataAccessDir}.{db.Name}\{profile.Global.GeneratedFolder}\Helper\", $@"{profile.Global.GeneratedPrefix}DataAccessAdoInitializer{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
       }
     }
 
     public override void GenerateDataAccessFacade(Database db, ProfileDto profile, IFileWriterService writerService)
     {
       IDataAccessFacadeGenerator generator = _language as IDataAccessFacadeGenerator;
+      string rootPath = $@"{profile.Path.DataAccessFacadeDir}/{profile.Global.GeneratedFolder}";
 
       // Tables
       foreach (Schema schema in db.Schemas)
       {
-        string schemaPath = $"{profile.Path.DataAccessFacadeDir}/{schema.Name}";
+        string schemaPath = $@"{rootPath}/{schema.Name}";
         foreach (Table table in schema.Tables)
         {
           // External Interface
@@ -441,7 +447,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         {
           // External Interface
           generator.BuildDataAccessFacadeFunctionExternalInterfaceHeader(schema, scalarFunction);
-          foreach (MethodType methodType in profile.Generator.MethodTypes) // TODO: limit to types in use!
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
           {
             if (profile.Generator.GeneratorDataAccess.AsyncDaos)
             {
@@ -459,7 +465,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
           // Internal Interface
           generator.BuildDataAccessFacadeFunctionInternalInterfaceHeader(schema, scalarFunction);
-          foreach (MethodType methodType in profile.Generator.MethodTypes) // TODO: limit to types in use!
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
           {
             for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
             {
@@ -482,7 +488,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         {
           // External Interface
           generator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceHeader(schema, tableValuedFunction);
-          foreach (MethodType methodType in profile.Generator.MethodTypes) // TODO: limit to types in use!
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
           {
             if (profile.Generator.GeneratorDataAccess.AsyncDaos)
             {
@@ -500,7 +506,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
           // Internal Interface
           generator.BuildDataAccessFacadeTableValuedFunctionInternalInterfaceHeader(schema, tableValuedFunction);
-          foreach (MethodType methodType in profile.Generator.MethodTypes) // TODO: limit to types in use!
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
           {
             for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
             {
@@ -519,11 +525,11 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         }
         // Universal ADO Interface
         generator.BuildADOInterface(db);
-        writerService.WriteToFile(profile.Path.DataAccessFacadeDir, $"IDataAccess.Ado.{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+        writerService.WriteToFile(rootPath, $"{profile.Global.GeneratedPrefix}IDataAccess.Ado{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
         // Where-Parameter Class
         generator.BuildWhereParameterClass();
-        writerService.WriteToFile(profile.Path.DataAccessFacadeDir, "WhereParameter.cs", _formatterService.CloseFile());
+        writerService.WriteToFile(rootPath, $"{profile.Global.GeneratedPrefix}WhereParameter{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
       }
     }
 
