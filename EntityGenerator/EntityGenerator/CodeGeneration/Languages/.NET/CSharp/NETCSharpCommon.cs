@@ -1,4 +1,5 @@
-﻿using EntityGenerator.CodeGeneration.Interfaces.Modules;
+﻿using EntityGenerator.CodeGeneration.Interfaces;
+using EntityGenerator.CodeGeneration.Interfaces.Modules;
 using EntityGenerator.CodeGeneration.Languages.Helper;
 using EntityGenerator.CodeGeneration.Models.Enums;
 using EntityGenerator.CodeGeneration.Models.ModelObjects;
@@ -13,9 +14,13 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : ICommonGenerator
   {
-    protected void BuildDTO(GeneratorBaseModel parameters)
+    protected bool IsBaseColumn(Column column)
     {
-      if (parameters.DbObjectType == DbObjectType.FUNCTION)
+      return _profile.Generator.GeneratorCommon.BaseColumns.Contains(column.Name);
+    }
+    protected void BuildDTO(GeneratorBaseModel baseModel)
+    {
+      if (baseModel.DbObjectType == DbObjectType.FUNCTION)
       {
         return;
       }
@@ -25,47 +30,55 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
         "System.Collections.Generic",
       });
 
-      BuildNameSpace($"{_profile.Global.ProjectName}.Common.DTOs.{parameters.Schema.Name}");
+      BuildNameSpace($"{_profile.Global.ProjectName}.Common.DTOs.{baseModel.Schema.Name}");
 
-      OpenEnum($"Order{parameters.Name}");
-      foreach (Column column in parameters.Columns.OrEmptyIfNull())
+      OpenEnum($"Order{baseModel.Name}");
+      foreach (Column column in baseModel.Columns.OrEmptyIfNull())
       {
         _sb.AppendLine($"{column.Name}_Asc,");
         _sb.AppendLine($"{column.Name}_Desc,");
       }
 
-      foreach (Column column in parameters.Columns.Where(column => !column.ColumnIsIdentity))
-      {
-        _sb.AppendLine($"public {(column.ColumnTypeDataType is DataTypes.XDocument or DataTypes.XElement ? "string" : GetColumnDataType(column))} {column.Name} {{ get; set; }}{column.ColumnDefaultDefinition}");
-      }
-
       // TODO : Allow config to decide over special Dto (currently fixed to Tenant)
-      OpenClass($"{parameters.DtoName}", $"{(parameters.Columns.Exists(column => column.Name == "TenantId") ? "DtoBaseTenant" : "DtoBase")}");
-      foreach (Column column in parameters.Columns.Where(column => !column.ColumnIsIdentity || (parameters.DbObjectType == DbObjectType.TABLE)))
+      OpenClass($"{baseModel.DtoName}", $"{(baseModel.Columns.Exists(column => column.Name == "TenantId") ? "DtoBaseTenant" : "DtoBase")}");
+      foreach (Column column in baseModel.Columns.Where(column => !column.ColumnIsIdentity && !IsBaseColumn(column)))
       {
         string dataType = column.ColumnTypeDataType is DataTypes.XDocument or DataTypes.XElement ? "string" : GetColumnDataType(column);
         _sb.AppendLine($"public {String.Format(ParameterFormat, dataType, column.Name)} {{ get; set; }} {(column.ColumnDefaultDefinition.IsNullOrEmpty() ? $"= {column.ColumnDefaultDefinition}" : "")}");
       }
     }
 
-    protected void BuildHistDto(GeneratorBaseModel parameters)
+    protected void BuildHistDto(GeneratorBaseModel baseModel)
     {
       // Ignore history for logging tables
-      if (parameters.Schema.Name.ToLower().Equals("log") || (parameters.Name.ToLower().Equals("logging") || parameters.Name.ToLower().Equals("log")))
+      if (baseModel.Schema.Name.ToLower().Equals("log") || (baseModel.Name.ToLower().Equals("logging") || baseModel.Name.ToLower().Equals("log")))
         return;
 
-      OpenClass($"{parameters.Name}HistDto", $"{parameters.DtoName}");
+      OpenClass($"{baseModel.Name}HistDto", $"{baseModel.DtoName}");
       _sb.AppendLine("public long Hist_Id { get; set; }");
       _sb.AppendLine("public string Hist_Action { get; set; }");
       _sb.AppendLine("public DateTime Hist_Date { get; set; }");
     }
+
+    protected void BuildInterfaceMethod(GeneratorBaseModel baseModel, MethodType methodType, bool isAsync)
+    {
+      List<string> methodSignatures = GetExternalMethodSignatures(baseModel, methodType, isAsync,
+        GetFullFunctionPrefix(baseModel.Schema, baseModel.Name));
+
+      foreach (string methodSignature in methodSignatures)
+      {
+        _sb.AppendLine(methodSignature);
+      }
+    }
+
     void ICommonGenerator.BuildBaseDTO()
     {
       BuildImports(new List<string>() { "System" });
       BuildNameSpace($"{_profile.Global.ProjectName}.Common.DTOs");
 
       OpenClass("DtoBase", isAbstract: true);
-      _sb.AppendLine();
+      
+      // TODO : Make configurable
       _sb.AppendLine($"public {((bool)_profile.Global.GuidIndexing ? "Guid" : "long")} Id {{ get; set; }} = {((bool)_profile.Global.GuidIndexing ? "Guid.Empty" : "-1")};");
       _sb.AppendLine("public Guid GlobalId { get; set; }");
       _sb.AppendLine("public DateTime ModifiedDate { get; set; }");
@@ -88,7 +101,6 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       OpenClass(db.Name, isStatic: true);
       foreach (Schema schema in db.Schemas)
       {
-        OpenClass($"public static Schema{schema.Name}Class {schema.Name} => new Schema{schema.Name}Class(nameof({db.Name}));");
         // TODO : Schema class content
       }
     }
@@ -124,5 +136,41 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     {
       BuildDTO(new GeneratorBaseModel(view, schema));
     }
+
+    void ICommonGenerator.BuildInterfaceHeader(Schema schema)
+    {
+      List<string> imports = new()
+      {
+        $"{_profile.Global.ProjectName}.Common.DTOs.{schema.Name}",
+        "System.Threading.Tasks",
+        "System.Collections.Generic",
+        "System",
+      };
+
+      BuildImports(imports);
+      BuildNameSpace($"{_profile.Global.ProjectName}.Common.Interfaces");
+      OpenInterface("ILogic", isPartial: true);
+    }
+
+    void ICommonGenerator.BuildTableInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync)
+    {
+      BuildInterfaceMethod(new GeneratorBaseModel(table, schema), methodType, isAsync);
+    }
+
+    void ICommonGenerator.BuildScalarFunctionInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync)
+    {
+      BuildInterfaceMethod(new GeneratorBaseModel(function, schema), methodType, isAsync);
+    }
+
+    void ICommonGenerator.BuildTableValuedFunctionInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync)
+    {
+      BuildInterfaceMethod(new GeneratorBaseModel(tableValuedFunction, schema), methodType, isAsync);
+    }
+
+    void ICommonGenerator.BuildViewInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync)
+    {
+      BuildInterfaceMethod(new GeneratorBaseModel(view, schema), methodType, isAsync);
+    }
+
   }
 }
