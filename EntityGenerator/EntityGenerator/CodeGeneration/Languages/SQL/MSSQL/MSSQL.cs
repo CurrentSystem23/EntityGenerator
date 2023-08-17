@@ -12,18 +12,18 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL
 {
   public abstract partial class MSSQL : SQLLanguageBase
   {
-    public new string Name = "MSSQL";
-
-    public MSSQL(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile) : base(sb, backendLanguage, profile) { }
+    public MSSQL(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile)
+      : base(sb, backendLanguage, profile, "MSSQL") 
+    { }
 
     public override string GetColumnDataType(Column column)
     {
-      return column.GetColumnSqlType().ToString().ToLower();
+      return column.ColumnTypeDataTypeSql.ToString().ToLower();
     }
 
     protected string GetDataTypeTSqlCamelCase(Column column)
     {
-      return column.GetColumnSqlType().ToString();
+      return column.ColumnTypeDataTypeSql.ToString();
     }
   }
 }

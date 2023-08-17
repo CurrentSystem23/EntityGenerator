@@ -6,7 +6,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL
 {
   public abstract class SQLLanguageBase : DatabaseLanguageBase
   {
-    public SQLLanguageBase(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile) : base(sb, backendLanguage, profile)
+    public SQLLanguageBase(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile, string name) : base(sb, backendLanguage, profile, name)
     {
       ParameterFormat = "{1} AS {0}";
     }

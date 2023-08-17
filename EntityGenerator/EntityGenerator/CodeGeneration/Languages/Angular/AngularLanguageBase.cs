@@ -11,7 +11,7 @@ namespace EntityGenerator.CodeGeneration.Languages.Angular
 {
   public abstract class AngularLanguageBase : LanguageBase
   {
-    public AngularLanguageBase(StringBuilder sb, ProfileDto profile) : base(sb, profile) { }
+    public AngularLanguageBase(StringBuilder sb, ProfileDto profile) : base(sb, profile, "Angular") { }
 
     public override string GetColumnDataType(Column column)
     {

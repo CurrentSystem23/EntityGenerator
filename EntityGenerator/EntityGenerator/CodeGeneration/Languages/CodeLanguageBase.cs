@@ -13,7 +13,7 @@ namespace EntityGenerator.CodeGeneration.Languages
 {
   public abstract class CodeLanguageBase : LanguageBase
   {
-    protected CodeLanguageBase(StringBuilder sb, ProfileDto profile) : base(sb, profile)
+    protected CodeLanguageBase(StringBuilder sb, ProfileDto profile, string name) : base(sb, profile, name)
     {
     }
   }

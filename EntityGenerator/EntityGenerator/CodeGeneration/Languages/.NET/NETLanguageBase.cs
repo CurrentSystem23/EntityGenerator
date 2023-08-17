@@ -15,7 +15,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET
     public List<DatabaseLanguageBase> DatabaseLanguages { get => _databaseLanguages; }
     protected List<DatabaseLanguageBase> _databaseLanguages;
 
-    public NETLanguageBase(StringBuilder sb, ProfileDto profile) : base(sb, profile)
+    public NETLanguageBase(StringBuilder sb, ProfileDto profile, string name) : base(sb, profile, name)
     {
       ParameterFormat = "{0} {1}";
     }

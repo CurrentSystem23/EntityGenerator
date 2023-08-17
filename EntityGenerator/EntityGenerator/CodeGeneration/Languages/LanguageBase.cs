@@ -39,10 +39,11 @@ namespace EntityGenerator.CodeGeneration.Languages
     /// </summary>
     protected StringBuilder _sb;
 
-    public LanguageBase(StringBuilder sb, ProfileDto profile)
+    public LanguageBase(StringBuilder sb, ProfileDto profile, string name)
     {
       _sb = sb;
       _profile = profile;
+      Name = name;
     }
 
     /// <summary>

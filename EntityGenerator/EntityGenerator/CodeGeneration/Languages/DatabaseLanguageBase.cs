@@ -13,7 +13,7 @@ namespace EntityGenerator.CodeGeneration.Languages
   public abstract class DatabaseLanguageBase : LanguageBase
   {
     protected CodeLanguageBase _backendLanguage;
-    protected DatabaseLanguageBase(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile) : base(sb, profile)
+    protected DatabaseLanguageBase(StringBuilder sb, CodeLanguageBase backendLanguage, ProfileDto profile, string name) : base(sb, profile, name)
     {
       _backendLanguage = backendLanguage;
     }
