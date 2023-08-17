@@ -1,6 +1,7 @@
 ﻿using EntityGenerator.Profile.DataTransferObjects;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -28,5 +29,10 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// Flag for generating data transfer objects.
     /// </summary>
     public bool DataTransferObjects { get; set; }
+
+    /// <summary>
+    /// List of columns contained in every table. Will be part of BaseDto.
+    /// </summary>
+    public List<string>? BaseColumns { get; set; } = new() { "GlobalId", "ModifiedDate", "ModifiedUser" };
   }
 }
