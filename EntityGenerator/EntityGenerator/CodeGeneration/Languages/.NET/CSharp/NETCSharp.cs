@@ -21,7 +21,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     private bool openStructure = false;
     private bool openNameSpace = false;
 
-    public NETCSharp(StringBuilder sb, ProfileDto profile) : base(sb, profile)
+    public NETCSharp(StringBuilder sb, ProfileDto profile) : base(sb, profile, "CSharp")
     {
       CloseExistingScope = true;
     }
@@ -79,6 +79,8 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       _sb.Append(' ');
       _sb.AppendJoin(" : ", (new string[] { structureName, structureBase }).Where(c => c != null).ToArray()).AppendLine();
       _sb.AppendLine("{");
+
+      openStructure = true;
     }
 
 
@@ -94,7 +96,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
     public override void OpenEnum(string enumName, bool isPartial = false, AccessType accessModifier = AccessType.PUBLIC)
     {
-      OpenStructure(StructureType.INTERFACE, enumName, structureBase: null, isPartial: isPartial, accessModifier: accessModifier);
+      OpenStructure(StructureType.ENUM, enumName, structureBase: null, isPartial: isPartial, accessModifier: accessModifier);
     }
 
     public override void OpenMethod(string methodName, string returnType = "void", AccessType accessModifier = AccessType.PUBLIC, bool isStatic = false)
@@ -105,7 +107,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       }
 
       CloseMethod();
-      _sb.Append(accessModifier + " ");
+      _sb.Append($"{accessModifier:g} ".ToLower());
       if (isStatic) _sb.Append("static ");
       _sb.Append(returnType);
       _sb.AppendLine(" " + methodName);
@@ -163,13 +165,13 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     public override void BuildTraceLogCall(string message, string paramsStr, bool async)
     {
       // TODO use async toggle.
-      _sb.AppendLine("_logger.LogTrace(message, paramsStr)");
+      _sb.AppendLine($@"_logger.LogTrace(""{message}"", {paramsStr});");
     }
 
     public override void BuildErrorLogCall(string message, string paramsStr, bool async)
     {
       // TODO use async toggle.
-      _sb.AppendLine("_logger.LogError(message, paramsStr)");
+      _sb.AppendLine($@"_logger.LogError(""{message}"", {paramsStr});");
     }
 
     public override string GetColumnDataType(Column column)
