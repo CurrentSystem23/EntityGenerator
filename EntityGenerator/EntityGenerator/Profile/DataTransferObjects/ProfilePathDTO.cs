@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace EntityGenerator.Profile.DataTransferObject
 {
@@ -23,36 +24,61 @@ namespace EntityGenerator.Profile.DataTransferObject
     /// <summary>
     /// The database directory of the project.
     /// </summary>
-    public string SqlDir { get; set; } = string.Empty;
+    [JsonIgnore]
+    public string SqlDir => $"{RootDir}/{SqlDirRelative}";
+    [JsonPropertyName("SqlDir")]
+    public string SqlDirRelative { get; set; } = string.Empty;
+
 
     /// <summary>
     /// The data access directory of the project - DataAccessObjects (Ends with server technology e.g. \DataAccess.MicrosoftSqlServer).
     /// </summary>
-    public string DataAccessDir { get; set; } = string.Empty;
+    [JsonIgnore]
+    public string DataAccessDir => $"{RootDir}/{DataAccessDirRelative}";
+    [JsonPropertyName("DataAccessDir")]
+    public string DataAccessDirRelative { get; set; } = string.Empty;
 
     /// <summary>
     /// The data access facade directory of the project.
     /// </summary>
-    public string DataAccessFacadeDir { get; set; } = string.Empty;
+    [JsonIgnore]
+    public string DataAccessFacadeDir => $"{RootDir}/{DataAccessFacadeDirRelative}";
+    [JsonPropertyName("DataAccessFacadeDir")]
+    public string DataAccessFacadeDirRelative { get; set; } = string.Empty;
 
     /// <summary>
     /// The common directory of the project - Constants and DataTransferObjects.
     /// </summary>
-    public string CommonDir { get; set; } = string.Empty;
+    [JsonIgnore]
+    public string CommonDir => $"{RootDir}/{CommonDirRelative}";
+    [JsonPropertyName("CommonDir")]
+    public string CommonDirRelative { get; set; } = string.Empty;
+
 
     /// <summary>
     /// The abstractions directory of the project - Interfaces.
     /// </summary>
-    public string AbstractionsDir { get; set; } = string.Empty;
+    [JsonIgnore]
+    public string AbstractionsDir => $"{RootDir}/{AbstractionsDirRelative}";
+    [JsonPropertyName("AbstractionsDir")]
+    public string AbstractionsDirRelative { get; set; } = string.Empty;
+
 
     /// <summary>
     /// The businesslogic directory of the project.
     /// </summary>
-    public string BusinessLogicDir { get; set; } = string.Empty;
+    [JsonIgnore]
+    public string BusinessLogicDir => $"{RootDir}/{BusinessLogicDirRelative}";
+    [JsonPropertyName("BusinessLogicDir")]
+    public string BusinessLogicDirRelative { get; set; } = string.Empty;
+
 
     /// <summary>
     /// The frontend directory of the project.
     /// </summary>
-    public string FrontendDir { get; set; } = string.Empty;
+    [JsonIgnore]
+    public string FrontendDir => $"{RootDir}/{FrontEndDirRelative}";
+    [JsonPropertyName("FrontendDir")]
+    public string FrontEndDirRelative { get; set; } = string.Empty;
   }
 }
