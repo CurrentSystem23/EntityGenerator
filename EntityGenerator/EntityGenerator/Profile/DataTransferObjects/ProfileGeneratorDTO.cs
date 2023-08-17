@@ -21,7 +21,7 @@ namespace EntityGenerator.Profile.DataTransferObject
       GeneratorCommon = new ProfileGeneratorCommonDto();
       GeneratorDatabase = new ProfileGeneratorDatabaseDto();
       GeneratorAPI = new ProfileGeneratorAPIDto();
-      GeneratorCS23DomainTypeValue = new();
+      GeneratorCS23DomainTypeValues = new();
       GeneratorDataAccess = new();
       GeneratorDataAccessFacade = new();
       GeneratorUserRights = new();
@@ -68,6 +68,6 @@ namespace EntityGenerator.Profile.DataTransferObject
     public ProfileGeneratorAPIDto GeneratorAPI { get; set; }
     public ProfileGeneratorUserRightsDto GeneratorUserRights { get; set; }
     public ProfileGeneratorDBScriptsDto GeneratorDBScripts { get; set; }
-    public ProfileGeneratorCS23DomainTypeValueDTO GeneratorCS23DomainTypeValue { get; set; }
+    public ProfileGeneratorCS23DomainTypeValuesDTO GeneratorCS23DomainTypeValues { get; set; }
   }
 }

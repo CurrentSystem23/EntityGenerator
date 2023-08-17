@@ -14,32 +14,37 @@ namespace EntityGenerator.CodeGeneration.Languages.Angular.TypeScript
   {
     public override void GenerateBusinessLogic(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      throw new NotImplementedException();
+      throw new NotSupportedException();
     }
 
     public override void GenerateCommon(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      throw new NotImplementedException();
+      throw new NotSupportedException();
     }
 
     public override void GenerateCommonPresentation(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      throw new NotImplementedException();
+      throw new NotSupportedException();
     }
 
     public override void GenerateDataAccess(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      throw new NotImplementedException();
+      throw new NotSupportedException();
     }
 
     public override void GenerateDataAccessFacade(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      throw new NotImplementedException();
+      throw new NotSupportedException();
     }
 
     public override void GenerateFrontend(Database db, ProfileDto profile, IFileWriterService writerService)
     {
-      Console.WriteLine("TypeScript Frontend not yet implemented");
+      throw new NotImplementedException();
+    }
+
+    public override void GenerateCS23DomainTypeValues(Database db, ProfileDto profile, IFileWriterService writerService)
+    {
+      throw new NotSupportedException();
     }
   }
 }

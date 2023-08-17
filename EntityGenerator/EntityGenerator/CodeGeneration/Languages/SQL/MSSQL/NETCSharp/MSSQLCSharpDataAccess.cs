@@ -454,7 +454,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       BuildSaveUpdateSqlStatement(baseModel);
 
       // Save(Dto)
-      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(1));
+      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0));
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
         _sb.AppendLine("{");
         _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");

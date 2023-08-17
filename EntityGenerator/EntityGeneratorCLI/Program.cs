@@ -23,27 +23,21 @@ namespace EntityGeneratorCLI
             IProfileProvider profileProvider = serviceProvider.GetRequiredService<IProfileProvider>();
             ICoreServiceWorker coreServiceWorker = serviceProvider.GetRequiredService<ICoreServiceWorker>();
 
-
+            profileProvider.LoadProfileFromFileJson(args.FirstOrDefault());
+            //profileProvider.Profile.Database.ConnectionString = @"Server=localhost\localdb; Database=Cerp; Trusted_Connection=True; Encrypt=False";
+            //profileProvider.Profile.Database.DatabaseName = "AsaGur";
+            Database db = coreServiceWorker.ExtractData(profileProvider.Profile);
+            coreServiceWorker.GenerateCode(db);
+            Console.WriteLine("Generation finished. Closing now...");
+            return;
             //TestOnly
-            standardOutput.PrimaryOutputProvider = new CliOutputProvider();
+            /**standardOutput.PrimaryOutputProvider = new CliOutputProvider();
             Database db = coreServiceWorker.ExtractData(CreateProfileDto());
             coreServiceWorker.GenerateCode(db);
 
             profileProvider.SaveProfileToFileJson(args.FirstOrDefault());
             profileProvider.SaveProfileToFileXml(args.FirstOrDefault());
-        }
-
-        private static ProfileDto CreateProfileDto()
-        {
-            ProfileDto profileDto = new ProfileDto();
-            profileDto.Database = new ProfileDatabaseDto();
-            profileDto.Database.ConnectionString = @"Server=LOCALHOST\LOCALDB; Database=Lenny; Trusted_Connection=True; TrustServerCertificate=True;";
-            profileDto.Database.DatabaseName = "Lenny";
-            profileDto.Global.ProjectName = "Lenny";
-            profileDto.Path.BusinessLogicDir = System.IO.Directory.GetCurrentDirectory() + "\\BusinessLogic";
-            profileDto.Path.CommonDir = System.IO.Directory.GetCurrentDirectory() + "\\Common";
-            profileDto.Path.FrontendDir = System.IO.Directory.GetCurrentDirectory() + "\\Frontend";
-            return profileDto;
+            **/
         }
 
         protected static ServiceProvider CreateServiceProvider()
