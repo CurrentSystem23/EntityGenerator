@@ -12,6 +12,7 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
   {
     void BuildWhereParameterClass();
 
+    void BuildDependencyInjectionBaseFile();
     void BuildADOInterface(Database db);
 
     void BuildDataAccessFacadeTableExternalInterfaceHeader(Schema schema, Table table);

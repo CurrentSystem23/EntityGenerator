@@ -133,28 +133,6 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       _databaseLanguages[databaseId].BuildAfterSaveMethod();
     }
 
-    void IDataAccessGenerator.BuildDependencyInjectionBaseFile()
-    {
-      List<string> imports = new()
-      {
-        "Microsoft.Extensions.DependencyInjection"
-      };
-
-      foreach (DatabaseLanguageBase databaseLanguage in _databaseLanguages)
-      {
-        imports.Add($"{_profile.Global.ProjectName}.DataAccess.{databaseLanguage.Name}.Helper");
-      }
-
-      BuildNameSpace($"");
-      OpenClass($"DataAccessInitializer", isStatic: true, isPartial: true);
-
-      OpenMethod("InitializeGeneratedDataAccess(IServiceCollection services)", isStatic: true);
-      foreach (DatabaseLanguageBase databaseLanguage in _databaseLanguages)
-      {
-        _sb.AppendLine($"DataAccess{databaseLanguage.Name}Initializer.InitializeGeneratedDataAccess(services);");
-      }
-    }
-
     void IDataAccessGenerator.BuildDependencyInjections(Database db, int databaseId)
     {
       // Add all available schemata as imports

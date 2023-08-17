@@ -324,6 +324,29 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       OpenMethod(@"WhereUniqueIdentifierParameter(string parameterName, Guid parameterValue) : base(parameterName, parameterValue)", null);
     }
 
+    void IDataAccessFacadeGenerator.BuildDependencyInjectionBaseFile()
+    {
+      List<string> imports = new()
+      {
+        "Microsoft.Extensions.DependencyInjection"
+      };
+
+      foreach (DatabaseLanguageBase databaseLanguage in _databaseLanguages)
+      {
+        imports.Add($"{_profile.Global.ProjectName}.DataAccess.{databaseLanguage.Name}.Helper");
+      }
+
+      BuildImports(imports);
+      BuildNameSpace($"{_profile.Global.ProjectName}.DataAccess.Helper");
+      OpenClass($"DataAccessInitializer", isStatic: true, isPartial: true);
+
+      OpenMethod("InitializeGeneratedDataAccess(IServiceCollection services)", isStatic: true);
+      foreach (DatabaseLanguageBase databaseLanguage in _databaseLanguages)
+      {
+        _sb.AppendLine($"DataAccess{databaseLanguage.Name}Initializer.InitializeGeneratedDataAccess(services);");
+      }
+    }
+
     void IDataAccessFacadeGenerator.BuildADOInterface(Database db)
     {
       BuildNameSpace($"{_profile.Global.ProjectName}.Common.DataAccess.Interfaces.Ado");

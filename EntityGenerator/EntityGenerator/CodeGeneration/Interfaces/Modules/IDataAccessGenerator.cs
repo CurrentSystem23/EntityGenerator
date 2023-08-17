@@ -10,7 +10,6 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessGenerator
   {
-    void BuildDependencyInjectionBaseFile();
     void BuildDependencyInjections(Database db, int databaseId);
     void BuildBaseFile(int databaseId);
 
