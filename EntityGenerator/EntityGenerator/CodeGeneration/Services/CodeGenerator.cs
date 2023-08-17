@@ -68,6 +68,12 @@ namespace EntityGenerator.CodeGeneration.Services
       languageService.GenerateFrontend(db, profile, writerService);
     }
 
+    public void ExecuteCS23DomainTypeValuesGenerator(Database db, ProfileDto profile, IFileWriterService writerService)
+    {
+      _languageProvider.GetLanguageService(profile.Generator.GeneratorCS23DomainTypeValues.Language, profile).GenerateCS23DomainTypeValues(db, profile, writerService);
+    }
+
+
     /// <summary>
     /// Increase the output step by one.
     /// </summary>

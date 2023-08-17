@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
-  public interface ICS23DomainTypeValueGenerator
+  public interface ICS23DomainTypeValuesGenerator
   {
     void BuildDomainTypes(Database db);
   }

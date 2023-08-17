@@ -16,7 +16,7 @@ using System.Xml.Linq;
 
 namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
-  public abstract partial class NETCSharp : ICS23DomainTypeValueGenerator
+  public abstract partial class NETCSharp : ICS23DomainTypeValuesGenerator
   {
     sealed protected class DomainTypeDto {
       public dynamic Id { get; set; }
@@ -191,35 +191,59 @@ SELECT [Id]
     }
 
 
-    void ICS23DomainTypeValueGenerator.BuildDomainTypes(Database db)
+    void ICS23DomainTypeValuesGenerator.BuildDomainTypes(Database db)
     {
       // Extract DomainTypes
-      List<DomainTypeDto> domainTypes = LoadDomainTypes(_profile.Generator.GeneratorCS23DomainTypeValue.DomainTypeTableName);
+      bool domainTypeTableExists = false;
+      foreach (Schema schema in db.Schemas)
+      {
+        if (schema.Tables.Exists(table => table.Name == _profile.Generator.GeneratorCS23DomainTypeValues.DomainTypeTableName))
+        {
+          domainTypeTableExists = true;
+          break;
+        }
+      }
+      if (!domainTypeTableExists)
+      {
+        throw new ArgumentException($"Error : No domain type table matches configured name {_profile.Generator.GeneratorCS23DomainTypeValues.DomainTypeTableName}");
+      }
+      List<DomainTypeDto> domainTypes = LoadDomainTypes(_profile.Generator.GeneratorCS23DomainTypeValues.DomainTypeTableName);
 
       // Extract DomainValues
-      List<DomainValueDto> domainValues = LoadDomainValues(_profile.Generator.GeneratorCS23DomainTypeValue.DomainValueTableName);
+      bool domainValueTableExists = false;
+      foreach (Schema schema in db.Schemas)
+      {
+        if (schema.Tables.Exists(table => table.Name == _profile.Generator.GeneratorCS23DomainTypeValues.DomainValueTableName))
+        {
+          domainValueTableExists = true;
+          break;
+        }
+      }
+      if (!domainValueTableExists)
+      {
+        throw new ArgumentException($"Error : No domain value table matches configured name {_profile.Generator.GeneratorCS23DomainTypeValues.DomainValueTableName}");
+      }
+      List<DomainValueDto> domainValues = LoadDomainValues(_profile.Generator.GeneratorCS23DomainTypeValues.DomainValueTableName);
+
+      BuildNameSpace($"{_profile.Global.ProjectName}.Common.Constants");
 
       // Build DomainTypes
+      OpenClass("DomainTypes", isStatic: true);
+      foreach (DomainTypeDto domainType in domainTypes)
       {
-        OpenClass("DomainTypes", isStatic: true);
-        foreach (DomainTypeDto domainType in domainTypes)
-        {
-          _sb.AppendLine($"public const {(_profile.Global.GuidIndexing ? "string" : "long")} {domainType.DomainTypeConstantName.TransformToCharOrDigitOnlyCamelCase()} = {(_profile.Global.GuidIndexing ? $@"""{domainType.Id}""" : $"{domainType.Id}")};");
-        }
+        _sb.AppendLine($"public const {(_profile.Global.GuidIndexing ? "string" : "long")} {domainType.DomainTypeConstantName.TransformToCharOrDigitOnlyCamelCase()} = {(_profile.Global.GuidIndexing ? $@"""{domainType.Id}""" : $"{domainType.Id}")};");
       }
 
       // Build DomainValues for DomainTypes
+      foreach (DomainTypeDto domainType in domainTypes)
       {
-        foreach (DomainTypeDto domainType in domainTypes)
-        {
-          OpenClass($"{domainType.DomainTypeConstantName.TransformToCharOrDigitOnlyCamelCase()}", null, true);
-          _sb.AppendLine($"public const {(_profile.Global.GuidIndexing ? "string" : "long")} DomainTypId = {(_profile.Global.GuidIndexing ? $@"""{domainType.Id}""" : $"{domainType.Id}")};");
-          _sb.AppendLine();
+        OpenClass($"{domainType.DomainTypeConstantName.TransformToCharOrDigitOnlyCamelCase()}", null, true);
+        _sb.AppendLine($"public const {(_profile.Global.GuidIndexing ? "string" : "long")} DomainTypId = {(_profile.Global.GuidIndexing ? $@"""{domainType.Id}""" : $"{domainType.Id}")};");
+        _sb.AppendLine();
 
-          foreach (DomainValueDto domainValue in domainValues.Where(w => w.TypeId == domainType.Id).OrderBy(o => o.Id))
-          {
-            _sb.AppendLine($"public const {(_profile.Global.GuidIndexing ? "string" : "long")} {domainValue.DomainValueConstantName.TransformToCharOrDigitOnlyCamelCase()} = {(_profile.Global.GuidIndexing ? $@"""{domainValue.Id}""" : $"{domainValue.Id}")};");
-          }
+        foreach (DomainValueDto domainValue in domainValues.Where(w => w.TypeId == domainType.Id).OrderBy(o => o.Id))
+        {
+          _sb.AppendLine($"public const {(_profile.Global.GuidIndexing ? "string" : "long")} {domainValue.DomainValueConstantName.TransformToCharOrDigitOnlyCamelCase()} = {(_profile.Global.GuidIndexing ? $@"""{domainValue.Id}""" : $"{domainValue.Id}")};");
         }
       }
     }

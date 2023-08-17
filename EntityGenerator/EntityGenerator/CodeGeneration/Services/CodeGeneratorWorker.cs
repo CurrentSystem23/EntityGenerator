@@ -59,7 +59,14 @@ namespace EntityGenerator.CodeGeneration.Services
 
       foreach (ProfileCodeGenerationBase generator in activeGenerators)
       {
-        GetGeneratorFunctionHandle(generator).Invoke(_codeGenerator, new object[] { db, _profile, _writerService });
+        try 
+        { 
+          GetGeneratorFunctionHandle(generator).Invoke(_codeGenerator, new object[] { db, _profile, _writerService });
+        }
+        catch (Exception ex)
+        {
+          throw new NotImplementedException($"Error: Function handler was not properly invoked for {generator.ModuleName}", ex);
+        }
       }
     }
 
@@ -94,7 +101,8 @@ namespace EntityGenerator.CodeGeneration.Services
 
     private static MethodInfo GetGeneratorFunctionHandle(ProfileCodeGenerationBase generator)
     {
-      return typeof(ICodeGenerator).GetMethod($"Execute{generator.ModuleName.ToString()}");
+      MethodInfo method = typeof(ICodeGenerator).GetMethod($"Execute{generator.ModuleName.ToString()}");
+      return method;
     }
 
     /// <summary>

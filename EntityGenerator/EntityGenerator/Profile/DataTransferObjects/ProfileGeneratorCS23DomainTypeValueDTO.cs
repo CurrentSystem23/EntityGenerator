@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.Profile.DataTransferObjects
 {
-  public class ProfileGeneratorCS23DomainTypeValueDTO : ProfileCodeGenerationBase
+  [Serializable]
+  public class ProfileGeneratorCS23DomainTypeValuesDTO : ProfileCodeGenerationBase
   {
-    public ProfileGeneratorCS23DomainTypeValueDTO() : base(CodeGenerationModules.CS23DomainTypeValueGenerator)
+    public ProfileGeneratorCS23DomainTypeValuesDTO() : base(CodeGenerationModules.CS23DomainTypeValuesGenerator)
     {
     }
 
     public bool DomainTypeValues { get; set; }
 
-    public string DomainTypeTableName { get; set; } = "DomainTypes";
+    public string DomainTypeTableName { get; set; } = "DomainType";
 
-    public string DomainValueTableName { get; set; } = "DomainValues";
+    public string DomainValueTableName { get; set; } = "DomainValue";
   }
 }
