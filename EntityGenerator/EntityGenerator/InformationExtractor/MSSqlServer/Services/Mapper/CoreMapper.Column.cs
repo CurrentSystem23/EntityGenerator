@@ -57,6 +57,8 @@ public static partial class CoreMapper
     {
       Name = columnDto.ObjectName,
       Id = columnDto.ObjectId,
+      ColumnTypeDataType = MapToCoreDataType(columnDto.ColumnTypeDataType),
+      ColumnTypeDataTypeSql = columnDto.ColumnTypeDataType,
       ColumnIsIdentity = columnDto.ColumnIsIdentity,
       ColumnIsNullable = columnDto.ColumnIsNullable,
       ColumnDefaultDefinition = columnDto.ColumnDefaultDefinition,
@@ -68,8 +70,6 @@ public static partial class CoreMapper
       ColumnNumericScale = columnDto.ColumnNumericScale,
       ColumnDatetimePrecision = columnDto.ColumnDatetimePrecision,
     };
-
-    column.SetColumnTypeData(MapToCoreDataType(columnDto.ColumnTypeDataType), columnDto.ColumnTypeDataType);
 
     MapExtendedProperty(column, databaseObjectDto, extendedColumnPropertyDtos);
     MapConstraint(column, databaseObjectDto, constraintDtos);
@@ -114,6 +114,8 @@ public static partial class CoreMapper
     {
       Name = tableValueFunctionsReturnValueDto.ObjectName,
       Id = tableValueFunctionsReturnValueDto.ObjectId,
+      ColumnTypeDataType = MapToCoreDataType(tableValueFunctionsReturnValueDto.ColumnTypeDataType),
+      ColumnTypeDataTypeSql = tableValueFunctionsReturnValueDto.ColumnTypeDataType,
       ColumnIsIdentity = tableValueFunctionsReturnValueDto.ColumnIsIdentity,
       ColumnIsNullable = tableValueFunctionsReturnValueDto.ColumnIsNullable,
       ColumnDefaultDefinition = tableValueFunctionsReturnValueDto.ColumnDefaultDefinition,
@@ -125,7 +127,6 @@ public static partial class CoreMapper
       ColumnNumericScale = tableValueFunctionsReturnValueDto.ColumnNumericScale,
       ColumnDatetimePrecision = null,
     };
-    column.SetColumnTypeData(MapToCoreDataType(tableValueFunctionsReturnValueDto.ColumnTypeDataType), tableValueFunctionsReturnValueDto.ColumnTypeDataType);
     return column;
   }
 }

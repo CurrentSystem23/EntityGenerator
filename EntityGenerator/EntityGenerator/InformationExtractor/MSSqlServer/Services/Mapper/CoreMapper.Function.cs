@@ -134,6 +134,8 @@ public static partial class CoreMapper
     {
       Name = parameters[0],
       Id = -1,
+      ColumnTypeDataType = MapToCoreDataType(sqlType),
+      ColumnTypeDataTypeSql = sqlType,
       ColumnIsIdentity = false,
       ColumnIsNullable = true,
       ColumnDefaultDefinition = null,
@@ -145,8 +147,6 @@ public static partial class CoreMapper
       ColumnNumericScale = null,
       ColumnDatetimePrecision = null,
     };
-
-    column.SetColumnTypeData(MapToCoreDataType(sqlType), sqlType);
 
     return column;
   }

@@ -373,7 +373,7 @@ namespace Microsoft.Data.SqlClient
     }
     public static T GetEnum<T>(this SqlDataReader reader, int i, T defaultValue) where T : struct, Enum
     {
-      if (Enum.TryParse(reader.GetString(i), out T columnDataType))
+      if (Enum.TryParse(reader.GetString(i), true, out T columnDataType))
         return columnDataType;
 
       return defaultValue;

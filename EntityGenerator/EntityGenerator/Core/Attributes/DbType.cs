@@ -11,5 +11,9 @@ namespace EntityGenerator.Core.Attributes
   public class DbType : Attribute
   {
     public InformationExtractor.MSSqlServer.Models.Enums.DataTypes Type { get; set; }
+    public DbType(InformationExtractor.MSSqlServer.Models.Enums.DataTypes type)
+    {
+      Type = type;
+    }
   }
 }
