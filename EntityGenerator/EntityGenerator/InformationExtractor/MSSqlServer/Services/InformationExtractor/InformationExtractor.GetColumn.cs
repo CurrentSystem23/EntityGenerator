@@ -242,6 +242,21 @@ SELECT c.[name]                      AS [object_name],
   }
 
   /// <summary>
+  /// Converts raw database defintion into usable string value.
+  /// </summary>
+  /// <param name="defaultDefinition"></param>
+  /// <returns></returns>
+  private static string GetDefaultDefinition(string defaultDefinition)
+  {
+    if (defaultDefinition == "('')")
+    {
+      return string.Empty;
+    }
+    else
+      return defaultDefinition;
+  }
+
+  /// <summary>
   /// Read the specific column data.
   /// </summary>
   /// <param name="reader"> The <see cref="SqlDataReader"/>.</param>
@@ -260,7 +275,7 @@ SELECT c.[name]                      AS [object_name],
       ColumnTypeDataType = reader.GetEnum(6, Models.Enums.DataTypes.Unknown),
       ColumnIsIdentity = reader.GetBoolean(7),
       ColumnIsNullable = reader.GetBoolean(8),
-      ColumnDefaultDefinition = reader.GetStringNullableFromNullableDbValue(9),
+      ColumnDefaultDefinition = GetDefaultDefinition(reader.GetStringNullableFromNullableDbValue(9)),
       ColumnIsComputed = reader.GetBoolean(10),
       ColumnMaxLength = reader.GetInt16(11),
       ColumnCharacterOctetLength = reader.GetInt32NullableFromNullableDbValue(12),
