@@ -61,7 +61,7 @@ namespace EntityGenerator.Core.Extensions
 
     public static bool IsNullOrEmpty(this string s)
     {
-      return s?.Trim().Equals(string.Empty) ?? false;
+      return String.IsNullOrEmpty(s);
     }
 
     public static string ToMultilineHtml(this string value)
