@@ -130,6 +130,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       ICommonGenerator generator = _language as ICommonGenerator;
 
       string rootPath = $@"{profile.Path.CommonDir}\{profile.Global.GeneratedFolder}\";
+      string rootPathDataAccess = $"{profile.Path.CommonDir}.DataAccess/{profile.Global.GeneratedFolder}";
       string schemaInfoPath = $@"{rootPath}\DbSchemaInformation\";
       string constantsPath = $@"{rootPath}\Constants\";
 
@@ -150,15 +151,24 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       generator.BuildTenantBase();
       writerService.WriteToFile(rootPath, $"{profile.Global.GeneratedPrefix}DtoBaseTenant{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
+      // Universal ADO Interface
+      generator.BuildADOInterface(db);
+      writerService.WriteToFile(rootPathDataAccess, $"{profile.Global.GeneratedPrefix}IDataAccess.Ado{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+
+      // Where-Parameter Class
+      generator.BuildWhereParameterClass();
+      writerService.WriteToFile($"{rootPathDataAccess}/BaseClasses/", $"{profile.Global.GeneratedPrefix}WhereParameter{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+
       // DTOs and Interfaces
       foreach (Schema schema in db.Schemas)
       {
         string dtoSchemaRootPath = $@"{rootPath}\DTOs\{schema.Name}\";
+        string dataAccessSchemaRootPath = $"{rootPathDataAccess}/{schema.Name}";
         string interfaceSchemaRootPath = $"{rootPath}/Interfaces/";
 
         foreach (Table table in schema.Tables)
         {
-          // Interface
+          // ADO Interface
           generator.BuildInterfaceHeader(schema);
           foreach (MethodType methodType in profile.Generator.MethodTypes)
           {
@@ -173,6 +183,43 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           }
           writerService.WriteToFile(interfaceSchemaRootPath, $"{profile.Global.GeneratedPrefix}{table.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
+          // External Interface
+          generator.BuildDataAccessFacadeTableExternalInterfaceHeader(schema, table);
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
+          {
+            if (profile.Generator.GeneratorDataAccess.AsyncDaos)
+            {
+              generator.BuildDataAccessFacadeTableExternalInterfaceMethod(schema, table, methodType, true);
+            }
+            if (profile.Generator.GeneratorDataAccess.SyncDaos)
+            {
+              generator.BuildDataAccessFacadeTableExternalInterfaceMethod(schema, table, methodType, false);
+            }
+          }
+          if (!profile.Generator.GeneratorDataAccessFacade.CombinedInterfaces)
+          {
+            writerService.WriteToFile(dataAccessSchemaRootPath, $"{profile.Global.GeneratedPrefix}{table.Name}External{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+          }
+
+          // Internal Interface
+          generator.BuildDataAccessFacadeTableInternalInterfaceHeader(schema, table);
+
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
+          {
+            for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
+            {
+              if (profile.Generator.GeneratorDataAccess.AsyncDaos)
+              {
+                generator.BuildDataAccessFacadeTableInternalInterfaceMethod(schema, table, methodType, true, databaseId);
+              }
+              if (profile.Generator.GeneratorDataAccess.SyncDaos)
+              {
+                generator.BuildDataAccessFacadeTableInternalInterfaceMethod(schema, table, methodType, false, databaseId);
+              }
+            }
+          }
+          writerService.WriteToFile(dataAccessSchemaRootPath, $"{profile.Global.GeneratedPrefix}{table.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+
           // DTO
           generator.BuildTableDTO(schema, table);
           writerService.WriteToFile(dtoSchemaRootPath, $"{profile.Global.GeneratedPrefix}{table.Name}Dto{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
@@ -180,7 +227,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
         foreach (Function function in schema.FunctionsScalar)
         {
-          // Interface
+          // ADO Interface
           generator.BuildInterfaceHeader(schema);
           foreach (MethodType methodType in profile.Generator.MethodTypes)
           {
@@ -195,12 +242,48 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           }
           writerService.WriteToFile(interfaceSchemaRootPath, $"{profile.Global.GeneratedPrefix}{function.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
+          // External Interface
+          generator.BuildDataAccessFacadeFunctionExternalInterfaceHeader(schema, function);
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
+          {
+            if (profile.Generator.GeneratorDataAccess.AsyncDaos)
+            {
+              generator.BuildDataAccessFacadeFunctionExternalInterfaceMethod(schema, function, methodType, true);
+            }
+            if (profile.Generator.GeneratorDataAccess.SyncDaos)
+            {
+              generator.BuildDataAccessFacadeFunctionExternalInterfaceMethod(schema, function, methodType, false);
+            }
+          }
+          if (!profile.Generator.GeneratorDataAccessFacade.CombinedInterfaces)
+          {
+            writerService.WriteToFile(dataAccessSchemaRootPath, $"{profile.Global.GeneratedPrefix}{function.Name}External{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+          }
+
+          // Internal Interface
+          generator.BuildDataAccessFacadeFunctionInternalInterfaceHeader(schema, function);
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
+          {
+            for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
+            {
+              if (profile.Generator.GeneratorDataAccess.AsyncDaos)
+              {
+                generator.BuildDataAccessFacadeFunctionInternalInterfaceMethod(schema, function, methodType, true, databaseId);
+              }
+              if (profile.Generator.GeneratorDataAccess.SyncDaos)
+              {
+                generator.BuildDataAccessFacadeFunctionInternalInterfaceMethod(schema, function, methodType, false, databaseId);
+              }
+            }
+          }
+          writerService.WriteToFile(dataAccessSchemaRootPath, $"{profile.Global.GeneratedPrefix}{function.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+
           // Scalar functions don't have DTOs.
         }
 
         foreach (Function tableValuedFunction in schema.FunctionsTableValued)
         {
-          // Interface
+          // ADO Interface
           generator.BuildInterfaceHeader(schema);
           foreach (MethodType methodType in profile.Generator.MethodTypes)
           {
@@ -214,6 +297,43 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
             }
           }
           writerService.WriteToFile(interfaceSchemaRootPath, $"{profile.Global.GeneratedPrefix}{tableValuedFunction.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+
+          // External Interface
+          generator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceHeader(schema, tableValuedFunction);
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
+          {
+            if (profile.Generator.GeneratorDataAccess.AsyncDaos)
+            {
+              generator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(schema, tableValuedFunction, methodType, true);
+            }
+            if (profile.Generator.GeneratorDataAccess.SyncDaos)
+            {
+              generator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(schema, tableValuedFunction, methodType, false);
+            }
+          }
+          if (!profile.Generator.GeneratorDataAccessFacade.CombinedInterfaces)
+          {
+            writerService.WriteToFile(dataAccessSchemaRootPath, $"{profile.Global.GeneratedPrefix}{tableValuedFunction.Name}External{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+          }
+
+          // Internal Interface
+          generator.BuildDataAccessFacadeTableValuedFunctionInternalInterfaceHeader(schema, tableValuedFunction);
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
+          {
+            for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
+            {
+              if (profile.Generator.GeneratorDataAccess.AsyncDaos)
+              {
+                generator.BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(schema, tableValuedFunction, methodType, true, databaseId);
+              }
+              if (profile.Generator.GeneratorDataAccess.SyncDaos)
+              {
+                generator.BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(schema, tableValuedFunction, methodType, false, databaseId);
+              }
+            }
+          }
+
+          writerService.WriteToFile(dataAccessSchemaRootPath, $"{profile.Global.GeneratedPrefix}{tableValuedFunction.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
           generator.BuildTableValuedFunctionDTO(schema, tableValuedFunction);
           writerService.WriteToFile(dtoSchemaRootPath, $"{profile.Global.GeneratedPrefix}{tableValuedFunction.Name}DtoV{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
@@ -235,6 +355,44 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
             }
           }
           writerService.WriteToFile(interfaceSchemaRootPath, $"{profile.Global.GeneratedPrefix}{view.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+
+          // External Interface
+          generator.BuildDataAccessFacadeViewExternalInterfaceHeader(schema, view);
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
+          {
+            if (profile.Generator.GeneratorDataAccess.AsyncDaos)
+            {
+              generator.BuildDataAccessFacadeViewExternalInterfaceMethod(schema, view, methodType, true);
+            }
+            if (profile.Generator.GeneratorDataAccess.SyncDaos)
+            {
+              generator.BuildDataAccessFacadeViewExternalInterfaceMethod(schema, view, methodType, false);
+            }
+          }
+          if (!profile.Generator.GeneratorDataAccessFacade.CombinedInterfaces)
+          {
+            writerService.WriteToFile(dataAccessSchemaRootPath, $"{profile.Global.GeneratedPrefix}{view.Name}External{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+          }
+
+          // Internal Interface
+          generator.BuildDataAccessFacadeViewInternalInterfaceHeader(schema, view);
+          foreach (MethodType methodType in profile.Generator.MethodTypes)
+          {
+            for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
+            {
+              if (profile.Generator.GeneratorDataAccess.AsyncDaos)
+              {
+                generator.BuildDataAccessFacadeViewInternalInterfaceMethod(schema, view, methodType, true, databaseId);
+              }
+              if (profile.Generator.GeneratorDataAccess.SyncDaos)
+              {
+                generator.BuildDataAccessFacadeViewInternalInterfaceMethod(schema, view, methodType, false, databaseId);
+              }
+            }
+          }
+
+          writerService.WriteToFile(dataAccessSchemaRootPath, $"{profile.Global.GeneratedPrefix}{view.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
+
 
           // DTO
           generator.BuildViewDTO(schema, view);
@@ -349,176 +507,6 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       foreach (Schema schema in db.Schemas)
       {
         string schemaPath = $@"{rootPath}/{schema.Name}";
-        foreach (Table table in schema.Tables)
-        {
-          // External Interface
-          generator.BuildDataAccessFacadeTableExternalInterfaceHeader(schema, table);
-          foreach (MethodType methodType in profile.Generator.MethodTypes)
-          {
-            if(profile.Generator.GeneratorDataAccess.AsyncDaos)
-            {
-              generator.BuildDataAccessFacadeTableExternalInterfaceMethod(schema, table, methodType, true);
-            }
-            if (profile.Generator.GeneratorDataAccess.SyncDaos)
-            {
-              generator.BuildDataAccessFacadeTableExternalInterfaceMethod(schema, table, methodType, false);
-            }
-          }
-          if (!profile.Generator.GeneratorDataAccessFacade.CombinedInterfaces)
-          {
-            writerService.WriteToFile(schemaPath, $"{profile.Global.GeneratedPrefix}{table.Name}External{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-          }
-
-          // Internal Interface
-          generator.BuildDataAccessFacadeTableInternalInterfaceHeader(schema, table);
-          
-          foreach (MethodType methodType in profile.Generator.MethodTypes)
-          {
-            for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
-            {
-              if (profile.Generator.GeneratorDataAccess.AsyncDaos)
-              {
-                generator.BuildDataAccessFacadeTableInternalInterfaceMethod(schema, table, methodType, true, databaseId);
-              }
-              if (profile.Generator.GeneratorDataAccess.SyncDaos)
-              {
-                generator.BuildDataAccessFacadeTableInternalInterfaceMethod(schema, table, methodType, false, databaseId);
-              }
-            }
-          }
-
-          writerService.WriteToFile(schemaPath, $"{profile.Global.GeneratedPrefix}{table.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-        }
-
-        // Views
-        foreach (View view in schema.Views)
-        {
-          // External Interface
-          generator.BuildDataAccessFacadeViewExternalInterfaceHeader(schema, view);
-          foreach (MethodType methodType in profile.Generator.MethodTypes)
-          {
-            if (profile.Generator.GeneratorDataAccess.AsyncDaos)
-            {
-              generator.BuildDataAccessFacadeViewExternalInterfaceMethod(schema, view, methodType, true);
-            }
-            if (profile.Generator.GeneratorDataAccess.SyncDaos)
-            {
-              generator.BuildDataAccessFacadeViewExternalInterfaceMethod(schema, view, methodType, false);
-            }
-          }
-          if (!profile.Generator.GeneratorDataAccessFacade.CombinedInterfaces)
-          {
-            writerService.WriteToFile(schemaPath, $"{profile.Global.GeneratedPrefix}{view.Name}External{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-          }
-
-          // Internal Interface
-          generator.BuildDataAccessFacadeViewInternalInterfaceHeader(schema, view);
-          foreach (MethodType methodType in profile.Generator.MethodTypes)
-          {
-            for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
-            {
-              if (profile.Generator.GeneratorDataAccess.AsyncDaos)
-              {
-                generator.BuildDataAccessFacadeViewInternalInterfaceMethod(schema, view, methodType, true, databaseId);
-              }
-              if (profile.Generator.GeneratorDataAccess.SyncDaos)
-              {
-                generator.BuildDataAccessFacadeViewInternalInterfaceMethod(schema, view, methodType, false, databaseId);
-              }
-            }
-          }
-
-          writerService.WriteToFile(schemaPath, $"{profile.Global.GeneratedPrefix}{view.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-        }
-
-        // Scalar Functions
-        foreach (Function scalarFunction in schema.FunctionsScalar)
-        {
-          // External Interface
-          generator.BuildDataAccessFacadeFunctionExternalInterfaceHeader(schema, scalarFunction);
-          foreach (MethodType methodType in profile.Generator.MethodTypes)
-          {
-            if (profile.Generator.GeneratorDataAccess.AsyncDaos)
-            {
-              generator.BuildDataAccessFacadeFunctionExternalInterfaceMethod(schema, scalarFunction, methodType, true);
-            }
-            if (profile.Generator.GeneratorDataAccess.SyncDaos)
-            {
-              generator.BuildDataAccessFacadeFunctionExternalInterfaceMethod(schema, scalarFunction, methodType, false);
-            }
-          }
-          if (!profile.Generator.GeneratorDataAccessFacade.CombinedInterfaces)
-          {
-            writerService.WriteToFile(schemaPath, $"{profile.Global.GeneratedPrefix}{scalarFunction.Name}External{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-          }
-
-          // Internal Interface
-          generator.BuildDataAccessFacadeFunctionInternalInterfaceHeader(schema, scalarFunction);
-          foreach (MethodType methodType in profile.Generator.MethodTypes)
-          {
-            for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
-            {
-              if (profile.Generator.GeneratorDataAccess.AsyncDaos)
-              {
-                generator.BuildDataAccessFacadeFunctionInternalInterfaceMethod(schema, scalarFunction, methodType, true, databaseId);
-              }
-              if (profile.Generator.GeneratorDataAccess.SyncDaos)
-              {
-                generator.BuildDataAccessFacadeFunctionInternalInterfaceMethod(schema, scalarFunction, methodType, false, databaseId);
-              }
-            }
-          }
-
-          writerService.WriteToFile(schemaPath, $"{profile.Global.GeneratedPrefix}{scalarFunction.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-        }
-
-        // Table-valued Functions
-        foreach (Function tableValuedFunction in schema.FunctionsTableValued)
-        {
-          // External Interface
-          generator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceHeader(schema, tableValuedFunction);
-          foreach (MethodType methodType in profile.Generator.MethodTypes)
-          {
-            if (profile.Generator.GeneratorDataAccess.AsyncDaos)
-            {
-              generator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(schema, tableValuedFunction, methodType, true);
-            }
-            if (profile.Generator.GeneratorDataAccess.SyncDaos)
-            {
-              generator.BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(schema, tableValuedFunction, methodType, false);
-            }
-          }
-          if (!profile.Generator.GeneratorDataAccessFacade.CombinedInterfaces)
-          {
-            writerService.WriteToFile(schemaPath, $"{profile.Global.GeneratedPrefix}{tableValuedFunction.Name}External{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-          }
-
-          // Internal Interface
-          generator.BuildDataAccessFacadeTableValuedFunctionInternalInterfaceHeader(schema, tableValuedFunction);
-          foreach (MethodType methodType in profile.Generator.MethodTypes)
-          {
-            for (int databaseId = 0; databaseId < _language.DatabaseLanguages.Count; databaseId++)
-            {
-              if (profile.Generator.GeneratorDataAccess.AsyncDaos)
-              {
-                generator.BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(schema, tableValuedFunction, methodType, true, databaseId);
-              }
-              if (profile.Generator.GeneratorDataAccess.SyncDaos)
-              {
-                generator.BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(schema, tableValuedFunction, methodType, false, databaseId);
-              }
-            }
-          }
-
-          writerService.WriteToFile(schemaPath, $"{profile.Global.GeneratedPrefix}{tableValuedFunction.Name}{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-        }
-        // Universal ADO Interface
-        generator.BuildADOInterface(db);
-        writerService.WriteToFile(rootPath, $"{profile.Global.GeneratedPrefix}IDataAccess.Ado{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
-
-        // Where-Parameter Class
-        generator.BuildWhereParameterClass();
-        writerService.WriteToFile(rootPath, $"{profile.Global.GeneratedPrefix}WhereParameter{profile.Global.GeneratedSuffix}.cs", _formatterService.CloseFile());
 
         // Dependency Injection Base File
         generator.BuildDependencyInjectionBaseFile();

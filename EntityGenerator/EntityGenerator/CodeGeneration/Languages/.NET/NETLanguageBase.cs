@@ -34,7 +34,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET
     public abstract void OpenEnum(string enumName, bool isPartial, AccessType accessModifier);
     public abstract void BuildTraceLogCall(string message, string paramsStr, bool async);
     public abstract void BuildErrorLogCall(string message, string paramsStr, bool async);
-    public abstract void OpenMethod(string methodName, string returnType, AccessType accessModifier, bool isStatic);
+    public abstract void OpenMethod(string methodName, string returnType, AccessType accessModifier, bool isStatic, bool isVirtual, bool isAsync);
     public abstract void OpenMethod(string fullMethodSignature);
     protected abstract void CloseNameSpace();
     public abstract void CloseStructure();

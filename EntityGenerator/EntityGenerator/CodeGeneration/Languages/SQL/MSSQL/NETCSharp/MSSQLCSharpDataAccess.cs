@@ -5,14 +5,77 @@ using EntityGenerator.CodeGeneration.Models.ModelObjects;
 using EntityGenerator.Core.Extensions;
 using EntityGenerator.Core.Models.Enums;
 using EntityGenerator.Core.Models.ModelObjects;
+using EntityGenerator.InformationExtractor.MSSqlServer.Models.Enums;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 {
   public partial class MSSQLCSharp : MSSQL
   {
+    private string GetTypeReader(Column column)
+    {
+      if (column.ColumnTypeDataType == Core.Models.Enums.DataTypes.TableValue)
+      {
+        return "GetDataTable";
+      }
+      return column.ColumnTypeDataTypeSql switch
+      {
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Bit => $"GetBoolean{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.TinyInt => $"GetByte{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.SmallInt => $"GetInt16{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Int => $"GetInt32{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.BigInt => $"GetInt64{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.SmallMoney => $"GetDecimal{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Money => $"GetDecimal{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Decimal => $"GetDecimal{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Real => $"GetFloat{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Float => $"GetDouble{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Char1 => $"GetSingleChar{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.NChar1 => $"GetSingleChar{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Char => $"GetSingleChar{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.NChar => $"GetSingleNChar{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.VarChar => $"GetString{(column.ColumnIsNullable ? "FromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.NVarChar => $"GetString{(column.ColumnIsNullable ? "FromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.VarCharMax => $"GetString{(column.ColumnIsNullable ? "FromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.NVarCharMax => $"GetString{(column.ColumnIsNullable ? "FromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Text => $"GetString{(column.ColumnIsNullable ? "FromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.NText => $"GetString{(column.ColumnIsNullable ? "FromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Xml => $"GetString{(column.ColumnIsNullable ? "FromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.SmallDateTime => $"GetDateTime{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.DateTime => $"GetDateTime{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.DateTime2 => $"GetDateTime{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.DateTimeOffset => $"GetDateTimeOffset{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Date => $"GetDateTime{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Time => $"GetDateTime{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Binary => $"GetBinaryFromNullableDbValue",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.VarBinary => $"GetBinaryFromNullableDbValue",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.VarBinaryMax => $"GetBinaryFromNullableDbValue",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.Image => $"GetBinaryFromNullableDbValue",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.TimeStamp => $"GetDateTime{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.FileStream => $"GetBinaryFromNullableDbValue",
+        InformationExtractor.MSSqlServer.Models.Enums.DataTypes.UniqueIdentifier => $"GetGuid{(column.ColumnIsNullable ? "NullableFromNullableDbValue" : "")}",
+          _ => throw new NotSupportedException()
+      };
+    }
+    private void BuildGetReadMethod(GeneratorBaseModel baseModel)
+    {
+      _backendLanguage.OpenMethod("GetRead(SqlDataReader reader)", $"{baseModel.DtoName}", Enums.AccessType.PRIVATE);
+      _sb.AppendLine($"{baseModel.DtoName} dto = new {baseModel.DtoName}();");
+
+      int pos = 0;
+      foreach (Column column in baseModel.Columns)
+      {
+        string readerType = column.ColumnTypeDataType == Core.Models.Enums.DataTypes.TableValue ? "GetDataTable" : GetTypeReader(column);
+        _sb.AppendLine($"dto.{column.Name} = reader.{readerType}({pos});");
+        pos++;
+      }
+
+      _sb.AppendLine("return dto;");
+    }
     private void BuildSavePrepareCommand(GeneratorBaseModel baseModel)
     {
       _backendLanguage.OpenMethod($"SavePrepareCommand(SqlCommand cmd, {baseModel.DtoName} dto)", "void", Enums.AccessType.PRIVATE);
@@ -22,22 +85,22 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       {
         if (column.ColumnIsNullable)
         {
-          _sb.AppendLine(column.ColumnTypeDataType is DataTypes.XDocument or DataTypes.XElement
-            ? $@"        cmd.Parameters.Add(""@{column.Name}"", {GetColumnDataType(column)}).Value =  new System.Data.SqlTypes.SqlXml(new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(dto.{column.Name}.StartsWith(""<"") ? dto.{column.Name} : dto.{column.Name}.Substring(1))));"
-            : $@"        cmd.Parameters.Add(""@{column.Name}"", {GetColumnDataType(column)}).Value =  dto.{column.Name} == null ? (object)DBNull.Value : dto.{column.Name};");
+          _sb.AppendLine(column.ColumnTypeDataType is Core.Models.Enums.DataTypes.XDocument or Core.Models.Enums.DataTypes.XElement
+            ? $@"        cmd.Parameters.Add(""@{column.Name}"", SqlDbType.{GetDataTypeTSqlCamelCase(column)}).Value =  new System.Data.SqlTypes.SqlXml(new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(dto.{column.Name}.StartsWith(""<"") ? dto.{column.Name} : dto.{column.Name}.Substring(1))));"
+            : $@"        cmd.Parameters.Add(""@{column.Name}"", SqlDbType.{GetDataTypeTSqlCamelCase(column)}).Value =  dto.{column.Name} == null ? (object)DBNull.Value : dto.{column.Name};");
         }
         else
         {
           switch (column.ColumnTypeDataType)
           {
-            case DataTypes.String:
-              _sb.AppendLine($@"        cmd.Parameters.Add(""@{column.Name}"", {GetColumnDataType(column)}).Value =  dto.{column.Name} ?? string.Empty;");
+            case Core.Models.Enums.DataTypes.String:
+              _sb.AppendLine($@"cmd.Parameters.Add(""@{column.Name}"", SqlDbType.{GetDataTypeTSqlCamelCase(column)}).Value =  dto.{column.Name} ?? string.Empty;");
               break;
-            case DataTypes.XDocument or DataTypes.XElement:
-              _sb.AppendLine($@"        cmd.Parameters.Add(""@{column.Name}"", {GetColumnDataType(column)}).Value =  new System.Data.SqlTypes.SqlXml(new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(dto.{column.Name}.StartsWith(""<"") ? dto.{column.Name} : dto.{column.Name}.Substring(1))));");
+            case Core.Models.Enums.DataTypes.XDocument or Core.Models.Enums.DataTypes.XElement:
+              _sb.AppendLine($@"cmd.Parameters.Add(""@{column.Name}"", SqlDbType.{GetDataTypeTSqlCamelCase(column)}).Value =  new System.Data.SqlTypes.SqlXml(new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(dto.{column.Name}.StartsWith(""<"") ? dto.{column.Name} : dto.{column.Name}.Substring(1))));");
               break;
             default:
-              _sb.AppendLine($@"        cmd.Parameters.Add(""@{column.Name}"", {GetColumnDataType(column)}).Value =  dto.{column.Name};");
+              _sb.AppendLine($@"cmd.Parameters.Add(""@{column.Name}"", SqlDbType.{GetDataTypeTSqlCamelCase(column)}).Value =  dto.{column.Name};");
               break;
           }
         }
@@ -59,6 +122,47 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         prefix = ",";
       }
       _sb.AppendLine(@"WHERE [Id] = @Id"";");
+    }
+
+    private void BuildSaveInsertSqlStatement(GeneratorBaseModel baseModel)
+    {
+      _backendLanguage.OpenMethod("SaveInsertSqlStatement()", "string", Enums.AccessType.PRIVATE);
+      _sb.AppendLine(@"return @""");
+      _sb.AppendLine($"      INSERT INTO [{baseModel.Schema.Name}].[{baseModel.Name}] (");
+
+      string prefix = " ";
+      foreach (Column column in baseModel.Columns.Where(c => !c.ColumnIsIdentity && !c.ColumnIsComputed))
+      {
+        _sb.AppendLine($"{prefix}[{column.Name}]");
+        prefix = ",";
+      }
+
+      _sb.AppendLine("           )");
+      _sb.AppendLine("     VALUES (");
+      prefix = " ";
+
+      foreach (Column column in baseModel.Columns.Where(c => !c.ColumnIsIdentity && !c.ColumnIsComputed))
+      {
+        if (column.Name == "Id" && _profile.Global.GuidIndexing)
+        {
+          _sb.AppendLine($"           NEWID()");
+        }
+        else
+        {
+          _sb.AppendLine($"           {prefix}@{column.Name}");
+        }
+        prefix = ",";
+      }
+
+      if (!_profile.Global.GuidIndexing)
+      {
+        _sb.AppendLine("           )")
+          .AppendLine(@$"           SELECT CAST(scope_identity()  AS bigint)"";");
+      }
+      else
+      {
+        _sb.AppendLine($@""";");
+      }
     }
 
     private void BuildMergeSqlStatement(GeneratorBaseModel baseModel)
@@ -198,14 +302,14 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 
     private void BuildHasChangedWork(GeneratorBaseModel baseModel)
     {
-      _backendLanguage.OpenMethod($"HasChangedWork({baseModel.DtoName} dto, {baseModel.DtoName}Dto dtoDb)", returnType: "bool", accessModifier: Enums.AccessType.PRIVATE);
+      _backendLanguage.OpenMethod($"HasChangedWork({baseModel.DtoName} dto, {baseModel.DtoName} dtoDb)", returnType: "bool", accessModifier: Enums.AccessType.PRIVATE);
       _sb.AppendLine("if (dtoDb == null)");
       _sb.AppendLine("return true;");
       _sb.AppendLine("bool ret = true;");
 
       foreach (Column column in baseModel.Columns)
       {
-        _sb.AppendLine(column.ColumnTypeDataType == DataTypes.ByteArray
+        _sb.AppendLine(column.ColumnTypeDataType == Core.Models.Enums.DataTypes.ByteArray
           ? $"ret = ret && dto.{column.Name}.SequenceEqual(dtoDb.{column.Name});"
           : $"ret = ret && dto.{column.Name} == dtoDb.{column.Name};");
       }
@@ -213,7 +317,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("return !ret;");
     }
 
-    public override void BuildPrepareCommand(GeneratorBaseModel baseModel, bool async)
+    public override void BuildGetPrepareCommand(GeneratorBaseModel baseModel, bool async)
     {
       string parametersStr = ParameterHelper.GetParametersString(baseModel.Parameters);
       string parametersWithTypeStr = ParameterHelper.GetParametersStringWithType(baseModel.Parameters, _backendLanguage);
@@ -230,7 +334,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       }
 
       // GetPrepareCommand(SqlCommand cmd, <params|id>, string where, bool distinct, int pageNum, int pageSize,params Order[] orderBy)
-      _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, {(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
+      _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, {(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : "long? id = null, ")}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
       _sb.AppendLine("cmd.Parameters.Clear();");
       _sb.AppendLine("cmd.CommandType = CommandType.Text;");
       if (baseModel.DbObjectType == DbObjectType.TABLE)
@@ -242,7 +346,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       {
         foreach (Column param in baseModel.Parameters.OrEmptyIfNull())
         {
-          if (param.ColumnTypeDataType == DataTypes.TableValue)
+          if (param.ColumnTypeDataType == Core.Models.Enums.DataTypes.TableValue)
           {
             _sb.AppendLine($@"cmd.Parameters.Add(GetCustomTypeSqlParameter(""@{param.Name}"", ""core.{GetColumnDataType(param)}"", {param.Name}.Cast<object>().ToArray(), typeof({GetColumnDataType(param).Remove(GetColumnDataType(param).Length - 2)})));");
           }
@@ -258,10 +362,10 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine(@"cmd.Parameters.Add(""@pageNum"", SqlDbType.Int).Value = pageNum;");
       _sb.AppendLine(@"cmd.Parameters.Add(""@pageSize"", SqlDbType.Int).Value = pageSize;");
       _sb.AppendLine("}");
-      _sb.AppendLine($"cmd.CommandText = GetSqlStatement({(baseModel.DbObjectType == DbObjectType.TABLE ? "id" : (parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty))}where, distinct, pageNum, pageSize, orderBy);");
+      _sb.AppendLine($"cmd.CommandText = GetSqlStatement({(baseModel.DbObjectType == DbObjectType.TABLE ? "id, " : (parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty))}where, distinct, pageNum, pageSize, orderBy);");
 
-      // GetPrepareCommand(SqlCommand cmd, <params|id>, WhereClause where, bool distinct, int pageNum, int pageSize,params Order[] orderBy)
-      _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, {(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}WhereClause whereClause, bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
+      // GetPrepareCommand(SqlCommand cmd, <params>, WhereClause where, <id>, bool distinct, int pageNum, int pageSize,params Order[] orderBy)
+      _backendLanguage.OpenMethod(@$"GetPrepareCommand(SqlCommand cmd, {(parametersWithTypeStr.Length > 0 ? $"{parametersWithTypeStr}, " : string.Empty)}WhereClause whereClause{(baseModel.DbObjectType == DbObjectType.TABLE ? ", long? id = null" : string.Empty)}, bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "void", Enums.AccessType.PRIVATE);
       _sb.AppendLine("cmd.Parameters.Clear();");
       _sb.AppendLine("cmd.CommandType = CommandType.Text;");
       if (baseModel.DbObjectType == DbObjectType.TABLE)
@@ -275,7 +379,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
       foreach (Column param in baseModel.Parameters.OrEmptyIfNull())
       {
-        if (param.ColumnTypeDataType == DataTypes.TableValue)
+        if (param.ColumnTypeDataType == Core.Models.Enums.DataTypes.TableValue)
         {
           _sb.AppendLine($@"cmd.Parameters.Add(GetCustomTypeSqlParameter(""@{param.Name}"", ""core.{GetColumnDataType(param)}"", {param.Name}.Cast<object>().ToArray(), typeof({param.ColumnTypeDataType.ToString().Remove(param.ColumnTypeDataType.ToString().Length - 2)})));");
         }
@@ -289,7 +393,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine(@"cmd.Parameters.Add(""@pageNum"", SqlDbType.Int).Value = pageNum;");
       _sb.AppendLine(@"cmd.Parameters.Add(""@pageSize"", SqlDbType.Int).Value = pageSize;");
       _sb.AppendLine("}");
-      _sb.AppendLine($"cmd.CommandText = GetSqlStatement({(baseModel.DbObjectType == DbObjectType.TABLE ? "id" : (parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty))}whereClause.Where, distinct, pageNum, pageSize, orderBy);");
+      _sb.AppendLine($"cmd.CommandText = GetSqlStatement({(baseModel.DbObjectType == DbObjectType.TABLE ? "id, " : (parametersStr.Length > 0 ? $"{parametersStr}, " : string.Empty))}whereClause.Where, distinct, pageNum, pageSize, orderBy);");
     }
 
     public override void BuildGetSqlStatement(GeneratorBaseModel baseModel)
@@ -298,7 +402,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       string parametersSqlStr = ParameterHelper.GetParametersSqlString(baseModel.Parameters);
 
       // GetSqlStatement
-      _backendLanguage.OpenMethod(@$"GetSqlStatement({(parametersWithTypeStr.IsNullOrEmpty() ? string.Empty : $"{parametersWithTypeStr}, ")}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "string", Enums.AccessType.PRIVATE);
+      _backendLanguage.OpenMethod(@$"GetSqlStatement({(parametersWithTypeStr.IsNullOrEmpty() ? $"{(baseModel.DbObjectType == DbObjectType.TABLE ? "long? id = null, " : string.Empty)}" : $"{parametersWithTypeStr}, ")}string where = """", bool distinct = false, int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)", "string", Enums.AccessType.PRIVATE);
       _sb.AppendLine(@"string sql =  $@""");
       _sb.AppendLine(@"SELECT {(distinct ? ""DISTINCT "": """")}");
 
@@ -311,7 +415,17 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 
       _sb.AppendLine($"  FROM [{baseModel.Schema.Name}].[{baseModel.Name}]{(parametersSqlStr.IsNullOrEmpty() ? $"({parametersSqlStr})" : " AS")} pv");
       _sb.AppendLine(@""";");
-      _sb.AppendLine(@"sql += where;");
+      if (baseModel.DbObjectType == DbObjectType.TABLE)
+      {
+        _sb.AppendLine("if (id != null)");
+        _sb.AppendLine(@"sql += ""WHERE pt.[Id] = @id"";");
+        _sb.AppendLine("else");
+        _sb.AppendLine("sql += where;");
+      }
+      else
+      {
+        _sb.AppendLine(@"sql += where;");
+      }
       _sb.AppendLine("sql += GetOrderBy(orderBy);");
       _sb.AppendLine("sql += GetPagination(pageNum, pageSize, orderBy);");
       _sb.AppendLine("return sql;");
@@ -326,10 +440,17 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       }
       string parametersStr = ParameterHelper.GetParametersString(baseModel.Parameters);
 
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
-      _sb.AppendLine($"return{(async ? " await" : "")} {baseModel.Name}Gets{(async ? "Async" : "")}(whereClause, distinct, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
+      BuildGetReadMethod(baseModel);
 
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(1));
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0), isAsync: async);
+      _sb.AppendLine($"return{(async ? " await" : "")} {baseModel.Name}Gets{(async ? "Async" : "")}(con, cmd, new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null){(async ? ".ConfigureAwait(false)" : "")};");
+
+      // Gets(WhereClause, distinct, orderBy)
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(1), isAsync: async);
+      _sb.AppendLine($"return {(async ? "await " : "")}{baseModel.Name}Gets{(async ? "Async" : "")}(whereClause, distinct, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null, orderBy){(async ? ".ConfigureAwait(false)" : "")};");
+
+      // Gets(WhereClause, distinct, pageNum, pageSize, orderBy)
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(2), isAsync: async);
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
       _sb.AppendLine("{");
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
@@ -341,10 +462,8 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
       _sb.AppendLine("}");
 
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(2));
-      _sb.AppendLine($"return {(async ? "await " : "")}{baseModel.Name}Gets{(async ? "Async" : "")}(con, cmd, new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null){(async ? ".ConfigureAwait(false)" : "")};");
 
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(3));
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(3), isAsync: async);
       _sb.AppendLine($"ICollection<{baseModel.DtoName}> dtos = new List<{baseModel.DtoName}>();");
       _sb.AppendLine("try");
       _sb.AppendLine("{");
@@ -368,7 +487,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       if (baseModel.DbObjectType == DbObjectType.TABLE)
       {
         // Get
-        _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(2));
+        _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(2), isAsync: async);
         _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
         _sb.AppendLine("{");
         _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
@@ -380,7 +499,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("}");
         _sb.AppendLine("}");
 
-        _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(4));
+        _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(4), isAsync: async);
         _sb.AppendLine($"{baseModel.DtoName} dto = null;");
         _sb.AppendLine("try");
         _sb.AppendLine("{");
@@ -403,7 +522,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("return dto;");
 
         // Get By GUID
-        _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(3));
+        _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(3), isAsync: async);
         _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
         _sb.AppendLine("{");
         _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
@@ -415,7 +534,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("}");
         _sb.AppendLine("}");
 
-        _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(5));
+        _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(5), isAsync: async);
         _sb.AppendLine($"{baseModel.DtoName} dto = null;");
         _sb.AppendLine("try");
         _sb.AppendLine("{");
@@ -453,8 +572,11 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       // SaveUpdateSQLStatement
       BuildSaveUpdateSqlStatement(baseModel);
 
+      // SaveInsertSQLStatement
+      BuildSaveInsertSqlStatement(baseModel);
+
       // Save(Dto)
-      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0));
+      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
         _sb.AppendLine("{");
         _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
@@ -466,7 +588,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
         _sb.AppendLine("}");
 
       // Save(SqlConnection, SqlCommand, Dto)
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine("try");
       _sb.AppendLine("{");
       _sb.AppendLine("if (!this.BeforeSave(con, cmd, dto))");
@@ -502,7 +624,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       BuildDeleteSqlStatement(baseModel);
 
       // Delete(id)
-      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0));
+      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
       _sb.AppendLine("{");
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
@@ -513,20 +635,8 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
       _sb.AppendLine("}");
 
-      // Delete(WhereClause)
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
-      _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
-      _sb.AppendLine("{");
-      _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
-      _sb.AppendLine("{");
-      _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
-      _sb.AppendLine($"{(async ? "await " : "")}{baseModel.Name}Delete{(async ? "Async" : "")}(con, cmd, whereClause){(async ? ".ConfigureAwait(false)" : "")};");
-      _sb.AppendLine("con.Close();");
-      _sb.AppendLine("}");
-      _sb.AppendLine("}");
-
       // Delete(SqlConnection, SqlCommand, id)
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(1));
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine("try");
       _sb.AppendLine("{");
       _sb.AppendLine("DeletePrepareCommand(cmd, id);");
@@ -538,8 +648,20 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("throw;");
       _sb.AppendLine("}");
 
+      // Delete(WhereClause)
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(1), isAsync: async);
+      _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
+      _sb.AppendLine("{");
+      _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
+      _sb.AppendLine("{");
+      _sb.AppendLine($"{(async ? "await " : "")}con.Open{(async ? "Async" : "")}(){(async ? ".ConfigureAwait(false)" : "")};");
+      _sb.AppendLine($"{(async ? "await " : "")}{baseModel.Name}Delete{(async ? "Async" : "")}(con, cmd, whereClause){(async ? ".ConfigureAwait(false)" : "")};");
+      _sb.AppendLine("con.Close();");
+      _sb.AppendLine("}");
+      _sb.AppendLine("}");
+
       // Delete(SqlConnection, SqlCommand, WhereClause)
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(2));
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(2), isAsync: async);
       _sb.AppendLine("try");
       _sb.AppendLine("{");
       _sb.AppendLine("DeletePrepareCommand(cmd, whereClause);");
@@ -558,7 +680,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       BuildMergeSqlStatement(baseModel);
 
       // Merge(Dto)
-      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0));
+      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
       _sb.AppendLine("{");
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
@@ -570,7 +692,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
 
       // Merge(SqlConnection, SqlCommand, Dto)
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine("try");
       _sb.AppendLine("{");
       _sb.AppendLine("if (!this.BeforeSave(con, cmd, dto))");
@@ -597,7 +719,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       string parametersSqlStr = ParameterHelper.GetParametersSqlString(baseModel.Parameters);
 
       // GetCount(WhereClause)
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
       _sb.AppendLine("{");
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
@@ -611,7 +733,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       // Add function parameters
       foreach (Column param in (baseModel.Parameters).OrEmptyIfNull())
       {
-        if (param.ColumnTypeDataType == DataTypes.TableValue)
+        if (param.ColumnTypeDataType == Core.Models.Enums.DataTypes.TableValue)
         {
           throw new ApplicationException("Table-valued function parameters are not supported.");
         }
@@ -644,7 +766,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       BuildHasChangedWork(baseModel);
 
       // HasChanged(Dto)
-      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0));
+      _backendLanguage.OpenMethod(externalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine("using (SqlConnection con = new SqlConnection(DatabaseConnection.ConnectionString))");
       _sb.AppendLine("{");
       _sb.AppendLine("using (SqlCommand cmd = con.CreateCommand())");
@@ -665,7 +787,7 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       _sb.AppendLine("}");
 
       // HasChanged(SqlConnection, SqlCommand, Dto)
-      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0));
+      _backendLanguage.OpenMethod(internalMethodSignatures.ElementAt(0), isAsync: async);
       _sb.AppendLine($"if (dto.Id {(_profile.Global.GuidIndexing ? "== Guid.Empty" : "<= 0")})");
       _sb.AppendLine("return true;");
       if (async)

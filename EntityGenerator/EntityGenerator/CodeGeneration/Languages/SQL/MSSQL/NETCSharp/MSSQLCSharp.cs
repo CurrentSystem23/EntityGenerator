@@ -28,13 +28,13 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
 
     public override void BuildBeforeSaveMethod()
     {
-      _backendLanguage.OpenMethod("virtual BeforeSave(SqlConnection connection, SqlCommand command, DtoBase dto)", "bool", Enums.AccessType.PUBLIC);
+      _backendLanguage.OpenMethod("BeforeSave(SqlConnection connection, SqlCommand command, DtoBase dto)", "bool", Enums.AccessType.PUBLIC, isVirtual: true);
       _sb.AppendLine("return true;");
     }
 
     public override void BuildAfterSaveMethod()
     {
-      _backendLanguage.OpenMethod("virtual AfterSave(SqlConnection connection, SqlCommand command, DtoBase dto)", "bool", Enums.AccessType.PUBLIC);
+      _backendLanguage.OpenMethod("AfterSave(SqlConnection connection, SqlCommand command, DtoBase dto)", "bool", Enums.AccessType.PUBLIC, isVirtual: true);
       _sb.AppendLine("return true;");
     }
 
@@ -52,50 +52,50 @@ namespace EntityGenerator.CodeGeneration.Languages.SQL.MSSQL.NETCSharp
       switch (methodType)
       {
         case MethodType.GET:          
-          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd{(parametersWithTypeStr != "" ? $", {parametersWithTypeStr}" : "")});");
-          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}(WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{baseModel.Name}[] orderBy);");
-          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}(WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{baseModel.Name}[] orderBy);");
-          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{baseModel.Name}[] orderBy);");
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd{(parametersWithTypeStr != "" ? $", {parametersWithTypeStr}" : "")})");
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}(WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}params Order{baseModel.Name}[] orderBy)");
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}(WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{baseModel.Name}[] orderBy)");
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.DtoName}>>" : $"ICollection<{baseModel.DtoName}>")} {prefix}Gets{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, WhereClause whereClause, bool distinct, {(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}, " : "")}int? pageNum, int? pageSize, params Order{baseModel.Name}[] orderBy)");
 
           if (baseModel.DbObjectType == DbObjectType.TABLE)
           {
-            signatures.Add($"{(async ? $"Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {prefix}Get{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {(_profile.Global.GuidIndexing ? "Guid" : "long")} id);");
-            signatures.Add($"{(async ? $"Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {prefix}Get{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, Guid globalId);");
+            signatures.Add($"{(async ? $"Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {prefix}Get{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {(_profile.Global.GuidIndexing ? "Guid" : "long")} id)");
+            signatures.Add($"{(async ? $"Task<{baseModel.DtoName}>" : $"{baseModel.DtoName}")} {prefix}Get{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, Guid globalId)");
           }
           break;
         case MethodType.SAVE:
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}Save{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {baseModel.DtoName} dto);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Save{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {baseModel.DtoName} dto)");
           break;
         case MethodType.DELETE:
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {(_profile.Global.GuidIndexing ? "Guid" : "long")} id);");
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(WhereClause whereClause);");
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, WhereClause whereClause);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {(_profile.Global.GuidIndexing ? "Guid" : "long")} id)");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(WhereClause whereClause)");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Delete{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, WhereClause whereClause)");
           break;
         case MethodType.MERGE:
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}Merge{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {baseModel.DtoName} dto);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}Merge{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {baseModel.DtoName} dto)");
           break;
         case MethodType.COUNT:
-          signatures.Add($"{(async ? $"Task<long>" : $"long")} {prefix}GetCount{(async ? "Async" : string.Empty)}(WhereClause whereClause{(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")});");
+          signatures.Add($"{(async ? $"Task<long>" : $"long")} {prefix}GetCount{(async ? "Async" : string.Empty)}(WhereClause whereClause{(parametersWithTypeStr != "" ? $"{parametersWithTypeStr}" : "")})");
           break;
         case MethodType.HAS_CHANGED:
-          signatures.Add($"{(async ? "Task<bool>" : "bool")} {prefix}HasChanged{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {baseModel.DtoName} dto);");
+          signatures.Add($"{(async ? "Task<bool>" : "bool")} {prefix}HasChanged{(async ? "Async" : "")}(SqlConnection con, SqlCommand cmd, {baseModel.DtoName} dto)");
           break;
         case MethodType.BUlK_INSERT:
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos)");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert)");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos)");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}_TempBulkInsert{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert)");
           break;
         case MethodType.BULK_MERGE:
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos)");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkMerge{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos, bool identityInsert)");
           break;
         case MethodType.BULK_UPDATE:
-          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkUpdate{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos);");
+          signatures.Add($"{(async ? "Task" : "void")} {prefix}BulkUpdate{(async ? "Async" : "")}(ICollection<{baseModel.DtoName}> dtos)");
           break;
         case MethodType.HIST_GET:
-          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.HistDtoName}>>" : $"ICollection<{baseModel.HistDtoName}>")} {prefix}HistGets{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id);");
-          signatures.Add($"{(async ? $"Task<{baseModel.HistDtoName}>" : $"{baseModel.HistDtoName}")} {prefix}HistEntryGet{(async ? "Async" : "")}(long histId);");
+          signatures.Add($"{(async ? $"Task<ICollection<{baseModel.HistDtoName}>>" : $"ICollection<{baseModel.HistDtoName}>")} {prefix}HistGets{(async ? "Async" : "")}({(_profile.Database.GuidIndexing ? "Guid" : "long")} id)");
+          signatures.Add($"{(async ? $"Task<{baseModel.HistDtoName}>" : $"{baseModel.HistDtoName}")} {prefix}HistEntryGet{(async ? "Async" : "")}(long histId)");
           break;
         default:
           break;

@@ -22,7 +22,7 @@ namespace EntityGenerator.CodeGeneration.Languages
     public abstract void BuildBeforeSaveMethod();
     public abstract void BuildAfterSaveMethod();
     public abstract List<string> GetClientImports();
-    public abstract void BuildPrepareCommand(GeneratorBaseModel baseModel, bool async);
+    public abstract void BuildGetPrepareCommand(GeneratorBaseModel baseModel, bool async);
 
     public abstract void BuildInternalGetFacadeMethod(GeneratorBaseModel baseModel, bool async, List<string> internalMethodSignatures);
     public abstract void BuildInternalSaveFacadeMethod(GeneratorBaseModel baseModel, bool async, List<string> internalMethodSignatures);

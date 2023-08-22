@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
-  internal interface ITestGenerator
+  public interface ITestGenerator
   {
     void BuildTableMock(StringBuilder sb, ProfileDto profile, Schema schema, Table table);
     void BuildFunctionMock(StringBuilder sb, ProfileDto profile, Schema schema, Function function);

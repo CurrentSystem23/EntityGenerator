@@ -11,6 +11,46 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 {
   public abstract partial class NETCSharp : IDataAccessGenerator
   {
+    protected void BuildGetOrderByMethod(GeneratorBaseModel baseModel)
+    {
+      OpenMethod($"private string GetOrderBy(params Order{baseModel.Name}[] orderBy)");
+      _sb.AppendLine("string result = string.Empty;");
+      _sb.AppendLine("if (orderBy == null)");
+      _sb.AppendLine("return result;");
+      _sb.AppendLine("bool first = true;");
+      _sb.AppendLine($"foreach (Order{baseModel.Name} order in orderBy)");
+      _sb.AppendLine("{");
+      _sb.AppendLine($"string orderName = Enum.GetName(typeof(Order{baseModel.Name}), order);");
+      _sb.AppendLine("string[] orderArray = orderName.Split('_');");
+      _sb.AppendLine("if (orderArray.Length == 2)");
+      _sb.AppendLine("{");
+      _sb.AppendLine("if (first)");
+      _sb.AppendLine("{");
+      _sb.AppendLine(@"result = $"" ORDER BY {orderArray[0]} {orderArray[1]}"";");
+      _sb.AppendLine("first = false;");
+      _sb.AppendLine("}");
+      _sb.AppendLine("else");
+      _sb.AppendLine("{");
+      _sb.AppendLine(@"result += $"", {orderArray[0]} {orderArray[1]}"";");
+      _sb.AppendLine("}");
+      _sb.AppendLine("}");
+      _sb.AppendLine("}");
+      _sb.AppendLine("return result;");
+    }
+
+    protected void BuildGetPaginationMethod(GeneratorBaseModel baseModel)
+    {
+      OpenMethod($"private string GetPagination(int? pageNum = null, int? pageSize = null, params Order{baseModel.Name}[] orderBy)");
+      _sb.AppendLine("string result = string.Empty;");
+      _sb.AppendLine("if (pageNum != null && pageSize != null && orderBy?.Length > 0)");
+      _sb.AppendLine("{");
+      _sb.AppendLine(@"result = @""");
+      _sb.AppendLine("OFFSET (@pageNum - 1) * @pageSize ROWS");
+      _sb.AppendLine(@"FETCH NEXT @pageSize ROWS ONLY;"";");
+      _sb.AppendLine("}");
+      _sb.AppendLine("return result;");
+    }
+
     protected void BuildDAOClassHeader(GeneratorBaseModel baseModel, int databaseId)
     {
       List<string> imports = new()
@@ -42,7 +82,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       _sb.AppendLine($"private readonly IServiceProvider _provider;");
 
       // Constructor
-      OpenMethod($"{baseModel.DaoName}(IServiceProvider provider, ILogger<{baseModel.DaoName}> logger = null", null);
+      OpenMethod($"{baseModel.DaoName}(IServiceProvider provider, ILogger<{baseModel.DaoName}> logger = null)", null);
       _sb.AppendLine($"_logger = logger;");
       _sb.AppendLine("_provider = provider;");
     }
@@ -62,13 +102,15 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       switch (methodType)
       {
         case MethodType.GET:
-          _databaseLanguage.BuildPrepareCommand(baseModel, isAsync);
+          BuildGetOrderByMethod(baseModel);
+          BuildGetPaginationMethod(baseModel);
+          _databaseLanguage.BuildGetPrepareCommand(baseModel, isAsync);
           _databaseLanguage.BuildGetSqlStatement(baseModel);
 
-          OpenMethod(externalMethodSignatures.ElementAt(0));
+          // Non DB-specific methods
+          OpenMethod(externalMethodSignatures.ElementAt(0), isAsync: isAsync);
           _sb.AppendLine($"return{(isAsync ? " await" : "")} {baseModel.Name}Gets{(isAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}null, null, orderBy){(isAsync ? ".ConfigureAwait(false)" : "")};");
-
-          OpenMethod(externalMethodSignatures.ElementAt(1));
+          OpenMethod(externalMethodSignatures.ElementAt(1), isAsync: isAsync);
           _sb.AppendLine($"return{(isAsync ? " await" : "")} {baseModel.Name}Gets{(isAsync ? "Async" : "")}(new WhereClause(), false, {(parametersStr != "" ? $"{parametersStr}, " : "")}pageNum, pageSize, orderBy){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
           _databaseLanguage.BuildGetMethod(baseModel, methodType, isAsync, externalMethodSignatures, internalMethodSignatures);
@@ -91,7 +133,8 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
           break;
 
         case MethodType.COUNT:
-          OpenMethod(externalMethodSignatures.ElementAt(0));
+          // Non DB-specific method
+          OpenMethod(externalMethodSignatures.ElementAt(0), isAsync: isAsync);
           _sb.AppendLine($"return{(isAsync ? " await" : "")} {baseModel.Name}GetCount{(isAsync ? "Async" : "")}(new WhereClause(){(parametersStr != "" ? $", {parametersStr}" : "")}){(isAsync ? ".ConfigureAwait(false)" : "")};");
 
           _databaseLanguage.BuildInternalCountMethod(baseModel, isAsync,
@@ -147,7 +190,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
       OpenClass($"DataAccess{_databaseLanguages[databaseId].Name}Initializer", isStatic: true, isPartial: true);
 
-      OpenMethod($"InitializeGeneratedDataAccess(IServiceCollection services)", isStatic: true);
+      OpenMethod($"InitializeGeneratedDataAccess(IServiceCollection services)", returnType: "void", isStatic: true);
       foreach (Schema schema in db.Schemas)
       {
         foreach (Table table in schema.Tables)
