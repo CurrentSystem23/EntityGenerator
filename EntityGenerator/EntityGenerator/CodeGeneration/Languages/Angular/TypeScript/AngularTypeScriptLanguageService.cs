@@ -46,5 +46,10 @@ namespace EntityGenerator.CodeGeneration.Languages.Angular.TypeScript
     {
       throw new NotSupportedException();
     }
+
+    public override void GenerateMichaTest(Database db, ProfileDto profile, IFileWriterService writerService)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

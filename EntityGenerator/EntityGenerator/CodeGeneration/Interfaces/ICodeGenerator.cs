@@ -17,5 +17,6 @@ namespace EntityGenerator.CodeGeneration.Interfaces
     void ExecuteDataAccessFacadeGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
     void ExecuteFrontendGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
     void ExecuteCS23DomainTypeValuesGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
+    void ExecuteMichaTestGenerator(Database db, ProfileDto profile, IFileWriterService writerService);
   }
 }

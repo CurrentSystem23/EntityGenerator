@@ -73,6 +73,11 @@ namespace EntityGenerator.CodeGeneration.Services
       _languageProvider.GetLanguageService(profile.Generator.GeneratorCS23DomainTypeValues.Language, profile).GenerateCS23DomainTypeValues(db, profile, writerService);
     }
 
+    public void ExecuteMichaTestGenerator(Database db, ProfileDto profile, IFileWriterService writerService)
+    {
+      _languageProvider.GetLanguageService(profile.Generator.GeneratorMichaTest.Language, profile).GenerateMichaTest(db, profile, writerService);
+    }
+
 
     /// <summary>
     /// Increase the output step by one.

@@ -13,5 +13,6 @@ namespace EntityGenerator.CodeGeneration.Services
     public abstract void GenerateDataAccessFacade(Database db, ProfileDto profile, IFileWriterService writerService);
     public abstract void GenerateFrontend(Database db, ProfileDto profile, IFileWriterService writerService);
     public abstract void GenerateCS23DomainTypeValues(Database db, ProfileDto profile, IFileWriterService writerService);
+    public abstract void GenerateMichaTest(Database db, ProfileDto profile, IFileWriterService writerService);
   }
 }

@@ -27,6 +27,7 @@ namespace EntityGenerator.Profile.DataTransferObject
       GeneratorUserRights = new();
       GeneratorTest = new();
       GeneratorDBScripts = new();
+      GeneratorMichaTest = new();
     }
 
     /// <summary>
@@ -69,5 +70,6 @@ namespace EntityGenerator.Profile.DataTransferObject
     public ProfileGeneratorUserRightsDto GeneratorUserRights { get; set; }
     public ProfileGeneratorDBScriptsDto GeneratorDBScripts { get; set; }
     public ProfileGeneratorCS23DomainTypeValuesDTO GeneratorCS23DomainTypeValues { get; set; }
+    public ProfileGeneratorMichaTestDto GeneratorMichaTest { get; set; }
   }
 }

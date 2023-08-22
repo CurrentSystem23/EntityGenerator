@@ -53,6 +53,10 @@ namespace EntityGenerator.Profile.DataTransferObjects.Enums
 
     [EnumMember(Value = "CS23.DomainTypeValues")]
     [StringValue("ICS23DomainTypeValuesGenerator")]
-    CS23DomainTypeValuesGenerator
+    CS23DomainTypeValuesGenerator,
+
+    [EnumMember(Value = "MichaTest")]
+    [StringValue("IMichaTestGenerator")]
+    MichaTestGenerator
   }
 }
