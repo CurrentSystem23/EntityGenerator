@@ -44,7 +44,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
       foreach (Column column in baseModel.Columns.Where(column => !column.ColumnIsIdentity && !IsBaseColumn(column)))
       {
         string dataType = column.ColumnTypeDataType is DataTypes.XDocument or DataTypes.XElement ? "string" : GetColumnDataType(column);
-        _sb.AppendLine($"public {String.Format(ParameterFormat, dataType, column.Name)} {{ get; set; }} {(column.ColumnDefaultDefinition.IsNullOrEmpty() ? $"= {column.ColumnDefaultDefinition}" : "")}");
+        _sb.AppendLine($"public {String.Format(ParameterFormat, $"{dataType}{(column.ColumnIsNullable && column.ColumnTypeDataType != DataTypes.String ? "?" : string.Empty)}", column.Name)} {{ get; set; }} {(column.ColumnDefaultDefinition.IsNullOrEmpty() ? "" : $"= {column.ColumnDefaultDefinition}")};");
       }
     }
 
@@ -67,7 +67,7 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
 
       foreach (string methodSignature in methodSignatures)
       {
-        _sb.AppendLine(methodSignature);
+        _sb.AppendLine($"{methodSignature};");
       }
     }
 
@@ -171,6 +171,5 @@ namespace EntityGenerator.CodeGeneration.Languages.NET.CSharp
     {
       BuildInterfaceMethod(new GeneratorBaseModel(view, schema), methodType, isAsync);
     }
-
   }
 }

@@ -10,30 +10,7 @@ namespace EntityGenerator.CodeGeneration.Interfaces.Modules
 {
   public interface IDataAccessFacadeGenerator
   {
-    void BuildWhereParameterClass();
-
     void BuildDependencyInjectionBaseFile();
-    void BuildADOInterface(Database db);
-
-    void BuildDataAccessFacadeTableExternalInterfaceHeader(Schema schema, Table table);
-    void BuildDataAccessFacadeFunctionExternalInterfaceHeader(Schema schema, Function function);
-    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceHeader(Schema schema, Function tableValuedFunction);
-    void BuildDataAccessFacadeViewExternalInterfaceHeader(Schema schema, View view);
-
-    void BuildDataAccessFacadeTableExternalInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync);
-    void BuildDataAccessFacadeFunctionExternalInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync);
-    void BuildDataAccessFacadeTableValuedFunctionExternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync);
-    void BuildDataAccessFacadeViewExternalInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync);
-    
-    void BuildDataAccessFacadeTableInternalInterfaceHeader(Schema schema, Table table);
-    void BuildDataAccessFacadeFunctionInternalInterfaceHeader(Schema schema, Function function);
-    void BuildDataAccessFacadeTableValuedFunctionInternalInterfaceHeader(Schema schema, Function tableValuedFunction);
-    void BuildDataAccessFacadeViewInternalInterfaceHeader(Schema schema, View view);
-
-    void BuildDataAccessFacadeTableInternalInterfaceMethod(Schema schema, Table table, MethodType methodType, bool isAsync, int databaseId);
-    void BuildDataAccessFacadeFunctionInternalInterfaceMethod(Schema schema, Function function, MethodType methodType, bool isAsync, int databaseId);
-    void BuildDataAccessFacadeTableValuedFunctionInternalInterfaceMethod(Schema schema, Function tableValuedFunction, MethodType methodType, bool isAsync, int databaseId);
-    void BuildDataAccessFacadeViewInternalInterfaceMethod(Schema schema, View view, MethodType methodType, bool isAsync, int databaseId);
 
     void BuildDataAccessFacadeTableClassHeader(Schema schema, Table table);
     void BuildDataAccessFacadeFunctionClassHeader(Schema schema, Function function);
